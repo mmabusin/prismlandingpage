@@ -237,8 +237,12 @@
     .hiw { background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .hiw-header { margin-bottom: 56px; }
     /* ── WAYS TAB SWITCHER ── */
+    .ways-hint { display: flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 auto 12px; transition: opacity .35s ease, transform .35s ease; }
+    .ways-hint svg { width: 13px; height: 13px; color: var(--accent); animation: ways-hint-nudge 1.8s ease-in-out infinite; }
+    @keyframes ways-hint-nudge { 0%,100% { transform: translate(0,0); } 50% { transform: translate(2px,2px); } }
+    .ways-hint.hidden { opacity: 0; transform: translateY(-4px); pointer-events: none; }
     .ways-tab-bar { display: flex; gap: 3px; padding: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; width: fit-content; margin: 0 auto 28px; }
-    .ways-tab { position: relative; padding: 9px 22px; font-size: 0.82rem; font-family: var(--font-brand); font-weight: 600; color: var(--text-muted); background: none; border: 1px solid transparent; border-radius: 8px; cursor: pointer; transition: color .15s, background .15s; overflow: hidden; white-space: nowrap; }
+    .ways-tab { position: relative; padding: 9px 22px; font-size: 0.82rem; font-family: var(--font-brand); font-weight: 600; color: var(--text-muted); background: none; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: color .15s, background .15s, border-color .15s; overflow: hidden; white-space: nowrap; }
     .ways-tab:hover { color: var(--text-dim); background: rgba(255,255,255,0.04); }
     .ways-tab.active { background: var(--surface2); color: var(--text); border-color: var(--border2); }
     .ways-tab-prog { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); border-radius: 1px; width: 0; transition: none; }
@@ -685,6 +689,11 @@
         <p class="section-sub reveal reveal-delay-2">Ask any question, search for a profile, pull a full player or team report, or build a national squad. All of this, and much more, right at your fingertips.</p>
       </div>
       <div class="reveal">
+        <!-- Tab hint — nudges people to click through; disappears once they do -->
+        <div class="ways-hint" id="waysHint">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 2l6.6 17.2 2.2-7 7-2.2z"/></svg>
+          Click any tab to explore
+        </div>
         <!-- Tab bar -->
         <div class="ways-tab-bar">
           <button class="ways-tab active" data-ways="chat">Chat<span class="ways-tab-prog"></span></button>
@@ -1323,7 +1332,8 @@
         }
       }
       const tabBar = document.querySelector('.ways-tab-bar');
-      function stopAuto() { auto = false; clearTimeout(timer); if (tabBar) tabBar.classList.add('no-auto'); }
+      const waysHint = document.getElementById('waysHint');
+      function stopAuto() { auto = false; clearTimeout(timer); if (tabBar) tabBar.classList.add('no-auto'); if (waysHint) waysHint.classList.add('hidden'); }
       tabs.forEach(t => t.addEventListener('click', () => { stopAuto(); switchTo(t.dataset.ways); }));
 
       // Sub-modes inside Player Search (Build / Ready-made / AI)
