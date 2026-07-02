@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Prism — Football Intelligence</title>
-  <meta name="description" content="Pro-level football analysis, finally yours. Ask any football question — get scout reports, shortlists, and live World Cup 2026 insight in seconds." />
+  <meta name="description" content="AI-powered football analysis for scouts, coaches, analysts, and anyone who loves the game. Ask anything — get reports, shortlists, and real insight in seconds." />
   <meta name="theme-color" content="#0b0b0b" />
   <link rel="canonical" href="https://theprismai.com/" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='6' fill='%230b0b0b'/%3E%3Cline x1='4' y1='6' x2='4' y2='22' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3Cline x1='24' y1='6' x2='24' y2='22' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3Cline x1='4' y1='6' x2='24' y2='6' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='14' cy='16' r='3' fill='%232563EB'/%3E%3C/svg%3E" />
@@ -12,11 +12,11 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="The Prism" />
   <meta property="og:title" content="The Prism — Football Intelligence" />
-  <meta property="og:description" content="Pro-level football analysis, finally yours. Ask any football question — get scout reports, shortlists, and live World Cup 2026 insight in seconds." />
+  <meta property="og:description" content="Enterprise-level football analysis, for everyone. Ask anything — get scout reports, shortlists, tactical breakdowns, and live World Cup 2026 insight in seconds." />
   <meta property="og:url" content="https://theprismai.com/" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="The Prism — Football Intelligence" />
-  <meta name="twitter:description" content="Pro-level football analysis, finally yours. Reports, shortlists, and live World Cup 2026 insight in seconds." />
+  <meta name="twitter:description" content="Enterprise-level football analysis, for everyone. Reports, shortlists, and live World Cup 2026 insight in seconds." />
   <!-- og:image / twitter:image intentionally omitted until a 1200×630 share image exists. Add og-image.png to this folder and re-add the tags + twitter:card=summary_large_image. -->
   <!-- Analytics — Plausible. Remove this line to disable. -->
   <script defer data-domain="theprismai.com" src="https://plausible.io/js/script.js"></script>
@@ -233,28 +233,84 @@
     .section-headline { font-family: var(--font-hero); font-size: clamp(1.55rem, 2.6vw, 2.1rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.12; margin-bottom: 14px; }
     .section-sub { font-size: 0.95rem; color: var(--text-dim); line-height: 1.65; max-width: 500px; }
 
+    /* ── APP SNAPSHOT ── */
+    .snapshot { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .snapshot-header { margin-bottom: 48px; }
+    .snapshot-demo {
+      border: 1px solid var(--border2); border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03);
+    }
+    .snap-bar {
+      display: flex; align-items: center; gap: 7px;
+      padding: 12px 16px; background: #0a0a0a; border-bottom: 1px solid var(--border);
+    }
+    .snap-app { display: flex; flex: 1; min-height: 380px; }
+    .snap-sidebar {
+      width: 180px; flex-shrink: 0;
+      background: #0b0b0b; border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 16px 0;
+    }
+    .snap-logo { display: flex; align-items: center; gap: 8px; padding: 0 14px 16px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+    .snap-logo-name { font-family: var(--font-brand); font-size: 0.82rem; font-weight: 700; color: var(--text); }
+    .snap-logo-dot { color: var(--accent); }
+    .snap-nav-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 7px 14px; font-size: 0.76rem; color: var(--text-muted);
+      cursor: default; border-radius: 6px; margin: 0 6px 2px;
+    }
+    .snap-nav-item.active { background: rgba(37,99,235,0.12); color: var(--text); }
+    .snap-nav-item svg { width: 13px; height: 13px; flex-shrink: 0; opacity: 0.6; }
+    .snap-nav-item.active svg { opacity: 1; color: var(--accent); }
+    .snap-nav-label { font-weight: 500; }
+    .snap-nav-badge { margin-left: auto; font-family: var(--font-mono); font-size: 0.55rem; padding: 2px 6px; border-radius: 999px; background: rgba(220,38,38,0.15); color: #f87171; border: 1px solid rgba(220,38,38,0.25); }
+    .snap-main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .snap-ticker {
+      background: #0d0d0d; border-bottom: 1px solid var(--border);
+      padding: 7px 16px; display: flex; gap: 20px; overflow: hidden;
+    }
+    .snap-ticker-item { display: flex; align-items: center; gap: 7px; white-space: nowrap; font-size: 0.72rem; color: var(--text-dim); }
+    .snap-ticker-name { font-weight: 600; color: var(--text); }
+    .snap-ticker-arrow { color: var(--accent); font-weight: 700; font-size: 0.65rem; }
+    .snap-ticker-clubs { color: var(--text-muted); }
+    .snap-content { padding: 20px 20px; flex: 1; overflow: hidden; }
+    .snap-welcome-title { font-family: var(--font-brand); font-size: 0.92rem; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3; }
+    .snap-welcome-title em { font-style: italic; color: var(--text-dim); }
+    .snap-welcome-sub { font-size: 0.72rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; max-width: 480px; }
+    .snap-ask {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 14px; background: var(--surface2);
+      border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+    }
+    .snap-ask-text { font-size: 0.75rem; color: var(--text-muted); flex: 1; }
+    .snap-ask-hint { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); background: var(--surface3); border: 1px solid var(--border2); padding: 2px 7px; border-radius: 4px; }
+    .snap-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .snap-action {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 10px 12px;
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .snap-action.wc { border-color: rgba(37,99,235,0.3); background: rgba(37,99,235,0.06); }
+    .snap-action-icon svg { width: 14px; height: 14px; color: var(--text-muted); }
+    .snap-action.wc .snap-action-icon svg { color: var(--accent); }
+    .snap-action-label { font-family: var(--font-brand); font-size: 0.72rem; font-weight: 700; color: var(--text); }
+    .snap-action-desc { font-size: 0.62rem; color: var(--text-muted); line-height: 1.4; }
+
     /* ── HOW IT WORKS ── */
     .hiw { background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .hiw-header { margin-bottom: 56px; }
     /* ── WAYS TAB SWITCHER ── */
-    .ways-hint { display: flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 auto 12px; transition: opacity .35s ease, transform .35s ease; }
-    .ways-hint svg { width: 13px; height: 13px; color: var(--accent); animation: ways-hint-nudge 1.8s ease-in-out infinite; }
-    @keyframes ways-hint-nudge { 0%,100% { transform: translate(0,0); } 50% { transform: translate(2px,2px); } }
-    .ways-hint.hidden { opacity: 0; transform: translateY(-4px); pointer-events: none; }
     .ways-tab-bar { display: flex; gap: 3px; padding: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; width: fit-content; margin: 0 auto 28px; }
-    .ways-tab { position: relative; padding: 9px 22px; font-size: 0.82rem; font-family: var(--font-brand); font-weight: 600; color: var(--text-muted); background: none; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: color .15s, background .15s, border-color .15s; overflow: hidden; white-space: nowrap; }
+    .ways-tab { position: relative; padding: 9px 22px; font-size: 0.82rem; font-family: var(--font-brand); font-weight: 600; color: var(--text-muted); background: none; border: 1px solid transparent; border-radius: 8px; cursor: pointer; transition: color .15s, background .15s; overflow: hidden; white-space: nowrap; }
     .ways-tab:hover { color: var(--text-dim); background: rgba(255,255,255,0.04); }
     .ways-tab.active { background: var(--surface2); color: var(--text); border-color: var(--border2); }
     .ways-tab-prog { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); border-radius: 1px; width: 0; transition: none; }
     .ways-tab.active .ways-tab-prog { animation: ways-prog 6s linear forwards; }
-    .ways-tab-bar.no-auto .ways-tab-prog { animation: none; width: 0; }
-    .ways-tab-bar.no-auto .ways-tab.active .ways-tab-prog { width: 100%; }
     @keyframes ways-prog { from { width: 0 } to { width: 100% } }
-    .ways-panel { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); display: grid; }
-    /* All panes share one grid cell, so the panel is always as tall as the tallest
-       pane — switching tabs never changes the height, so the page never jumps. */
-    .ways-pane { grid-area: 1 / 1; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .22s ease; }
-    .ways-pane.active { opacity: 1; visibility: visible; pointer-events: auto; }
+    .ways-panel { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+    .ways-pane { display: none; }
+    .ways-pane.active { display: block; animation: ways-in .22s ease-out; }
     @keyframes ways-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     /* Chat ranked leaderboard */
     .rank-list { display: flex; flex-direction: column; }
@@ -282,10 +338,73 @@
     .natrep-verdict { display: flex; align-items: flex-start; gap: 10px; padding: 13px 18px; border-top: 1px solid var(--border); }
     .natrep-right .mock-badge { padding: 2px 6px; font-size: 0.52rem; }
 
-    /* live dot (used in coverage league tags) */
+    /* ── FEATURES ── */
+    .features { background: var(--bg); }
+    .features-header { margin-bottom: 48px; }
+    .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .feature-card { background: var(--surface); padding: 28px 24px; display: flex; flex-direction: column; gap: 12px; transition: background .18s; }
+    .feature-card:hover { background: var(--surface2); }
+    .feature-card.wc-feature { border-top: 2px solid var(--accent); }
+    .feature-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--accent-lo); border: 1px solid var(--accent-md); display: flex; align-items: center; justify-content: center; }
+    .feature-icon svg { width: 15px; height: 15px; color: var(--accent); }
+    .feature-title { font-family: var(--font-brand); font-size: 0.9rem; font-weight: 700; color: var(--text); }
+    .feature-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.6; }
+    .feature-live { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 0.6rem; color: #f87171; margin-top: 2px; }
     .feature-live-dot { width: 5px; height: 5px; border-radius: 50%; background: #f87171; animation: pulse 1.5s ease-in-out infinite; }
 
-    /* verdict strip (used in scout-report + national-selection panes) */
+    /* ── VISUAL SHOWCASE ── */
+    .showcase { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .showcase-header { margin-bottom: 52px; }
+    .showcase-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: start; }
+    .showcase-col { display: flex; flex-direction: column; gap: 24px; }
+
+    .cmp-card { background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .cmp-header { display: grid; grid-template-columns: 1fr auto 1fr; border-bottom: 1px solid var(--border); }
+    .cmp-player { padding: 14px 16px; display: flex; flex-direction: column; gap: 3px; }
+    .cmp-player:last-child { text-align: right; border-left: 1px solid var(--border); }
+    .cmp-player-name { font-family: var(--font-brand); font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .cmp-player-meta { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); }
+    .cmp-vs { padding: 14px 12px; font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); display: flex; align-items: center; }
+    .cmp-rows { display: flex; flex-direction: column; }
+    .cmp-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid var(--border); }
+    .cmp-row:last-child { border-bottom: none; }
+    .cmp-val { padding: 10px 14px; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text); display: flex; align-items: center; gap: 5px; }
+    .cmp-val:last-child { justify-content: flex-end; border-left: 1px solid var(--border); }
+    .cmp-lbl { padding: 10px 8px; font-size: 0.62rem; color: var(--text-muted); text-align: center; text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; justify-content: center; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+    .cmp-win { color: var(--text); }
+    .cmp-dim { color: var(--text-muted); }
+    .arrow-up { font-size: 0.6rem; color: var(--green); }
+
+    .shortlist-card { background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .shortlist-header { padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .shortlist-title { font-family: var(--font-brand); font-size: 0.82rem; font-weight: 700; color: var(--text); }
+    .shortlist-meta { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); }
+    .shortlist-section-label { padding: 7px 14px; font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; background: var(--surface2); border-bottom: 1px solid var(--border); }
+    .shortlist-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid var(--border); transition: background .12s; }
+    .shortlist-row:last-child { border-bottom: none; }
+    .shortlist-row:hover { background: var(--surface2); }
+    .shortlist-player { display: flex; flex-direction: column; gap: 2px; }
+    .shortlist-name { font-family: var(--font-brand); font-size: 0.82rem; font-weight: 700; color: var(--text); }
+    .shortlist-info { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); }
+    .shortlist-right { display: flex; align-items: center; gap: 10px; }
+    .shortlist-score { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); }
+
+    .preview-card { background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .preview-card-top { padding: 16px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .preview-player { display: flex; flex-direction: column; gap: 3px; }
+    .preview-player-name { font-family: var(--font-brand); font-size: 1.05rem; font-weight: 800; letter-spacing: -0.015em; }
+    .preview-player-meta { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); }
+    .preview-rating { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .preview-rating-val { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 500; color: var(--text); }
+    .preview-rating-lbl { font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .preview-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .preview-stat { padding: 12px 14px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 3px; }
+    .preview-stat:nth-child(3n) { border-right: none; }
+    .preview-stat:nth-last-child(-n+3) { border-bottom: none; }
+    .preview-stat-val { font-family: var(--font-mono); font-size: 1.05rem; font-weight: 500; color: var(--text); }
+    .preview-stat-lbl { font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .preview-stat-sub { font-family: var(--font-mono); font-size: 0.58rem; color: var(--teal); }
+    .preview-verdict { padding: 13px 16px; border-top: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
     .verdict-bar { width: 3px; align-self: stretch; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
     .verdict-text { font-size: 0.76rem; color: var(--text-dim); line-height: 1.55; }
 
@@ -327,6 +446,39 @@
     .faq-body.open { max-height: 400px; }
     .faq-a { padding: 0 28px 20px; font-size: 0.82rem; color: var(--text-dim); line-height: 1.65; }
     .faq-a strong { color: var(--text); font-weight: 600; }
+
+    /* ── TEAM DNA MOCK ── */
+    .dna-mock { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .dna-mock-header { padding: 14px 18px 10px; border-bottom: 1px solid var(--border); }
+    .dna-mock-team { font-family: var(--font-brand); font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .dna-mock-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .dna-mock-record { display: flex; gap: 14px; margin-top: 8px; }
+    .dna-record-item { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-dim); }
+    .dna-record-item span { color: var(--accent); font-weight: 600; }
+    .dna-fingerprint { padding: 14px 18px; display: flex; flex-direction: column; gap: 9px; }
+    .dna-fp-axis { display: grid; grid-template-columns: 118px 1fr 36px 52px; align-items: center; gap: 10px; }
+    .dna-fp-lbl { font-size: 0.67rem; color: var(--text-dim); }
+    .dna-fp-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .dna-fp-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+    .dna-fp-score { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text); text-align: right; }
+    .dna-badge-elite { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(37,99,235,0.14); color: var(--accent); text-transform: uppercase; text-align: center; }
+    .dna-badge-high { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(21,128,61,0.14); color: #4ade80; text-transform: uppercase; text-align: center; }
+    .dna-badge-med { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(251,146,60,0.12); color: #fb923c; text-transform: uppercase; text-align: center; }
+    .dna-evidence-chips { padding: 0 18px 14px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .dna-chip { font-size: 0.6rem; color: var(--text-muted); padding: 3px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; }
+    .dna-section { padding: 13px 18px; border-top: 1px solid var(--border); }
+    .dna-section-lbl { font-family: var(--font-mono); font-size: 0.58rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .dna-identity { font-size: 0.74rem; color: var(--text-dim); line-height: 1.62; }
+    .dna-identity strong { color: var(--text); font-weight: 600; }
+    .dna-keymen { display: flex; flex-direction: column; gap: 9px; }
+    .dna-keyman { display: flex; gap: 10px; align-items: flex-start; }
+    .dna-keyman-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.56rem; font-weight: 700; color: var(--accent); }
+    .dna-keyman-body { flex: 1; min-width: 0; }
+    .dna-keyman-top { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .dna-keyman-name { font-family: var(--font-brand); font-size: 0.78rem; font-weight: 700; color: var(--text); }
+    .dna-keyman-role { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.05em; padding: 1px 6px; border-radius: 3px; background: rgba(37,99,235,0.12); color: var(--accent); text-transform: uppercase; }
+    .dna-keyman-stat { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); margin-left: auto; }
+    .dna-keyman-desc { font-size: 0.67rem; color: var(--text-muted); line-height: 1.5; margin-top: 2px; }
 
     /* ── CUSTOM BUILDER MOCK ── */
     .builder-mock { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
@@ -388,37 +540,33 @@
     .ai-thinking { display: flex; align-items: flex-start; gap: 9px; margin: 10px 16px 0; font-size: 0.68rem; color: var(--text-muted); line-height: 1.5; }
     .ai-thinking em { color: var(--text-dim); font-style: normal; font-family: var(--font-mono); font-size: 0.63rem; }
 
-    /* ── TEAM DNA MOCK ── */
-    .dna-mock-header { padding: 14px 18px 10px; border-bottom: 1px solid var(--border); }
-    .dna-mock-team { font-family: var(--font-brand); font-size: 0.88rem; font-weight: 700; color: var(--text); }
-    .dna-mock-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
-    .dna-mock-record { display: flex; gap: 14px; margin-top: 8px; }
-    .dna-record-item { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-dim); }
-    .dna-record-item span { color: var(--accent); font-weight: 600; }
-    .dna-fingerprint { padding: 14px 18px; display: flex; flex-direction: column; gap: 9px; }
-    .dna-fp-axis { display: grid; grid-template-columns: 118px 1fr 36px 52px; align-items: center; gap: 10px; }
-    .dna-fp-lbl { font-size: 0.67rem; color: var(--text-dim); }
-    .dna-fp-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
-    .dna-fp-fill { height: 100%; border-radius: 2px; background: var(--accent); }
-    .dna-fp-score { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text); text-align: right; }
-    .dna-badge-elite { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(37,99,235,0.14); color: var(--accent); text-transform: uppercase; text-align: center; }
-    .dna-badge-high { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(21,128,61,0.14); color: #4ade80; text-transform: uppercase; text-align: center; }
-    .dna-badge-med { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(251,146,60,0.12); color: #fb923c; text-transform: uppercase; text-align: center; }
-    .dna-evidence-chips { padding: 0 18px 14px; display: flex; flex-wrap: wrap; gap: 5px; }
-    .dna-chip { font-size: 0.6rem; color: var(--text-muted); padding: 3px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; }
-    .dna-section { padding: 13px 18px; border-top: 1px solid var(--border); }
-    .dna-section-lbl { font-family: var(--font-mono); font-size: 0.58rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-    .dna-identity { font-size: 0.74rem; color: var(--text-dim); line-height: 1.62; }
-    .dna-identity strong { color: var(--text); font-weight: 600; }
-    .dna-keymen { display: flex; flex-direction: column; gap: 9px; }
-    .dna-keyman { display: flex; gap: 10px; align-items: flex-start; }
-    .dna-keyman-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.56rem; font-weight: 700; color: var(--accent); }
-    .dna-keyman-body { flex: 1; min-width: 0; }
-    .dna-keyman-top { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-    .dna-keyman-name { font-family: var(--font-brand); font-size: 0.78rem; font-weight: 700; color: var(--text); }
-    .dna-keyman-role { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.05em; padding: 1px 6px; border-radius: 3px; background: rgba(37,99,235,0.12); color: var(--accent); text-transform: uppercase; }
-    .dna-keyman-stat { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); margin-left: auto; }
-    .dna-keyman-desc { font-size: 0.67rem; color: var(--text-muted); line-height: 1.5; margin-top: 2px; }
+    /* ── LEAGUE PULSE MOCK ── */
+    .pulse-mock { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .pulse-ecg-strip { padding: 11px 16px 0; }
+    .pulse-ecg { height: 20px; width: 100%; display: block; }
+    .pulse-ecg path { stroke: var(--accent); stroke-width: 1.6; fill: none; }
+    .pulse-league-head { display: flex; align-items: center; gap: 9px; padding: 8px 16px 11px; border-bottom: 1px solid var(--border); }
+    .pulse-league-flag { font-size: 0.95rem; line-height: 1; }
+    .pulse-league-name { font-family: var(--font-brand); font-size: 0.84rem; font-weight: 700; color: var(--text); }
+    .pulse-league-mw { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); }
+    .pulse-live { display: flex; align-items: center; gap: 6px; margin-left: auto; font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .pulse-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: pulse-dot 1.8s infinite; }
+    @keyframes pulse-dot { 0% { box-shadow: 0 0 0 0 rgba(74,222,128,.5) } 70% { box-shadow: 0 0 0 6px rgba(74,222,128,0) } 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0) } }
+    .pulse-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+    .pulse-col { background: var(--surface); padding: 11px 0 9px; }
+    .pulse-sec-lbl { padding: 0 14px 7px; font-family: var(--font-mono); font-size: 0.56rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+    .pulse-result { display: flex; align-items: center; gap: 7px; padding: 4px 14px; }
+    .pulse-result-home, .pulse-result-away { flex: 1; font-family: var(--font-brand); font-size: 0.67rem; font-weight: 600; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .pulse-result-away { text-align: right; }
+    .pulse-result-score { font-family: var(--font-mono); font-size: 0.67rem; color: var(--accent); font-weight: 600; flex-shrink: 0; }
+    .pulse-perf { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 14px; }
+    .pulse-perf-info { min-width: 0; }
+    .pulse-perf-name { font-family: var(--font-brand); font-size: 0.69rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pulse-perf-club { font-family: var(--font-mono); font-size: 0.53rem; color: var(--text-muted); }
+    .pulse-perf-rating { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; color: #4ade80; flex-shrink: 0; }
+    .pulse-intel { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 16px 15px; border-top: 1px solid var(--border); }
+    .pulse-intel-chip { font-family: var(--font-mono); font-size: 0.59rem; color: var(--text-muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 4px 9px; }
+    .pulse-intel-chip b { color: var(--text); font-weight: 600; }
 
     /* ── WORLD CUP MOCK ── */
     .wc-mock { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
@@ -447,17 +595,6 @@
     .wc-take svg { flex-shrink: 0; margin-top: 1px; }
     .wc-take-text { font-size: 0.68rem; color: var(--text-dim); line-height: 1.5; }
     .wc-take-text b { color: var(--text); font-weight: 600; }
-    .wc-bracket { border-top: 1px solid var(--border); padding: 11px 16px 12px; }
-    .wc-bracket-lbl { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: 0.57rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 9px; }
-    .wc-bracket-lbl span { color: var(--accent); }
-    .wc-bracket-ties { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    .wc-bracket-tie { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 7px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; }
-    .wc-bt-team { font-family: var(--font-brand); font-size: 0.66rem; font-weight: 600; color: var(--text); white-space: nowrap; }
-    .wc-bt-vs { font-family: var(--font-mono); font-size: 0.5rem; color: var(--text-muted); }
-    .wc-news { border-top: 1px solid var(--border); padding: 11px 16px 13px; display: flex; flex-direction: column; gap: 7px; }
-    .wc-news-item { display: flex; gap: 8px; align-items: flex-start; }
-    .wc-news-dot { color: var(--accent); font-size: 0.62rem; line-height: 1.5; flex-shrink: 0; }
-    .wc-news-text { font-size: 0.66rem; color: var(--text-dim); line-height: 1.5; }
 
     /* ── FULL PLAYER PROFILE MOCK ── */
     .profile-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 18px; border-bottom: 1px solid var(--border); }
@@ -527,30 +664,31 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 1000px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .showcase-grid { grid-template-columns: 1fr; }
       .coverage-stats { grid-template-columns: repeat(2, 1fr); }
       .who-grid { grid-template-columns: repeat(2, 1fr); }
       .faq-list { border-radius: var(--radius-sm); }
+      .snap-actions { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 720px) {
       nav { padding: 0 20px; }
       .nav-links { display: none; }
       section { padding: 68px 20px; }
-      /* Mobile: show every tab at once as a 2-row segmented grid — no sideways
-         scroll, nothing hidden. 'National Selection' spans the full width. */
-      .ways-tab-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: 100%; max-width: 420px; }
-      .ways-tab { padding: 11px 8px; font-size: 0.78rem; text-align: center; justify-content: center; }
-      .ways-tab:last-child { grid-column: 1 / -1; }
-      .ways-tab-prog { border-radius: 0 0 8px 8px; }
+      .ways-tab-bar { flex-wrap: wrap; width: auto; justify-content: center; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
       .who-grid { grid-template-columns: 1fr 1fr; }
       .hero-form, .cta-form { flex-direction: column; }
       .mock-stats { grid-template-columns: repeat(2, 1fr); }
       .mock-stat:nth-child(2) { border-right: none; }
       .mock-stat:nth-child(3) { border-top: 1px solid var(--border); }
+      .snap-sidebar { display: none; }
       .natrep-grid { grid-template-columns: 1fr; }
       .profile-stat-grid { grid-template-columns: repeat(2, 1fr); }
       .builder-modes { flex-wrap: wrap; }
     }
     @media (max-width: 520px) {
+      .features-grid { grid-template-columns: 1fr; }
       .who-grid { grid-template-columns: 1fr; }
       .coverage-stats { grid-template-columns: 1fr 1fr; }
       footer { flex-direction: column; align-items: flex-start; }
@@ -609,10 +747,10 @@
         Early Access — Limited Spots Available
       </div>
       <h1 class="hero-headline reveal reveal-delay-1">
-        AI-powered football<br>intelligence <em>at your fingertips.</em>
+        The intelligence layer<br>your analysis stack<br><em>was missing.</em>
       </h1>
       <p class="hero-sub reveal reveal-delay-2">
-        Enterprise-level football analysis, for everyone. Whether you're a scout building a shortlist, a coach studying an opponent, or a fan who just wants to go deeper — The Prism turns what's on your mind into <strong>reports, shortlists, and tangible results</strong>.
+        Enterprise-level football analysis, <strong>for everyone</strong>. Whether you're a scout building a shortlist, a coach studying an opponent, or a fan who just wants to go deeper — turn what's on your mind into reports, shortlists, and real results.
       </p>
       <form class="hero-form reveal reveal-delay-3" onsubmit="handleSubmit(event,'hero')">
         <input class="hero-input" type="email" id="hero-email" placeholder="Enter your email" autocomplete="email"/>
@@ -680,26 +818,124 @@
     </div>
   </section>
 
+  <!-- APP SNAPSHOT -->
+  <section class="snapshot">
+    <div class="section-inner">
+      <div class="snapshot-header">
+        <p class="section-label reveal">The platform</p>
+        <h2 class="section-headline reveal reveal-delay-1">Everything in one place. Live, right now.</h2>
+        <p class="section-sub reveal reveal-delay-2">The Prism dashboard gives you scouting, analysis, transfers, and live World Cup 2026 data — all in a single interface, available the moment you ask.</p>
+      </div>
+      <div class="snapshot-demo reveal reveal-delay-2">
+        <div class="snap-bar">
+          <span class="mock-dot mock-dot-r"></span>
+          <span class="mock-dot mock-dot-y"></span>
+          <span class="mock-dot mock-dot-g"></span>
+          <span style="flex:1;text-align:center;font-family:var(--font-mono);font-size:0.62rem;color:var(--text-muted);">the-prism · dashboard</span>
+        </div>
+        <div class="snap-app">
+          <div class="snap-sidebar">
+            <div class="snap-logo">
+              <svg width="18" height="18"><use href="#prism-logo"/></svg>
+              <span class="snap-logo-name">The Prism<span class="snap-logo-dot" style="color:var(--accent)">.</span></span>
+            </div>
+            <div class="snap-nav-item active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              <span class="snap-nav-label">Home</span>
+            </div>
+            <div class="snap-nav-item" style="color:var(--accent);opacity:1;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg>
+              <span class="snap-nav-label" style="font-weight:700;">World Cup 2026</span>
+              <span class="snap-nav-badge">LIVE</span>
+            </div>
+            <div class="snap-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="snap-nav-label">Chat</span>
+            </div>
+            <div class="snap-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span class="snap-nav-label">Scout Players</span>
+            </div>
+            <div class="snap-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 12 7 12 10 4 14 20 17 12 21 12"/></svg>
+              <span class="snap-nav-label">The Pulse</span>
+            </div>
+            <div class="snap-nav-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span class="snap-nav-label">National Selection</span>
+            </div>
+          </div>
+          <div class="snap-main">
+            <div class="snap-ticker">
+              <div class="snap-ticker-item">
+                <span class="snap-ticker-name">K. Mbappé</span>
+                <span class="snap-ticker-arrow">→</span>
+                <span class="snap-ticker-clubs">PSG → Real Madrid</span>
+              </div>
+              <div class="snap-ticker-item" style="opacity:.6">·</div>
+              <div class="snap-ticker-item">
+                <span class="snap-ticker-name">J. Bellingham</span>
+                <span class="snap-ticker-arrow">→</span>
+                <span class="snap-ticker-clubs">Real Madrid · Renewed</span>
+              </div>
+              <div class="snap-ticker-item" style="opacity:.6">·</div>
+              <div class="snap-ticker-item">
+                <span class="snap-ticker-name">L. Lukeba</span>
+                <span class="snap-ticker-arrow">→</span>
+                <span class="snap-ticker-clubs">RB Leipzig · Linked</span>
+              </div>
+            </div>
+            <div class="snap-content">
+              <div class="snap-welcome-title">ThePrism. <em>The intelligence layer</em> your analysis stack was missing.</div>
+              <div class="snap-welcome-sub">AI-powered analysis for scouts, coaches, analysts, and lovers of the game. Ask anything — get reports, shortlists, and real insight in seconds.</div>
+              <div class="snap-ask">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent);flex-shrink:0;"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>
+                <span class="snap-ask-text">Ask ThePrism anything — "Who are the top performers at World Cup 2026 so far?"</span>
+                <span class="snap-ask-hint">↵</span>
+              </div>
+              <div class="snap-actions">
+                <div class="snap-action">
+                  <span class="snap-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                  <div class="snap-action-label">Scout a player</div>
+                  <div class="snap-action-desc">Deep dive on any player</div>
+                </div>
+                <div class="snap-action">
+                  <span class="snap-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 7v6l8 4 8-4V7"/></svg></span>
+                  <div class="snap-action-label">Build a national squad</div>
+                  <div class="snap-action-desc">AI-powered squad selection</div>
+                </div>
+                <div class="snap-action">
+                  <span class="snap-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 12 7 12 10 4 14 20 17 12 21 12"/></svg></span>
+                  <div class="snap-action-label">Check The Pulse</div>
+                  <div class="snap-action-desc">Form, ratings, standouts</div>
+                </div>
+                <div class="snap-action wc">
+                  <span class="snap-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg></span>
+                  <div class="snap-action-label">World Cup 2026</div>
+                  <div class="snap-action-desc">Live analysis & groups</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- HOW IT WORKS -->
   <section class="hiw" id="how">
     <div class="section-inner">
       <div class="hiw-header">
-        <p class="section-label reveal">How it works</p>
+        <p class="section-label reveal">Ways in</p>
         <h2 class="section-headline reveal reveal-delay-1">One platform, multiple ways in.</h2>
-        <p class="section-sub reveal reveal-delay-2">Ask any question, search for a profile, pull a full player or team report, or build a national squad. All of this, and much more, right at your fingertips.</p>
+        <p class="section-sub reveal reveal-delay-2">Ask a question, search for a profile, pull a full player report, or build a national squad — Prism meets you wherever you start.</p>
       </div>
       <div class="reveal">
-        <!-- Tab hint — nudges people to click through; disappears once they do -->
-        <div class="ways-hint" id="waysHint">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 2l6.6 17.2 2.2-7 7-2.2z"/></svg>
-          Click any tab to explore
-        </div>
         <!-- Tab bar -->
         <div class="ways-tab-bar">
           <button class="ways-tab active" data-ways="chat">Chat<span class="ways-tab-prog"></span></button>
           <button class="ways-tab" data-ways="search">Player Search<span class="ways-tab-prog"></span></button>
-          <button class="ways-tab" data-ways="reports">Player Reports<span class="ways-tab-prog"></span></button>
-          <button class="ways-tab" data-ways="team">Team Analysis<span class="ways-tab-prog"></span></button>
+          <button class="ways-tab" data-ways="reports">Reports & Analysis<span class="ways-tab-prog"></span></button>
           <button class="ways-tab" data-ways="national">National Selection<span class="ways-tab-prog"></span></button>
         </div>
 
@@ -935,95 +1171,7 @@
             </div>
           </div>
 
-          <!-- ── PANE: Team Analysis (Opponent DNA) ── -->
-          <div class="ways-pane" id="ways-team">
-            <div class="mock-bar">
-              <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
-              <span class="mock-title">the-prism · team dna · psg</span>
-            </div>
-            <div class="dna-mock-header">
-              <div class="dna-mock-team">Paris Saint-Germain</div>
-              <div class="dna-mock-meta">Ligue 1 · 2024/25 · 34 matches</div>
-              <div class="dna-mock-record">
-                <span class="dna-record-item">W <span>24</span></span>
-                <span class="dna-record-item">D <span>5</span></span>
-                <span class="dna-record-item">L <span>5</span></span>
-                <span class="dna-record-item">xG/game <span>2.3</span></span>
-                <span class="dna-record-item">Poss <span>61%</span></span>
-              </div>
-            </div>
-            <div class="dna-fingerprint">
-              <div class="dna-fp-axis">
-                <div class="dna-fp-lbl">Pressing Intensity</div>
-                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:82%"></div></div>
-                <div class="dna-fp-score">82</div>
-                <div class="dna-badge-high">HIGH</div>
-              </div>
-              <div class="dna-fp-axis">
-                <div class="dna-fp-lbl">Possession Control</div>
-                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:91%"></div></div>
-                <div class="dna-fp-score">91</div>
-                <div class="dna-badge-elite">ELITE</div>
-              </div>
-              <div class="dna-fp-axis">
-                <div class="dna-fp-lbl">Build-up Style</div>
-                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:88%"></div></div>
-                <div class="dna-fp-score">88</div>
-                <div class="dna-badge-elite">ELITE</div>
-              </div>
-              <div class="dna-fp-axis">
-                <div class="dna-fp-lbl">Defensive Line</div>
-                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:68%"></div></div>
-                <div class="dna-fp-score">68</div>
-                <div class="dna-badge-med">MED</div>
-              </div>
-              <div class="dna-fp-axis">
-                <div class="dna-fp-lbl">Transition Speed</div>
-                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:85%"></div></div>
-                <div class="dna-fp-score">85</div>
-                <div class="dna-badge-elite">ELITE</div>
-              </div>
-            </div>
-            <div class="dna-evidence-chips">
-              <span class="dna-chip">673 passes/game</span>
-              <span class="dna-chip">91.3% pass acc.</span>
-              <span class="dna-chip">16.8 PPDA</span>
-              <span class="dna-chip">High press triggers</span>
-              <span class="dna-chip">Wide attacker system</span>
-            </div>
-            <div class="dna-section">
-              <div class="dna-section-lbl">Tactical Identity</div>
-              <div class="dna-identity">A <strong>possession-dominant</strong> side built on positional rotations and relentless ball circulation. Beats the press through patient build-up before springing <strong>quick wide transitions</strong> — fullbacks invert, wingers hold width, and the front line presses high to win the ball back inside 6 seconds.</div>
-            </div>
-            <div class="dna-section">
-              <div class="dna-section-lbl">Key Men</div>
-              <div class="dna-keymen">
-                <div class="dna-keyman">
-                  <div class="dna-keyman-avatar">OD</div>
-                  <div class="dna-keyman-body">
-                    <div class="dna-keyman-top"><span class="dna-keyman-name">Ousmane Dembélé</span><span class="dna-keyman-role">Talisman</span><span class="dna-keyman-stat">21 G+A</span></div>
-                    <div class="dna-keyman-desc">Free-roaming wide forward — the team's primary outlet in transition and top chance creator.</div>
-                  </div>
-                </div>
-                <div class="dna-keyman">
-                  <div class="dna-keyman-avatar">VR</div>
-                  <div class="dna-keyman-body">
-                    <div class="dna-keyman-top"><span class="dna-keyman-name">Vitinha</span><span class="dna-keyman-role">Metronome</span><span class="dna-keyman-stat">88% pass</span></div>
-                    <div class="dna-keyman-desc">Dictates tempo from deep — highest touch and progressive-pass volume in the side.</div>
-                  </div>
-                </div>
-                <div class="dna-keyman">
-                  <div class="dna-keyman-avatar">NM</div>
-                  <div class="dna-keyman-body">
-                    <div class="dna-keyman-top"><span class="dna-keyman-name">Nuno Mendes</span><span class="dna-keyman-role">Engine</span><span class="dna-keyman-stat">3.1 prog/90</span></div>
-                    <div class="dna-keyman-desc">Inverting left-back who drives the press and overloads the half-space on the break.</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ── PANE 5: National Selection ── -->
+          <!-- ── PANE 4: National Selection ── -->
           <div class="ways-pane" id="ways-national">
             <div class="mock-bar">
               <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
@@ -1064,11 +1212,327 @@
     </div>
   </section>
 
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-inner">
+      <div class="features-header">
+        <p class="section-label reveal">Capabilities</p>
+        <h2 class="section-headline reveal reveal-delay-1">Everything your desk needs.</h2>
+        <p class="section-sub reveal reveal-delay-2">From individual player deep-dives to squad-wide shortlists and tactical breakdowns — Prism powers the full analysis workflow.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div class="feature-title">Player Reports</div>
+          <div class="feature-desc">Eight-section deep-dives: physical profile, attacking, passing, defensive, goalkeeping, discipline — with per-90 rates throughout.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <div class="feature-title">Player Comparisons</div>
+          <div class="feature-desc">Side-by-side stat grids for any two players, any season, any league. Settle debates with data.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="feature-title">National Team Shortlists</div>
+          <div class="feature-desc">Position-organised candidate reports for any nation, with data-driven callup, monitor, and consider recommendations.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="feature-title">Natural Language Search</div>
+          <div class="feature-desc">"A high-pressing No. 9 in La Liga under 25 with a strong xG." Ask it like you'd say it — Prism handles the rest.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div class="feature-title">Per-90 Analytics</div>
+          <div class="feature-desc">Every stat normalised per 90 minutes. Goals, assists, xG, key passes, shots — built for accurate, minutes-adjusted comparison.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+          <div class="feature-title">Opponent DNA</div>
+          <div class="feature-desc">Tactical style fingerprints for any team — pressing intensity, build-up patterns, and match tendencies broken down clearly.</div>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="feature-title">Squad Profiles</div>
+          <div class="feature-desc">Age distribution, nationality spread, positional balance — a full demographic picture of any squad at a glance.</div>
+        </div>
+        <div class="feature-card wc-feature reveal reveal-delay-3">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg></div>
+          <div class="feature-title">World Cup 2026</div>
+          <div class="feature-desc">Live tournament data — top performers, group standings, match results, and AI analysis updated as the competition unfolds.</div>
+          <div class="feature-live"><span class="feature-live-dot"></span>Live now</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPOTLIGHT: THE PULSE -->
+  <section class="spotlight spotlight-alt">
+    <div class="spotlight-inner spotlight-reverse">
+      <div class="spotlight-copy reveal">
+        <div class="spotlight-eyebrow"><span class="spotlight-num">01</span><span class="spotlight-divider"></span><span class="section-label">League Pulse</span></div>
+        <h2 class="spotlight-headline">Take the pulse of a whole league.</h2>
+        <p class="spotlight-sub">Pick any league and get the full division in one view — the latest results, who's in form, top scorers and creators by position, plus a style and competitiveness read across every club.</p>
+        <ul class="spotlight-bullets">
+          <li><strong>Latest results</strong> and top-rated performers from the newest matchweek</li>
+          <li><strong>Top scorers &amp; assist-makers</strong>, broken down by position</li>
+          <li>A <strong>league style fingerprint</strong> and competitiveness index</li>
+          <li>Injury, suspension &amp; transfer watch across the division</li>
+        </ul>
+      </div>
+      <div class="pulse-mock reveal reveal-delay-1">
+        <div class="mock-bar" style="border-radius:0">
+          <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+          <span class="mock-title">the-prism · league pulse</span>
+        </div>
+        <div class="pulse-ecg-strip">
+          <svg class="pulse-ecg" viewBox="0 0 240 20" preserveAspectRatio="none"><path d="M0 10 H44 l4 -8 l5 15 l4 -7 H120 l5 -10 l6 19 l5 -9 H240"/></svg>
+        </div>
+        <div class="pulse-league-head">
+          <span class="pulse-league-flag">🇩🇪</span>
+          <span class="pulse-league-name">Bundesliga</span>
+          <span class="pulse-league-mw">· Matchweek 34</span>
+          <span class="pulse-live"><span class="pulse-live-dot"></span>Live feed</span>
+        </div>
+        <div class="pulse-cols">
+          <div class="pulse-col">
+            <div class="pulse-sec-lbl">Latest Results</div>
+            <div class="pulse-result"><span class="pulse-result-home">Bayern</span><span class="pulse-result-score">3–1</span><span class="pulse-result-away">Köln</span></div>
+            <div class="pulse-result"><span class="pulse-result-home">Union</span><span class="pulse-result-score">4–0</span><span class="pulse-result-away">Augsburg</span></div>
+            <div class="pulse-result"><span class="pulse-result-home">Freiburg</span><span class="pulse-result-score">4–1</span><span class="pulse-result-away">Leipzig</span></div>
+            <div class="pulse-result"><span class="pulse-result-home">Bremen</span><span class="pulse-result-score">0–2</span><span class="pulse-result-away">Dortmund</span></div>
+          </div>
+          <div class="pulse-col">
+            <div class="pulse-sec-lbl">Top Performers</div>
+            <div class="pulse-perf"><div class="pulse-perf-info"><div class="pulse-perf-name">H. Kane</div><div class="pulse-perf-club">Bayern · 3 goals</div></div><span class="pulse-perf-rating">9.6</span></div>
+            <div class="pulse-perf"><div class="pulse-perf-info"><div class="pulse-perf-name">N. Elvedi</div><div class="pulse-perf-club">M'gladbach · 2 assists</div></div><span class="pulse-perf-rating">8.6</span></div>
+            <div class="pulse-perf"><div class="pulse-perf-info"><div class="pulse-perf-name">J. Kimmich</div><div class="pulse-perf-club">Bayern · 2 assists</div></div><span class="pulse-perf-rating">8.6</span></div>
+            <div class="pulse-perf"><div class="pulse-perf-info"><div class="pulse-perf-name">A. Schäfer</div><div class="pulse-perf-club">Union · 1 G · 1 A</div></div><span class="pulse-perf-rating">8.6</span></div>
+          </div>
+        </div>
+        <div class="pulse-intel">
+          <span class="pulse-intel-chip">Top scorer · <b>Kane 36</b></span>
+          <span class="pulse-intel-chip">Top assists · <b>Olise 19</b></span>
+          <span class="pulse-intel-chip">Style · <b>Possession-led</b></span>
+          <span class="pulse-intel-chip">Competitiveness · <b>0.4</b></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPOTLIGHT: TEAM ANALYSIS -->
+  <section class="spotlight">
+    <div class="spotlight-inner">
+      <div class="spotlight-copy reveal">
+        <div class="spotlight-eyebrow"><span class="spotlight-num">02</span><span class="spotlight-divider"></span><span class="section-label">Team Analysis</span></div>
+        <h2 class="spotlight-headline">Understand how any team really plays.</h2>
+        <p class="spotlight-sub">Tactical fingerprints across pressing, possession, build-up, and transition — quantified into a single scannable profile. Ask about any club, get a structured DNA breakdown instantly.</p>
+        <ul class="spotlight-bullets">
+          <li>Tactical axes scored 0–100 with <strong>ELITE / HIGH / MED / LOW</strong> ratings</li>
+          <li>A plain-English <strong>tactical identity</strong> read on how they actually play</li>
+          <li><strong>Key men</strong> surfaced with their role and standout numbers</li>
+          <li>Works for any club across Europe's top 5 leagues</li>
+        </ul>
+      </div>
+      <div class="dna-mock reveal reveal-delay-1">
+        <div class="mock-bar" style="border-radius:0">
+          <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+          <span class="mock-title">the-prism · team dna · psg</span>
+        </div>
+        <div class="dna-mock-header">
+          <div class="dna-mock-team">Paris Saint-Germain</div>
+          <div class="dna-mock-meta">Ligue 1 · 2024/25 · 34 matches</div>
+          <div class="dna-mock-record">
+            <span class="dna-record-item">W <span>24</span></span>
+            <span class="dna-record-item">D <span>5</span></span>
+            <span class="dna-record-item">L <span>5</span></span>
+            <span class="dna-record-item">xG/game <span>2.3</span></span>
+            <span class="dna-record-item">Poss <span>61%</span></span>
+          </div>
+        </div>
+        <div class="dna-fingerprint">
+          <div class="dna-fp-axis">
+            <div class="dna-fp-lbl">Pressing Intensity</div>
+            <div class="dna-fp-track"><div class="dna-fp-fill" style="width:82%"></div></div>
+            <div class="dna-fp-score">82</div>
+            <div class="dna-badge-high">HIGH</div>
+          </div>
+          <div class="dna-fp-axis">
+            <div class="dna-fp-lbl">Possession Control</div>
+            <div class="dna-fp-track"><div class="dna-fp-fill" style="width:91%"></div></div>
+            <div class="dna-fp-score">91</div>
+            <div class="dna-badge-elite">ELITE</div>
+          </div>
+          <div class="dna-fp-axis">
+            <div class="dna-fp-lbl">Build-up Style</div>
+            <div class="dna-fp-track"><div class="dna-fp-fill" style="width:88%"></div></div>
+            <div class="dna-fp-score">88</div>
+            <div class="dna-badge-elite">ELITE</div>
+          </div>
+          <div class="dna-fp-axis">
+            <div class="dna-fp-lbl">Defensive Line</div>
+            <div class="dna-fp-track"><div class="dna-fp-fill" style="width:68%"></div></div>
+            <div class="dna-fp-score">68</div>
+            <div class="dna-badge-med">MED</div>
+          </div>
+          <div class="dna-fp-axis">
+            <div class="dna-fp-lbl">Transition Speed</div>
+            <div class="dna-fp-track"><div class="dna-fp-fill" style="width:85%"></div></div>
+            <div class="dna-fp-score">85</div>
+            <div class="dna-badge-elite">ELITE</div>
+          </div>
+        </div>
+        <div class="dna-evidence-chips">
+          <span class="dna-chip">673 passes/game</span>
+          <span class="dna-chip">91.3% pass acc.</span>
+          <span class="dna-chip">16.8 PPDA</span>
+          <span class="dna-chip">High press triggers</span>
+          <span class="dna-chip">Wide attacker system</span>
+        </div>
+        <div class="dna-section">
+          <div class="dna-section-lbl">Tactical Identity</div>
+          <div class="dna-identity">A <strong>possession-dominant</strong> side built on positional rotations and relentless ball circulation. Beats the press through patient build-up before springing <strong>quick wide transitions</strong> — fullbacks invert, wingers hold width, and the front line presses high to win the ball back inside 6 seconds.</div>
+        </div>
+        <div class="dna-section">
+          <div class="dna-section-lbl">Key Men</div>
+          <div class="dna-keymen">
+            <div class="dna-keyman">
+              <div class="dna-keyman-avatar">OD</div>
+              <div class="dna-keyman-body">
+                <div class="dna-keyman-top"><span class="dna-keyman-name">Ousmane Dembélé</span><span class="dna-keyman-role">Talisman</span><span class="dna-keyman-stat">21 G+A</span></div>
+                <div class="dna-keyman-desc">Free-roaming wide forward — the team's primary outlet in transition and top chance creator.</div>
+              </div>
+            </div>
+            <div class="dna-keyman">
+              <div class="dna-keyman-avatar">VR</div>
+              <div class="dna-keyman-body">
+                <div class="dna-keyman-top"><span class="dna-keyman-name">Vitinha</span><span class="dna-keyman-role">Metronome</span><span class="dna-keyman-stat">88% pass</span></div>
+                <div class="dna-keyman-desc">Dictates tempo from deep — highest touch and progressive-pass volume in the side.</div>
+              </div>
+            </div>
+            <div class="dna-keyman">
+              <div class="dna-keyman-avatar">NM</div>
+              <div class="dna-keyman-body">
+                <div class="dna-keyman-top"><span class="dna-keyman-name">Nuno Mendes</span><span class="dna-keyman-role">Engine</span><span class="dna-keyman-stat">3.1 prog/90</span></div>
+                <div class="dna-keyman-desc">Inverting left-back who drives the press and overloads the half-space on the break.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPOTLIGHT: CUSTOM BUILDER -->
+  <section class="spotlight spotlight-alt">
+    <div class="spotlight-inner spotlight-reverse">
+      <div class="spotlight-copy reveal">
+        <div class="spotlight-eyebrow"><span class="spotlight-num">03</span><span class="spotlight-divider"></span><span class="section-label">Player Search</span></div>
+        <h2 class="spotlight-headline">Find players built exactly for your system.</h2>
+        <p class="spotlight-sub">Three ways to search: build a profile from scratch, start from a ready-made template, or just describe what you want in plain English and let AI do the rest.</p>
+        <ul class="spotlight-bullets">
+          <li><strong>Build a profile</strong> — weight the stats that matter, auto-normalised to 100%</li>
+          <li><strong>Ready-made profiles</strong> — proven templates per position, ready to tweak</li>
+          <li><strong>AI search</strong> — describe your ideal player in a sentence, get a ranked list</li>
+          <li>Hard filters throughout: age range, minutes, and league selection</li>
+        </ul>
+      </div>
+      <div class="builder-mock reveal reveal-delay-1">
+        <div class="mock-bar" style="border-radius:0">
+          <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+          <span class="mock-title">the-prism · player search</span>
+        </div>
+        <div class="builder-modes">
+          <span class="builder-mode active">Build a profile</span>
+          <span class="builder-mode">Ready-made profile</span>
+          <span class="builder-mode">AI search</span>
+        </div>
+        <div class="builder-pos-row">
+          <span class="builder-pos-chip">GK</span>
+          <span class="builder-pos-chip active">CB</span>
+          <span class="builder-pos-chip">LB/RB</span>
+          <span class="builder-pos-chip">DM</span>
+          <span class="builder-pos-chip">CM</span>
+          <span class="builder-pos-chip">CAM</span>
+          <span class="builder-pos-chip">LW/RW</span>
+          <span class="builder-pos-chip">ST</span>
+        </div>
+        <div class="builder-panels">
+          <div class="builder-panel">
+            <div class="builder-panel-title">Stat Library</div>
+            <div class="builder-stat-lib">
+              <div class="builder-lib-item">Aerials Won / 90</div>
+              <div class="builder-lib-item">Clearances / 90</div>
+              <div class="builder-lib-item">Interceptions / 90</div>
+              <div class="builder-lib-item">Pass Accuracy</div>
+              <div class="builder-lib-item">Duels Won %</div>
+              <div class="builder-lib-item">Progressive Carries</div>
+            </div>
+          </div>
+          <div class="builder-panel">
+            <div class="builder-panel-title">Your Priorities</div>
+            <div class="builder-priority-list">
+              <div class="builder-priority-item">
+                <span class="builder-priority-name">Aerials Won</span>
+                <div class="builder-bar-wrap"><div class="builder-bar" style="width:35%"></div></div>
+                <span class="builder-pct">35%</span>
+              </div>
+              <div class="builder-priority-item">
+                <span class="builder-priority-name">Clearances</span>
+                <div class="builder-bar-wrap"><div class="builder-bar" style="width:30%"></div></div>
+                <span class="builder-pct">30%</span>
+              </div>
+              <div class="builder-priority-item">
+                <span class="builder-priority-name">Pass Accuracy</span>
+                <div class="builder-bar-wrap"><div class="builder-bar" style="width:20%"></div></div>
+                <span class="builder-pct">20%</span>
+              </div>
+              <div class="builder-priority-item">
+                <span class="builder-priority-name">Tackles / 90</span>
+                <div class="builder-bar-wrap"><div class="builder-bar" style="width:15%"></div></div>
+                <span class="builder-pct">15%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="builder-constraints">
+          <span class="builder-c-label">Age:</span>
+          <span class="builder-c-val">18 – 24</span>
+          <span class="builder-c-label">Min mins:</span>
+          <span class="builder-c-val">900+</span>
+          <span class="builder-c-label">Leagues:</span>
+          <span class="builder-c-val">PL · BL · SA · L1 · LL</span>
+        </div>
+        <div class="builder-find-btn">Find Players</div>
+        <div class="builder-results">
+          <div class="builder-result-row">
+            <span class="builder-rank">#1</span>
+            <span class="builder-rname">C. Lukeba</span>
+            <span class="builder-rclub">CB · RB Leipzig · BL</span>
+            <span class="builder-rscore">89%</span>
+          </div>
+          <div class="builder-result-row">
+            <span class="builder-rank">#2</span>
+            <span class="builder-rname">P. Gvardiol</span>
+            <span class="builder-rclub">CB · Man City · PL</span>
+            <span class="builder-rscore">81%</span>
+          </div>
+          <div class="builder-result-row">
+            <span class="builder-rank">#3</span>
+            <span class="builder-rname">E. Dier</span>
+            <span class="builder-rclub">CB · Bayern · BL</span>
+            <span class="builder-rscore">76%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- SPOTLIGHT: WORLD CUP 2026 -->
   <section class="spotlight">
     <div class="spotlight-inner">
       <div class="spotlight-copy reveal">
-        <div class="spotlight-eyebrow"><span class="section-label">World Cup 2026 · Live Now</span></div>
+        <div class="spotlight-eyebrow"><span class="spotlight-num">04</span><span class="spotlight-divider"></span><span class="section-label">World Cup 2026</span></div>
         <h2 class="spotlight-headline">The World Cup, read in real time.</h2>
         <p class="spotlight-sub">Prism follows the whole tournament live — AI analysis and news, match-by-match predictions, results, power rankings, and the players lighting it up. One place to know what just happened and what's coming next.</p>
         <ul class="spotlight-bullets">
@@ -1087,48 +1551,34 @@
           <span class="wc-head-trophy">🏆</span>
           <div style="display:flex;flex-direction:column;gap:1px;">
             <span class="wc-head-title">World Cup 2026</span>
-            <span class="wc-head-stage">Round of 32 · Live</span>
+            <span class="wc-head-stage">Group Stage · Matchday 3</span>
           </div>
           <span class="wc-live"><span class="wc-live-dot"></span>Live</span>
         </div>
-        <div class="wc-lead-lbl">Golden Boot Race <span>Goals</span></div>
+        <div class="wc-lead-lbl">Golden Boot Race <span>G + A</span></div>
         <div class="wc-perf">
-          <span class="wc-perf-rank">1</span><span class="wc-perf-flag">🇫🇷</span>
-          <div class="wc-perf-info"><span class="wc-perf-name">Kylian Mbappé</span><span class="wc-perf-team">France · 4 apps</span></div>
-          <span class="wc-perf-stat">6</span>
+          <span class="wc-perf-rank">1</span><span class="wc-perf-flag">🇦🇷</span>
+          <div class="wc-perf-info"><span class="wc-perf-name">Lionel Messi</span><span class="wc-perf-team">Argentina · 3 apps</span></div>
+          <span class="wc-perf-stat">5</span>
         </div>
         <div class="wc-perf">
-          <span class="wc-perf-rank">2</span><span class="wc-perf-flag">🇳🇴</span>
+          <span class="wc-perf-rank">2</span><span class="wc-perf-flag">🇫🇷</span>
+          <div class="wc-perf-info"><span class="wc-perf-name">Kylian Mbappé</span><span class="wc-perf-team">France · 3 apps</span></div>
+          <span class="wc-perf-stat">4</span>
+        </div>
+        <div class="wc-perf">
+          <span class="wc-perf-rank">3</span><span class="wc-perf-flag">🇳🇴</span>
           <div class="wc-perf-info"><span class="wc-perf-name">Erling Haaland</span><span class="wc-perf-team">Norway · 3 apps</span></div>
-          <span class="wc-perf-stat">5</span>
-        </div>
-        <div class="wc-perf">
-          <span class="wc-perf-rank">3</span><span class="wc-perf-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
-          <div class="wc-perf-info"><span class="wc-perf-name">Harry Kane</span><span class="wc-perf-team">England · 4 apps</span></div>
-          <span class="wc-perf-stat">5</span>
+          <span class="wc-perf-stat">4</span>
         </div>
         <div class="wc-intel">
-          <div class="wc-intel-card"><span class="wc-intel-lbl">Title pick</span><span class="wc-intel-val accent">🇫🇷 France</span></div>
-          <div class="wc-intel-card"><span class="wc-intel-lbl">Top assists</span><span class="wc-intel-val">Olise · 5</span></div>
-          <div class="wc-intel-card"><span class="wc-intel-lbl">Latest</span><span class="wc-intel-val">🇫🇷 3–0 🇸🇪</span></div>
-        </div>
-        <div class="wc-bracket">
-          <div class="wc-bracket-lbl">Knockout Bracket <span>Round of 16</span></div>
-          <div class="wc-bracket-ties">
-            <div class="wc-bracket-tie"><span class="wc-bt-team">🇫🇷 France</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇵🇾 Paraguay</span></div>
-            <div class="wc-bracket-tie"><span class="wc-bt-team">🇲🇦 Morocco</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇨🇦 Canada</span></div>
-            <div class="wc-bracket-tie"><span class="wc-bt-team">🇧🇷 Brazil</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇳🇴 Norway</span></div>
-            <div class="wc-bracket-tie"><span class="wc-bt-team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇲🇽 Mexico</span></div>
-          </div>
-        </div>
-        <div class="wc-news">
-          <div class="wc-bracket-lbl">Latest News <span>ESPN</span></div>
-          <div class="wc-news-item"><span class="wc-news-dot">▸</span><span class="wc-news-text">Pubs cleared to stay open until 5 a.m. for the England v Mexico World Cup clash</span></div>
-          <div class="wc-news-item"><span class="wc-news-dot">▸</span><span class="wc-news-text">Gomez: Pulisic needs to spearhead the USMNT attack against Belgium</span></div>
+          <div class="wc-intel-card"><span class="wc-intel-lbl">Title pick</span><span class="wc-intel-val accent">🇫🇷 France 21%</span></div>
+          <div class="wc-intel-card"><span class="wc-intel-lbl">Power rank #1</span><span class="wc-intel-val">🇦🇷 Argentina</span></div>
+          <div class="wc-intel-card"><span class="wc-intel-lbl">Latest</span><span class="wc-intel-val">🇦🇷 2–0 🇦🇹</span></div>
         </div>
         <div class="wc-take">
           <svg viewBox="0 0 28 28" width="13" height="13"><use href="#prism-logo"/></svg>
-          <span class="wc-take-text"><b>ThePrism take:</b> France look the team to beat after a 3–0 win over Sweden, with Mbappé already on 8 goal involvements. Morocco stunned the Netherlands 3–2 on penalties to reach the last 16.</span>
+          <span class="wc-take-text"><b>ThePrism take:</b> Argentina top the power rankings on form, but France carry the best title odds — watch <b>🇫🇷 France v 🇧🇷 Brazil</b> in the Round of 16.</span>
         </div>
       </div>
     </div>
@@ -1184,17 +1634,17 @@
           <div class="who-desc">Understand your opponents before you face them. Spot the patterns in their play. Know your next signing inside out.</div>
           <div class="who-usecase">"Break down Dortmund's pressing triggers and high line from recent matches"</div>
         </div>
-        <div class="who-card reveal">
+        <div class="who-card reveal reveal-delay-3">
           <div class="who-title">Sporting Director</div>
           <div class="who-desc">Cross-league comparisons and data-backed shortlists — everything you need to validate a recommendation fast.</div>
           <div class="who-usecase">"How does our top target compare to the best CBs available in his age bracket?"</div>
         </div>
-        <div class="who-card reveal reveal-delay-1">
+        <div class="who-card reveal">
           <div class="who-title">Talent Watcher</div>
           <div class="who-desc">Track emerging players across Europe's top 5 leagues before the headlines catch up. Be first to the next big name.</div>
-          <div class="who-usecase">"Who are the best U21 midfielders in Ligue 1 right now?"</div>
+          <div class="who-usecase">"Who are the best U20 midfielders in the Eredivisie right now?"</div>
         </div>
-        <div class="who-card reveal reveal-delay-2">
+        <div class="who-card reveal reveal-delay-1">
           <div class="who-title">Football Fan</div>
           <div class="who-desc">Settle arguments. Find the next Pedri. Dig into the numbers behind the player you've been watching all season. The same data the pros use — now yours.</div>
           <div class="who-usecase">"Is Bellingham actually performing better than last season? Show me the numbers."</div>
@@ -1311,9 +1761,8 @@
     (function initWaysTabs() {
       const tabs = document.querySelectorAll('.ways-tab');
       const panes = document.querySelectorAll('.ways-pane');
-      const order = ['chat', 'search', 'reports', 'team', 'national'];
+      const order = ['chat', 'search', 'reports', 'national'];
       let timer;
-      let auto = true;   // auto-advance until the user takes control, then stop for good
       function switchTo(id) {
         tabs.forEach(t => {
           t.classList.remove('active');
@@ -1324,27 +1773,22 @@
         document.querySelector(`.ways-tab[data-ways="${id}"]`).classList.add('active');
         document.getElementById(`ways-${id}`).classList.add('active');
         clearTimeout(timer);
-        // Only keep the carousel going while it's still auto-driving. Once the user
-        // clicks a tab we hand them the wheel and never yank it away mid-read.
-        if (auto) {
-          const next = order[(order.indexOf(id) + 1) % order.length];
-          timer = setTimeout(() => switchTo(next), 6000);
-        }
+        const next = order[(order.indexOf(id) + 1) % order.length];
+        timer = setTimeout(() => switchTo(next), 6000);
       }
-      const tabBar = document.querySelector('.ways-tab-bar');
-      const waysHint = document.getElementById('waysHint');
-      function stopAuto() { auto = false; clearTimeout(timer); if (tabBar) tabBar.classList.add('no-auto'); if (waysHint) waysHint.classList.add('hidden'); }
-      tabs.forEach(t => t.addEventListener('click', () => { stopAuto(); switchTo(t.dataset.ways); }));
+      tabs.forEach(t => t.addEventListener('click', () => switchTo(t.dataset.ways)));
 
       // Sub-modes inside Player Search (Build / Ready-made / AI)
       const modeBtns = document.querySelectorAll('#ways-search .builder-mode');
       const modePanes = document.querySelectorAll('#ways-search .smode-pane');
       modeBtns.forEach(b => b.addEventListener('click', () => {
-        stopAuto();   // exploring the sub-modes counts as taking control
         modeBtns.forEach(x => x.classList.remove('active'));
         modePanes.forEach(x => x.classList.remove('active'));
         b.classList.add('active');
         document.getElementById('smode-' + b.dataset.smode).classList.add('active');
+        // user is actively exploring — give them room before auto-advancing
+        clearTimeout(timer);
+        timer = setTimeout(() => switchTo('reports'), 11000);
       }));
 
       timer = setTimeout(() => switchTo('search'), 6000);
