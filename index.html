@@ -243,10 +243,14 @@
     .ways-tab.active { background: var(--surface2); color: var(--text); border-color: var(--border2); }
     .ways-tab-prog { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); border-radius: 1px; width: 0; transition: none; }
     .ways-tab.active .ways-tab-prog { animation: ways-prog 6s linear forwards; }
+    .ways-tab-bar.no-auto .ways-tab-prog { animation: none; width: 0; }
+    .ways-tab-bar.no-auto .ways-tab.active .ways-tab-prog { width: 100%; }
     @keyframes ways-prog { from { width: 0 } to { width: 100% } }
-    .ways-panel { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
-    .ways-pane { display: none; }
-    .ways-pane.active { display: block; animation: ways-in .22s ease-out; }
+    .ways-panel { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); display: grid; }
+    /* All panes share one grid cell, so the panel is always as tall as the tallest
+       pane — switching tabs never changes the height, so the page never jumps. */
+    .ways-pane { grid-area: 1 / 1; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .22s ease; }
+    .ways-pane.active { opacity: 1; visibility: visible; pointer-events: auto; }
     @keyframes ways-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     /* Chat ranked leaderboard */
     .rank-list { display: flex; flex-direction: column; }
@@ -527,7 +531,12 @@
       nav { padding: 0 20px; }
       .nav-links { display: none; }
       section { padding: 68px 20px; }
-      .ways-tab-bar { flex-wrap: wrap; width: auto; justify-content: center; }
+      /* Mobile: show every tab at once as a 2-row segmented grid — no sideways
+         scroll, nothing hidden. 'National Selection' spans the full width. */
+      .ways-tab-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: 100%; max-width: 420px; }
+      .ways-tab { padding: 11px 8px; font-size: 0.78rem; text-align: center; justify-content: center; }
+      .ways-tab:last-child { grid-column: 1 / -1; }
+      .ways-tab-prog { border-radius: 0 0 8px 8px; }
       .who-grid { grid-template-columns: 1fr 1fr; }
       .hero-form, .cta-form { flex-direction: column; }
       .mock-stats { grid-template-columns: repeat(2, 1fr); }
@@ -1295,6 +1304,7 @@
       const panes = document.querySelectorAll('.ways-pane');
       const order = ['chat', 'search', 'reports', 'team', 'national'];
       let timer;
+      let auto = true;   // auto-advance until the user takes control, then stop for good
       function switchTo(id) {
         tabs.forEach(t => {
           t.classList.remove('active');
@@ -1305,22 +1315,26 @@
         document.querySelector(`.ways-tab[data-ways="${id}"]`).classList.add('active');
         document.getElementById(`ways-${id}`).classList.add('active');
         clearTimeout(timer);
-        const next = order[(order.indexOf(id) + 1) % order.length];
-        timer = setTimeout(() => switchTo(next), 6000);
+        // Only keep the carousel going while it's still auto-driving. Once the user
+        // clicks a tab we hand them the wheel and never yank it away mid-read.
+        if (auto) {
+          const next = order[(order.indexOf(id) + 1) % order.length];
+          timer = setTimeout(() => switchTo(next), 6000);
+        }
       }
-      tabs.forEach(t => t.addEventListener('click', () => switchTo(t.dataset.ways)));
+      const tabBar = document.querySelector('.ways-tab-bar');
+      function stopAuto() { auto = false; clearTimeout(timer); if (tabBar) tabBar.classList.add('no-auto'); }
+      tabs.forEach(t => t.addEventListener('click', () => { stopAuto(); switchTo(t.dataset.ways); }));
 
       // Sub-modes inside Player Search (Build / Ready-made / AI)
       const modeBtns = document.querySelectorAll('#ways-search .builder-mode');
       const modePanes = document.querySelectorAll('#ways-search .smode-pane');
       modeBtns.forEach(b => b.addEventListener('click', () => {
+        stopAuto();   // exploring the sub-modes counts as taking control
         modeBtns.forEach(x => x.classList.remove('active'));
         modePanes.forEach(x => x.classList.remove('active'));
         b.classList.add('active');
         document.getElementById('smode-' + b.dataset.smode).classList.add('active');
-        // user is actively exploring — give them room before auto-advancing
-        clearTimeout(timer);
-        timer = setTimeout(() => switchTo('reports'), 11000);
       }));
 
       timer = setTimeout(() => switchTo('search'), 6000);
