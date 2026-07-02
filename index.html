@@ -380,6 +380,38 @@
     .ai-thinking { display: flex; align-items: flex-start; gap: 9px; margin: 10px 16px 0; font-size: 0.68rem; color: var(--text-muted); line-height: 1.5; }
     .ai-thinking em { color: var(--text-dim); font-style: normal; font-family: var(--font-mono); font-size: 0.63rem; }
 
+    /* ── TEAM DNA MOCK ── */
+    .dna-mock-header { padding: 14px 18px 10px; border-bottom: 1px solid var(--border); }
+    .dna-mock-team { font-family: var(--font-brand); font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .dna-mock-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .dna-mock-record { display: flex; gap: 14px; margin-top: 8px; }
+    .dna-record-item { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-dim); }
+    .dna-record-item span { color: var(--accent); font-weight: 600; }
+    .dna-fingerprint { padding: 14px 18px; display: flex; flex-direction: column; gap: 9px; }
+    .dna-fp-axis { display: grid; grid-template-columns: 118px 1fr 36px 52px; align-items: center; gap: 10px; }
+    .dna-fp-lbl { font-size: 0.67rem; color: var(--text-dim); }
+    .dna-fp-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .dna-fp-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+    .dna-fp-score { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text); text-align: right; }
+    .dna-badge-elite { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(37,99,235,0.14); color: var(--accent); text-transform: uppercase; text-align: center; }
+    .dna-badge-high { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(21,128,61,0.14); color: #4ade80; text-transform: uppercase; text-align: center; }
+    .dna-badge-med { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(251,146,60,0.12); color: #fb923c; text-transform: uppercase; text-align: center; }
+    .dna-evidence-chips { padding: 0 18px 14px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .dna-chip { font-size: 0.6rem; color: var(--text-muted); padding: 3px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; }
+    .dna-section { padding: 13px 18px; border-top: 1px solid var(--border); }
+    .dna-section-lbl { font-family: var(--font-mono); font-size: 0.58rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .dna-identity { font-size: 0.74rem; color: var(--text-dim); line-height: 1.62; }
+    .dna-identity strong { color: var(--text); font-weight: 600; }
+    .dna-keymen { display: flex; flex-direction: column; gap: 9px; }
+    .dna-keyman { display: flex; gap: 10px; align-items: flex-start; }
+    .dna-keyman-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.56rem; font-weight: 700; color: var(--accent); }
+    .dna-keyman-body { flex: 1; min-width: 0; }
+    .dna-keyman-top { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .dna-keyman-name { font-family: var(--font-brand); font-size: 0.78rem; font-weight: 700; color: var(--text); }
+    .dna-keyman-role { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.05em; padding: 1px 6px; border-radius: 3px; background: rgba(37,99,235,0.12); color: var(--accent); text-transform: uppercase; }
+    .dna-keyman-stat { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); margin-left: auto; }
+    .dna-keyman-desc { font-size: 0.67rem; color: var(--text-muted); line-height: 1.5; margin-top: 2px; }
+
     /* ── WORLD CUP MOCK ── */
     .wc-mock { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
     .wc-head { display: flex; align-items: center; gap: 9px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: linear-gradient(90deg, rgba(37,99,235,0.08), transparent); }
@@ -407,6 +439,17 @@
     .wc-take svg { flex-shrink: 0; margin-top: 1px; }
     .wc-take-text { font-size: 0.68rem; color: var(--text-dim); line-height: 1.5; }
     .wc-take-text b { color: var(--text); font-weight: 600; }
+    .wc-bracket { border-top: 1px solid var(--border); padding: 11px 16px 12px; }
+    .wc-bracket-lbl { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: 0.57rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 9px; }
+    .wc-bracket-lbl span { color: var(--accent); }
+    .wc-bracket-ties { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .wc-bracket-tie { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 7px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; }
+    .wc-bt-team { font-family: var(--font-brand); font-size: 0.66rem; font-weight: 600; color: var(--text); white-space: nowrap; }
+    .wc-bt-vs { font-family: var(--font-mono); font-size: 0.5rem; color: var(--text-muted); }
+    .wc-news { border-top: 1px solid var(--border); padding: 11px 16px 13px; display: flex; flex-direction: column; gap: 7px; }
+    .wc-news-item { display: flex; gap: 8px; align-items: flex-start; }
+    .wc-news-dot { color: var(--accent); font-size: 0.62rem; line-height: 1.5; flex-shrink: 0; }
+    .wc-news-text { font-size: 0.66rem; color: var(--text-dim); line-height: 1.5; }
 
     /* ── FULL PLAYER PROFILE MOCK ── */
     .profile-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 18px; border-bottom: 1px solid var(--border); }
@@ -630,14 +673,15 @@
       <div class="hiw-header">
         <p class="section-label reveal">How it works</p>
         <h2 class="section-headline reveal reveal-delay-1">One platform, multiple ways in.</h2>
-        <p class="section-sub reveal reveal-delay-2">Ask a question, search for a profile, pull a full player report, or build a national squad.</p>
+        <p class="section-sub reveal reveal-delay-2">Ask any question, search for a profile, pull a full player or team report, or build a national squad. All of this, and much more, right at your fingertips.</p>
       </div>
       <div class="reveal">
         <!-- Tab bar -->
         <div class="ways-tab-bar">
           <button class="ways-tab active" data-ways="chat">Chat<span class="ways-tab-prog"></span></button>
           <button class="ways-tab" data-ways="search">Player Search<span class="ways-tab-prog"></span></button>
-          <button class="ways-tab" data-ways="reports">Reports & Analysis<span class="ways-tab-prog"></span></button>
+          <button class="ways-tab" data-ways="reports">Player Reports<span class="ways-tab-prog"></span></button>
+          <button class="ways-tab" data-ways="team">Team Analysis<span class="ways-tab-prog"></span></button>
           <button class="ways-tab" data-ways="national">National Selection<span class="ways-tab-prog"></span></button>
         </div>
 
@@ -873,7 +917,95 @@
             </div>
           </div>
 
-          <!-- ── PANE 4: National Selection ── -->
+          <!-- ── PANE: Team Analysis (Opponent DNA) ── -->
+          <div class="ways-pane" id="ways-team">
+            <div class="mock-bar">
+              <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+              <span class="mock-title">the-prism · team dna · psg</span>
+            </div>
+            <div class="dna-mock-header">
+              <div class="dna-mock-team">Paris Saint-Germain</div>
+              <div class="dna-mock-meta">Ligue 1 · 2024/25 · 34 matches</div>
+              <div class="dna-mock-record">
+                <span class="dna-record-item">W <span>24</span></span>
+                <span class="dna-record-item">D <span>5</span></span>
+                <span class="dna-record-item">L <span>5</span></span>
+                <span class="dna-record-item">xG/game <span>2.3</span></span>
+                <span class="dna-record-item">Poss <span>61%</span></span>
+              </div>
+            </div>
+            <div class="dna-fingerprint">
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Pressing Intensity</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:82%"></div></div>
+                <div class="dna-fp-score">82</div>
+                <div class="dna-badge-high">HIGH</div>
+              </div>
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Possession Control</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:91%"></div></div>
+                <div class="dna-fp-score">91</div>
+                <div class="dna-badge-elite">ELITE</div>
+              </div>
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Build-up Style</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:88%"></div></div>
+                <div class="dna-fp-score">88</div>
+                <div class="dna-badge-elite">ELITE</div>
+              </div>
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Defensive Line</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:68%"></div></div>
+                <div class="dna-fp-score">68</div>
+                <div class="dna-badge-med">MED</div>
+              </div>
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Transition Speed</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:85%"></div></div>
+                <div class="dna-fp-score">85</div>
+                <div class="dna-badge-elite">ELITE</div>
+              </div>
+            </div>
+            <div class="dna-evidence-chips">
+              <span class="dna-chip">673 passes/game</span>
+              <span class="dna-chip">91.3% pass acc.</span>
+              <span class="dna-chip">16.8 PPDA</span>
+              <span class="dna-chip">High press triggers</span>
+              <span class="dna-chip">Wide attacker system</span>
+            </div>
+            <div class="dna-section">
+              <div class="dna-section-lbl">Tactical Identity</div>
+              <div class="dna-identity">A <strong>possession-dominant</strong> side built on positional rotations and relentless ball circulation. Beats the press through patient build-up before springing <strong>quick wide transitions</strong> — fullbacks invert, wingers hold width, and the front line presses high to win the ball back inside 6 seconds.</div>
+            </div>
+            <div class="dna-section">
+              <div class="dna-section-lbl">Key Men</div>
+              <div class="dna-keymen">
+                <div class="dna-keyman">
+                  <div class="dna-keyman-avatar">OD</div>
+                  <div class="dna-keyman-body">
+                    <div class="dna-keyman-top"><span class="dna-keyman-name">Ousmane Dembélé</span><span class="dna-keyman-role">Talisman</span><span class="dna-keyman-stat">21 G+A</span></div>
+                    <div class="dna-keyman-desc">Free-roaming wide forward — the team's primary outlet in transition and top chance creator.</div>
+                  </div>
+                </div>
+                <div class="dna-keyman">
+                  <div class="dna-keyman-avatar">VR</div>
+                  <div class="dna-keyman-body">
+                    <div class="dna-keyman-top"><span class="dna-keyman-name">Vitinha</span><span class="dna-keyman-role">Metronome</span><span class="dna-keyman-stat">88% pass</span></div>
+                    <div class="dna-keyman-desc">Dictates tempo from deep — highest touch and progressive-pass volume in the side.</div>
+                  </div>
+                </div>
+                <div class="dna-keyman">
+                  <div class="dna-keyman-avatar">NM</div>
+                  <div class="dna-keyman-body">
+                    <div class="dna-keyman-top"><span class="dna-keyman-name">Nuno Mendes</span><span class="dna-keyman-role">Engine</span><span class="dna-keyman-stat">3.1 prog/90</span></div>
+                    <div class="dna-keyman-desc">Inverting left-back who drives the press and overloads the half-space on the break.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── PANE 5: National Selection ── -->
           <div class="ways-pane" id="ways-national">
             <div class="mock-bar">
               <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
@@ -937,15 +1069,15 @@
           <span class="wc-head-trophy">🏆</span>
           <div style="display:flex;flex-direction:column;gap:1px;">
             <span class="wc-head-title">World Cup 2026</span>
-            <span class="wc-head-stage">Round of 16 · Live</span>
+            <span class="wc-head-stage">Round of 32 · Live</span>
           </div>
           <span class="wc-live"><span class="wc-live-dot"></span>Live</span>
         </div>
-        <div class="wc-lead-lbl">Golden Boot Race <span>G + A</span></div>
+        <div class="wc-lead-lbl">Golden Boot Race <span>Goals</span></div>
         <div class="wc-perf">
           <span class="wc-perf-rank">1</span><span class="wc-perf-flag">🇫🇷</span>
           <div class="wc-perf-info"><span class="wc-perf-name">Kylian Mbappé</span><span class="wc-perf-team">France · 4 apps</span></div>
-          <span class="wc-perf-stat">8</span>
+          <span class="wc-perf-stat">6</span>
         </div>
         <div class="wc-perf">
           <span class="wc-perf-rank">2</span><span class="wc-perf-flag">🇳🇴</span>
@@ -962,9 +1094,23 @@
           <div class="wc-intel-card"><span class="wc-intel-lbl">Top assists</span><span class="wc-intel-val">Olise · 5</span></div>
           <div class="wc-intel-card"><span class="wc-intel-lbl">Latest</span><span class="wc-intel-val">🇫🇷 3–0 🇸🇪</span></div>
         </div>
+        <div class="wc-bracket">
+          <div class="wc-bracket-lbl">Knockout Bracket <span>Round of 16</span></div>
+          <div class="wc-bracket-ties">
+            <div class="wc-bracket-tie"><span class="wc-bt-team">🇫🇷 France</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇵🇾 Paraguay</span></div>
+            <div class="wc-bracket-tie"><span class="wc-bt-team">🇲🇦 Morocco</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇨🇦 Canada</span></div>
+            <div class="wc-bracket-tie"><span class="wc-bt-team">🇧🇷 Brazil</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇳🇴 Norway</span></div>
+            <div class="wc-bracket-tie"><span class="wc-bt-team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇲🇽 Mexico</span></div>
+          </div>
+        </div>
+        <div class="wc-news">
+          <div class="wc-bracket-lbl">Latest News <span>ESPN</span></div>
+          <div class="wc-news-item"><span class="wc-news-dot">▸</span><span class="wc-news-text">Pubs cleared to stay open until 5 a.m. for the England v Mexico World Cup clash</span></div>
+          <div class="wc-news-item"><span class="wc-news-dot">▸</span><span class="wc-news-text">Gomez: Pulisic needs to spearhead the USMNT attack against Belgium</span></div>
+        </div>
         <div class="wc-take">
           <svg viewBox="0 0 28 28" width="13" height="13"><use href="#prism-logo"/></svg>
-          <span class="wc-take-text"><b>ThePrism take:</b> France look the team to beat after a 3–0 win over Sweden, with Mbappé already on 8 goal involvements. Morocco stunned the Netherlands 3–2 on penalties to reach the quarters.</span>
+          <span class="wc-take-text"><b>ThePrism take:</b> France look the team to beat after a 3–0 win over Sweden, with Mbappé already on 8 goal involvements. Morocco stunned the Netherlands 3–2 on penalties to reach the last 16.</span>
         </div>
       </div>
     </div>
@@ -1147,7 +1293,7 @@
     (function initWaysTabs() {
       const tabs = document.querySelectorAll('.ways-tab');
       const panes = document.querySelectorAll('.ways-pane');
-      const order = ['chat', 'search', 'reports', 'national'];
+      const order = ['chat', 'search', 'reports', 'team', 'national'];
       let timer;
       function switchTo(id) {
         tabs.forEach(t => {
