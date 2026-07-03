@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<!--
-  E6 — Early access is coming (Day ~21)
-  Subject:  Your invite is close. Here's how it works.
-  Preview:  We open the doors in waves — you're on the list.
--->
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="color-scheme" content="light">
-  <meta name="supported-color-schemes" content="light">
-  <title>Your invite is close</title>
-  <style>
+<mjml>
+  <mj-head>
+    <mj-raw><style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Nunito:wght@800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
     body { margin: 0; padding: 0; width: 100% !important; }
     a { text-decoration: none; }
@@ -20,11 +8,12 @@
       .sr-body { padding: 22px 22px 4px !important; }
       .sr-h1 { font-size: 23px !important; }
     }
-  </style>
-</head>
-<body style="margin:0; padding:0; background:#e8e9ec;">
+  </style></mj-raw>
+  </mj-head>
+  <mj-body background-color="#e8e9ec">
+    <mj-raw>
   <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#e8e9ec; opacity:0;">
-    We open the doors in waves — you're on the list.
+    A quick look under the hood before you're in.
   </div>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#e8e9ec;">
@@ -42,7 +31,7 @@
                     <span style="font-family:'Nunito','Trebuchet MS',Helvetica,Arial,sans-serif; font-weight:800; font-size:18px; color:#0b0b0b; letter-spacing:-0.02em; vertical-align:middle; padding-left:10px;">The Prism<span style="color:#2563EB;">.</span></span>
                   </td>
                   <td align="right" valign="middle" style="font-family:'JetBrains Mono','Courier New',monospace; font-size:10px; letter-spacing:0.12em; color:#8a8e96; text-transform:uppercase;">
-                    Almost There
+                    Product Update
                   </td>
                 </tr>
               </table>
@@ -56,36 +45,50 @@
             <td class="sr-body" style="padding:28px 32px 8px;">
 
               <div style="font-family:'JetBrains Mono','Courier New',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:#2563EB; font-weight:500; padding-bottom:12px;">
-                Nearly time
+                Build in progress
               </div>
 
               <h1 class="sr-h1" style="margin:0 0 16px; font-family:'Syne',Helvetica,Arial,sans-serif; font-weight:700; font-size:27px; line-height:1.14; letter-spacing:-0.02em; color:#0b0b0b;">
-                Your invite is close.
+                Three things we just shipped.
               </h1>
 
-              <p style="margin:0 0 14px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:15px; line-height:1.65; color:#33353a;">
-                Access opens in <strong>waves</strong> rather than all at once &mdash; it keeps the experience fast. When your wave is up, you'll get a single email with a link straight in. No forms, no card, no hoops.
+              <p style="margin:0 0 18px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:15px; line-height:1.65; color:#33353a;">
+                Because the app you get on day one should already feel deep. Recently landed:
               </p>
 
-              <p style="margin:0 0 12px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:15px; line-height:1.65; color:#33353a;">
-                When you're in, a good first question sets the tone:
-              </p>
-
-              <!-- question chips -->
+              <!-- feature rows -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 6px;">
-                <tr><td style="background:#f6f7f9; border:1px solid #ececee; border-left:3px solid #2563EB; border-radius:8px; padding:10px 13px; font-family:'Inter',Helvetica,Arial,sans-serif; font-style:italic; font-size:13px; line-height:1.5; color:#33353a;">"Compare [young prospect] to [proven starter] &mdash; who's the better signing right now?"</td></tr>
-                <tr><td style="height:8px; font-size:0; line-height:0;">&nbsp;</td></tr>
-                <tr><td style="background:#f6f7f9; border:1px solid #ececee; border-left:3px solid #2563EB; border-radius:8px; padding:10px 13px; font-family:'Inter',Helvetica,Arial,sans-serif; font-style:italic; font-size:13px; line-height:1.5; color:#33353a;">"Who should start in midfield for [national team] at the World Cup?"</td></tr>
-                <tr><td style="height:8px; font-size:0; line-height:0;">&nbsp;</td></tr>
-                <tr><td style="background:#f6f7f9; border:1px solid #ececee; border-left:3px solid #2563EB; border-radius:8px; padding:10px 13px; font-family:'Inter',Helvetica,Arial,sans-serif; font-style:italic; font-size:13px; line-height:1.5; color:#33353a;">"What are [opponent]'s tactical tendencies &mdash; where do they hurt you?"</td></tr>
+                <tr>
+                  <td width="46" valign="top" style="padding:0 0 16px;">
+                    <div style="width:38px; height:38px; background:#eef2fe; border:1px solid #dbe4fc; border-radius:9px; text-align:center; font-family:'Syne',Helvetica,Arial,sans-serif; font-weight:700; font-size:16px; color:#2563EB; line-height:38px;">1</div>
+                  </td>
+                  <td valign="top" style="padding:0 0 16px 4px;">
+                    <div style="font-family:'Nunito','Trebuchet MS',Helvetica,Arial,sans-serif; font-weight:800; font-size:15px; color:#0b0b0b; padding-bottom:3px;">National Selection</div>
+                    <div style="font-family:'Inter',Helvetica,Arial,sans-serif; font-size:13px; line-height:1.5; color:#5b5f66;">Point it at a country &mdash; it scores every eligible player and hands back call-up badges, decided by the numbers, not a mood.</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="46" valign="top" style="padding:0 0 16px;">
+                    <div style="width:38px; height:38px; background:#eef2fe; border:1px solid #dbe4fc; border-radius:9px; text-align:center; font-family:'Syne',Helvetica,Arial,sans-serif; font-weight:700; font-size:16px; color:#2563EB; line-height:38px;">2</div>
+                  </td>
+                  <td valign="top" style="padding:0 0 16px 4px;">
+                    <div style="font-family:'Nunito','Trebuchet MS',Helvetica,Arial,sans-serif; font-weight:800; font-size:15px; color:#0b0b0b; padding-bottom:3px;">The Pulse</div>
+                    <div style="font-family:'Inter',Helvetica,Arial,sans-serif; font-size:13px; line-height:1.5; color:#5b5f66;">League &amp; team intelligence: standings, sortable tables, in-form players, and a "team DNA" read on how any club actually plays.</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="46" valign="top" style="padding:0;">
+                    <div style="width:38px; height:38px; background:#eef2fe; border:1px solid #dbe4fc; border-radius:9px; text-align:center; font-family:'Syne',Helvetica,Arial,sans-serif; font-weight:700; font-size:16px; color:#2563EB; line-height:38px;">3</div>
+                  </td>
+                  <td valign="top" style="padding:0 0 0 4px;">
+                    <div style="font-family:'Nunito','Trebuchet MS',Helvetica,Arial,sans-serif; font-weight:800; font-size:15px; color:#0b0b0b; padding-bottom:3px;">A sharper home dashboard</div>
+                    <div style="font-family:'Inter',Helvetica,Arial,sans-serif; font-size:13px; line-height:1.5; color:#5b5f66;">Transfers, top-rated performances, form alerts and league leaders &mdash; value the moment you land, before you've typed a word.</div>
+                  </td>
+                </tr>
               </table>
 
-              <p style="margin:16px 0 12px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:15px; line-height:1.65; color:#33353a;">
-                Sit tight. The next email from us is the one you've been waiting for.
-              </p>
-
-              <p style="margin:0 0 8px; font-family:'Inter',Helvetica,Arial,sans-serif; font-style:italic; font-size:13px; line-height:1.6; color:#9296a0;">
-                Want to jump the queue for a friend? Forward this &mdash; the more football people in the room, the better it gets.
+              <p style="margin:18px 0 8px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:14px; line-height:1.6; color:#6b6f76;">
+                You're near the front of the queue. Invites go out in waves shortly &mdash; the next email explains how.
               </p>
 
             </td>
@@ -108,5 +111,6 @@
       </td>
     </tr>
   </table>
-</body>
-</html>
+</mj-raw>
+  </mj-body>
+</mjml>

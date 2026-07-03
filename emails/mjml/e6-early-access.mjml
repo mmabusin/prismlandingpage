@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<!--
-  E6 — Early access is coming (Day ~21)
-  Subject:  Your invite is close. Here's how it works.
-  Preview:  We open the doors in waves — you're on the list.
--->
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="color-scheme" content="light">
-  <meta name="supported-color-schemes" content="light">
-  <title>Your invite is close</title>
-  <style>
+<mjml>
+  <mj-head>
+    <mj-raw><style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Nunito:wght@800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
     body { margin: 0; padding: 0; width: 100% !important; }
     a { text-decoration: none; }
@@ -20,9 +8,10 @@
       .sr-body { padding: 22px 22px 4px !important; }
       .sr-h1 { font-size: 23px !important; }
     }
-  </style>
-</head>
-<body style="margin:0; padding:0; background:#e8e9ec;">
+  </style></mj-raw>
+  </mj-head>
+  <mj-body background-color="#e8e9ec">
+    <mj-raw>
   <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#e8e9ec; opacity:0;">
     We open the doors in waves — you're on the list.
   </div>
@@ -108,5 +97,6 @@
       </td>
     </tr>
   </table>
-</body>
-</html>
+</mj-raw>
+  </mj-body>
+</mjml>

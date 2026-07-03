@@ -1,28 +1,6 @@
-<!DOCTYPE html>
-<!--
-  E1 — Welcome (Day 0, instant)
-  Production, email-safe HTML for pasting into Loops (HTML/code mode).
-  Subject:  You're on the list — welcome to The Prism.
-  Preview:  Your football analyst in a box. Here's what happens next.
-
-  Notes:
-  - Table-based layout + inline styles for Outlook/Gmail compatibility.
-  - Web fonts load only in clients that support them (Apple Mail/iOS); every
-    element has an Arial/Helvetica fallback so it degrades cleanly elsewhere.
-  - The logo is a styled TEXT wordmark (not the SVG mark) because Outlook/Gmail
-    don't render inline SVG. Swap in a hosted PNG <img> later if you want the icon.
-  - {unsubscribe_link} in the footer must be mapped to Loops' unsubscribe merge tag
-    on import (Loops can also auto-append its own unsubscribe footer).
--->
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="color-scheme" content="light">
-  <meta name="supported-color-schemes" content="light">
-  <title>Welcome to The Prism</title>
-  <style>
+<mjml>
+  <mj-head>
+    <mj-raw><style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Nunito:wght@800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
     body { margin: 0; padding: 0; width: 100% !important; }
     a { text-decoration: none; }
@@ -30,9 +8,10 @@
       .sr-body { padding: 22px 22px 4px !important; }
       .sr-h1 { font-size: 23px !important; }
     }
-  </style>
-</head>
-<body style="margin:0; padding:0; background:#e8e9ec;">
+  </style></mj-raw>
+  </mj-head>
+  <mj-body background-color="#e8e9ec">
+    <mj-raw>
   <!-- preheader (hidden preview text) -->
   <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#e8e9ec; opacity:0;">
     Your football analyst in a box. Here's what happens next.
@@ -121,5 +100,6 @@
       </td>
     </tr>
   </table>
-</body>
-</html>
+</mj-raw>
+  </mj-body>
+</mjml>
