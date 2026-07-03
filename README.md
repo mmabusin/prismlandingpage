@@ -54,3 +54,29 @@ Then in `index.html` replace every `theprism.football` (canonical, og:url, Plaus
 - Editing the page: the working copy lives at `../static/landing-v3.html` (previewable via
   the FastAPI dev server). Re-copy it here (`cp ../static/landing-v3.html index.html`) and
   re-apply the head tweaks before deploying.
+
+## Making E2 live — the World Cup dispatch (`api/wc-dispatch.js`)
+
+E2 is generated from live data each matchday morning (Vercel Cron), drafted in The Prism
+voice via Anthropic (falls back to a fixed template if the key is unset), rendered, stored,
+and surfaced for review. It never mails anyone — you send the approved draft as a Loops
+campaign.
+
+**One-time setup**
+1. Supabase SQL editor:
+   ```sql
+   create table wc_dispatch (
+     slug text primary key, subject text not null, html text not null,
+     facts jsonb, created_at timestamptz not null default now()
+   );
+   ```
+2. Vercel env vars: `ANTHROPIC_API_KEY` (funded), `CRON_SECRET` (any random string),
+   optional `SLACK_DISPATCH_WEBHOOK`, `DISPATCH_PREVIEW_TOKEN`. `SUPABASE_*` already set.
+3. Cron is in `vercel.json` (`0 8 * * *`). Redeploy to register it.
+
+**Preview / operate**
+- Draft preview: `GET /api/wc-dispatch?preview=1[&token=…]`
+- Manual run: `curl -H "Authorization: Bearer $CRON_SECRET" <domain>/api/wc-dispatch`
+- Review the preview, then send it as a Loops campaign to the `waitlist` audience.
+
+Waitlist email HTML lives in `emails/` — see `emails/README.md`.
