@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+  E1 — Welcome (Day 0, instant)
+  Production, email-safe HTML for pasting into Loops (HTML/code mode).
+  Subject:  You're on the list — welcome to The Prism.
+  Preview:  Your football analyst in a box. Here's what happens next.
+
+  Notes:
+  - Table-based layout + inline styles for Outlook/Gmail compatibility.
+  - Web fonts load only in clients that support them (Apple Mail/iOS); every
+    element has an Arial/Helvetica fallback so it degrades cleanly elsewhere.
+  - The logo is a styled TEXT wordmark (not the SVG mark) because Outlook/Gmail
+    don't render inline SVG. Swap in a hosted PNG <img> later if you want the icon.
+  - {{unsubscribe}} in the footer must be mapped to Loops' unsubscribe merge tag
+    on import (Loops can also auto-append its own unsubscribe footer).
+-->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>Welcome to The Prism</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Nunito:wght@800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
+    body { margin: 0; padding: 0; width: 100% !important; }
+    a { text-decoration: none; }
+    @media only screen and (max-width: 600px) {
+      .sr-body { padding: 22px 22px 4px !important; }
+      .sr-h1 { font-size: 23px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background:#e8e9ec;">
+  <!-- preheader (hidden preview text) -->
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#e8e9ec; opacity:0;">
+    Your football analyst in a box. Here's what happens next.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#e8e9ec;">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <!-- card -->
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; background:#ffffff; border:1px solid #e6e6e9; border-radius:14px; overflow:hidden;">
+
+          <!-- masthead (logo mark + wordmark, high up) -->
+          <tr>
+            <td style="padding:22px 24px 16px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="left" valign="middle">
+                    <img src="https://theprismai.com/prism-mark.png" width="34" height="34" alt="The Prism" style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;">
+                    <span style="font-family:'Nunito','Trebuchet MS',Helvetica,Arial,sans-serif; font-weight:800; font-size:18px; color:#0b0b0b; letter-spacing:-0.02em; vertical-align:middle; padding-left:10px;">The Prism<span style="color:#2563EB;">.</span></span>
+                  </td>
+                  <td align="right" valign="middle" style="font-family:'JetBrains Mono','Courier New',monospace; font-size:10px; letter-spacing:0.12em; color:#8a8e96; text-transform:uppercase;">
+                    Early Access
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- accent rule -->
+          <tr><td style="height:3px; background:#2563EB; font-size:0; line-height:0;">&nbsp;</td></tr>
+
+          <!-- body -->
+          <tr>
+            <td class="sr-body" style="padding:28px 32px 8px;">
+
+              <div style="font-family:'JetBrains Mono','Courier New',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:#2563EB; font-weight:500; padding-bottom:12px;">
+                Welcome aboard
+              </div>
+
+              <h1 class="sr-h1" style="margin:0 0 16px; font-family:'Syne',Helvetica,Arial,sans-serif; font-weight:700; font-size:27px; line-height:1.14; letter-spacing:-0.02em; color:#0b0b0b;">
+                You're in.
+              </h1>
+
+              <p style="margin:0 0 14px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:15px; line-height:1.65; color:#33353a;">
+                The Prism is your AI football analyst that backs every thought with data &mdash; scout reports, player comparisons, squad selections, opponent breakdowns, and league intelligence across Europe's top five leagues. Ask it anything a football fanatic could, and get a real answer in seconds.
+              </p>
+
+              <p style="margin:0 0 14px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:15px; line-height:1.65; color:#33353a;">
+                We're bringing people in gradually &mdash; in waves &mdash; so the experience is ready when you walk in. You'll get your invite by email. In the meantime, this list isn't a waiting room: we'll send you the occasional dispatch showing exactly what The Prism can do, starting with how it's reading <strong>the World Cup 2026</strong> right now.
+              </p>
+
+              <!-- the one ask -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 14px;">
+                <tr>
+                  <td style="background:#eef2fe; border:1px solid #dbe4fc; border-radius:10px; padding:13px 16px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:13.5px; line-height:1.55; color:#1e3a8a;">
+                    One ask: if you know someone who lives and breathes football &mdash; a fellow fanatic, a coach, an analyst, a mate who won't stop talking about xG &mdash; <strong>forward this to them</strong>. The best rooms are built by the right people.
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 8px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:15px; line-height:1.65; color:#33353a;">
+                Talk soon.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- footer -->
+          <tr>
+            <td style="background:#f6f6f8; border-top:1px solid #ededf0; padding:18px 24px 20px; text-align:center;">
+              <div style="font-family:'Nunito','Trebuchet MS',Helvetica,Arial,sans-serif; font-weight:800; font-size:12px; color:#0b0b0b; padding-bottom:8px;">
+                The Prism<span style="color:#2563EB;">.</span>
+              </div>
+              <p style="margin:0 0 6px; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:11.5px; line-height:1.6; color:#9296a0;">
+                You're receiving this because you requested early access at theprismai.com.
+              </p>
+              <p style="margin:0; font-family:'Inter',Helvetica,Arial,sans-serif; font-size:11.5px; color:#9296a0;">
+                <a href="{{unsubscribe}}" style="color:#6b6f76; text-decoration:underline;">Unsubscribe</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://theprismai.com" style="color:#6b6f76; text-decoration:underline;">theprismai.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,423 @@
+// Vercel serverless function — GET /api/wc-dispatch
+//
+// The "live" E2: a matchday-morning World Cup dispatch, generated from real ESPN
+// data and drafted in The Prism voice. It is generate-and-approve, NOT auto-send:
+//   1. Vercel Cron hits this endpoint each morning (see vercel.json → crons).
+//   2. It pulls the last ~36h of finished results + the next notable fixture from
+//      ESPN (the same public feed behind the in-app World Cup hub — no key needed).
+//   3. It drafts the connective prose (subject, preview, intro) via Anthropic.
+//   4. It renders the full email HTML, stores it in Supabase (wc_dispatch.latest),
+//      and pings an approver via Slack with a preview link.
+//   5. YOU review the preview and send it to the waitlist as a Loops campaign.
+//      Nothing is mailed to anyone from this function.
+//
+// Preview:  GET /api/wc-dispatch?preview=1[&token=DISPATCH_PREVIEW_TOKEN]
+//           → returns the latest stored dispatch as rendered HTML (view / copy).
+//
+// Env vars (Vercel → Settings → Environment Variables):
+//   SUPABASE_URL, SUPABASE_SERVICE_KEY   (already set for the waitlist)
+//   ANTHROPIC_API_KEY                    drafting; falls back to a static template if unset
+//   CRON_SECRET                          Vercel Cron sends `Authorization: Bearer <CRON_SECRET>`;
+//                                        when set, the generate path requires it
+//   SLACK_DISPATCH_WEBHOOK   (optional)  incoming-webhook URL to ping when a draft is ready
+//   DISPATCH_PREVIEW_TOKEN   (optional)  gate the ?preview link with ?token=<value>
+//   DISPATCH_BASE_URL        (optional)  override the preview link host (else inferred from the request)
+//
+// Supabase table (run once in the SQL editor — see README "Making E2 live"):
+//   create table wc_dispatch (
+//     slug text primary key,
+//     subject text not null,
+//     html text not null,
+//     facts jsonb,
+//     created_at timestamptz not null default now()
+//   );
+
+const WC_SLUG = "fifa.world";
+const ESPN_SCOREBOARD = `https://site.api.espn.com/apis/site/v2/sports/soccer/${WC_SLUG}/scoreboard`;
+const ESPN_NEWS = `https://site.api.espn.com/apis/site/v2/sports/soccer/${WC_SLUG}/news`;
+
+// Tournament window — dispatch only runs while the World Cup is live.
+const WC_START = "20260611";
+const WC_END = "20260719";
+
+const MODEL = "claude-opus-4-8";
+
+// ---------- date helpers ----------
+
+function ymd(date) {
+  // YYYYMMDD in UTC
+  return date.toISOString().slice(0, 10).replace(/-/g, "");
+}
+function shiftDays(date, n) {
+  const d = new Date(date);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d;
+}
+function prettyDate(date) {
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
+  });
+}
+function wcActive(today) {
+  const t = ymd(today);
+  return t >= WC_START && t <= WC_END;
+}
+
+// ---------- ESPN fetch + fact extraction ----------
+
+async function espnScoreboard(startDate, endDate) {
+  const url = `${ESPN_SCOREBOARD}?dates=${ymd(startDate)}-${ymd(endDate)}`;
+  const resp = await fetch(url, { headers: { accept: "application/json" } });
+  if (!resp.ok) throw new Error(`ESPN scoreboard ${resp.status}`);
+  const data = await resp.json();
+  return Array.isArray(data.events) ? data.events : [];
+}
+
+function shortStatus(desc) {
+  const d = (desc || "").toLowerCase();
+  if (d.includes("penalt")) return "PENS";
+  if (d.includes("overtime") || d.includes("extra")) return "AET";
+  return "FT";
+}
+
+function parseResult(ev) {
+  const comp = (ev.competitions && ev.competitions[0]) || {};
+  const type = (ev.status && ev.status.type) || {};
+  if (!type.completed) return null; // finished games only
+  const cs = comp.competitors || [];
+  if (cs.length < 2) return null;
+  // ESPN orders competitors [home, away] via .homeAway, but not guaranteed — sort explicitly.
+  const home = cs.find((c) => c.homeAway === "home") || cs[0];
+  const away = cs.find((c) => c.homeAway === "away") || cs[1];
+  const nm = (c) => (c.team && (c.team.displayName || c.team.name)) || "?";
+  return {
+    date: ev.date,
+    home: nm(home),
+    homeScore: home.score,
+    away: nm(away),
+    awayScore: away.score,
+    status: shortStatus(type.description),
+  };
+}
+
+function parseFixture(ev) {
+  const comp = (ev.competitions && ev.competitions[0]) || {};
+  const type = (ev.status && ev.status.type) || {};
+  if (type.state !== "pre") return null; // scheduled only
+  const cs = comp.competitors || [];
+  if (cs.length < 2) return null;
+  const home = cs.find((c) => c.homeAway === "home") || cs[0];
+  const away = cs.find((c) => c.homeAway === "away") || cs[1];
+  const nm = (c) => (c.team && (c.team.displayName || c.team.name)) || "?";
+  return { date: ev.date, home: nm(home), away: nm(away) };
+}
+
+async function buildFacts(today) {
+  // Recent: last ~2 days (catches late-night finishes). Upcoming: next ~3 days.
+  const [recent, upcoming, newsData] = await Promise.all([
+    espnScoreboard(shiftDays(today, -2), today),
+    espnScoreboard(today, shiftDays(today, 3)),
+    fetch(ESPN_NEWS, { headers: { accept: "application/json" } })
+      .then((r) => (r.ok ? r.json() : { articles: [] }))
+      .catch(() => ({ articles: [] })),
+  ]);
+
+  const results = recent
+    .map(parseResult)
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 6);
+
+  const nextFixture = upcoming
+    .map(parseFixture)
+    .filter(Boolean)
+    .sort((a, b) => new Date(a.date) - new Date(b.date))[0] || null;
+
+  const headlines = (newsData.articles || [])
+    .map((a) => a.headline)
+    .filter(Boolean)
+    .slice(0, 4);
+
+  return {
+    dateLabel: prettyDate(today),
+    results,
+    nextFixture,
+    headlines,
+    isMatchday: results.length > 0,
+  };
+}
+
+// ---------- drafting (Anthropic, raw HTTP — matches the repo's fetch-based idiom) ----------
+
+const DRAFT_SYSTEM =
+  "You are The Prism, an AI football analyst writing a short 'last 24 hours at the World Cup' " +
+  "email dispatch for a waitlist of football fans, coaches and scouts. Voice: sharp, confident, " +
+  "grounded in data, no hype, no emoji, British English. You are given the day's finished results " +
+  "and the next notable fixture as structured data. Those results are rendered separately in the " +
+  "email, so you MUST NOT restate any scoreline and MUST NOT invent any result, statistic, player " +
+  "or event that is not in the data. Write only the connective prose.";
+
+async function draftProse(facts) {
+  const key = process.env.ANTHROPIC_API_KEY || "";
+  if (!key) return fallbackProse(facts);
+
+  const userPrompt =
+    "Here is today's World Cup data (JSON):\n\n" +
+    JSON.stringify(
+      { results: facts.results, nextFixture: facts.nextFixture, headlines: facts.headlines },
+      null, 2
+    ) +
+    "\n\nWrite the connective prose for the dispatch. Rules:\n" +
+    "- subject: <=60 chars, punchy; may name the biggest storyline by team, but NO scoreline.\n" +
+    "- preview: <=90 chars, the email preview line.\n" +
+    "- intro: 1-2 sentences setting up 'here's the last 24 hours', no scorelines.\n" +
+    "- next_why: 1 sentence framing the next fixture as one to watch — a light tactical angle, " +
+    "NOT a prediction of the winner or score. Empty string if there is no next fixture.";
+
+  const body = {
+    model: MODEL,
+    max_tokens: 1024,
+    system: DRAFT_SYSTEM,
+    messages: [{ role: "user", content: userPrompt }],
+    output_config: {
+      format: {
+        type: "json_schema",
+        schema: {
+          type: "object",
+          properties: {
+            subject: { type: "string" },
+            preview: { type: "string" },
+            intro: { type: "string" },
+            next_why: { type: "string" },
+          },
+          required: ["subject", "preview", "intro", "next_why"],
+          additionalProperties: false,
+        },
+      },
+    },
+  };
+
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    if (!resp.ok) {
+      console.error("wc-dispatch: anthropic error", resp.status, (await resp.text()).slice(0, 300));
+      return fallbackProse(facts);
+    }
+    const data = await resp.json();
+    const text = (data.content || []).find((b) => b.type === "text");
+    const parsed = JSON.parse(text.text);
+    // Guard against an empty/garbled draft.
+    if (!parsed.subject || !parsed.intro) return fallbackProse(facts);
+    return parsed;
+  } catch (err) {
+    console.error("wc-dispatch: anthropic unreachable", err);
+    return fallbackProse(facts);
+  }
+}
+
+function fallbackProse(facts) {
+  const nf = facts.nextFixture;
+  return {
+    subject: "The World Cup, read by the numbers",
+    preview: "Last night's results and what's next — grounded in data, not vibes.",
+    intro:
+      "The World Cup doesn't stop, and neither does The Prism. Here's how the last 24 hours " +
+      "actually looked once you strip out the noise.",
+    next_why: nf ? `${nf.home} v ${nf.away} is the one to circle next.` : "",
+  };
+}
+
+// ---------- render ----------
+
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// Hosted PNG (inline SVG doesn't render in Outlook/Gmail). Goes live with the deploy.
+const PRISM_LOGO = `<img src="https://theprismai.com/prism-mark.png" width="34" height="34" alt="The Prism" style="display:inline-block;vertical-align:middle;border:0;outline:none;text-decoration:none;">`;
+
+function renderEmail(facts, prose) {
+  const rows = facts.results
+    .map(
+      (r) => `
+      <tr>
+        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-size:14px;color:#26272b;font-weight:500;">${esc(r.home)}</td>
+        <td style="padding:11px 8px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:15px;color:#0b0b0b;text-align:center;white-space:nowrap;">${esc(r.homeScore)} &ndash; ${esc(r.awayScore)}</td>
+        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-size:14px;color:#26272b;font-weight:500;text-align:right;">${esc(r.away)}</td>
+        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;color:#8a8e96;text-align:right;">${esc(r.status)}</td>
+      </tr>`
+    )
+    .join("");
+
+  const nextBlock = facts.nextFixture
+    ? `
+      <div style="background:#eef2fe;border:1px solid #dbe4fc;border-radius:12px;padding:12px 15px;margin:0 0 16px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#2563EB;margin-bottom:5px;">Next up</div>
+        <div style="font-size:15px;font-weight:600;color:#0b0b0b;">${esc(facts.nextFixture.home)} v ${esc(facts.nextFixture.away)}</div>
+        ${prose.next_why ? `<div style="font-size:13px;color:#4b5563;margin-top:3px;">${esc(prose.next_why)}</div>` : ""}
+      </div>`
+    : "";
+
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(prose.subject)}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Nunito:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  body{margin:0;background:#e8e9ec;font-family:'Inter',Arial,sans-serif;color:#26272b;}
+  a{color:#2563EB;}
+</style></head>
+<body>
+  <span style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(prose.preview)}</span>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#e8e9ec;padding:24px 12px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border:1px solid #e6e6e9;border-radius:14px;overflow:hidden;">
+        <tr><td style="padding:22px 24px 16px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>
+            <td style="vertical-align:middle;">${PRISM_LOGO}<span style="font-family:'Nunito',Arial,sans-serif;font-weight:800;font-size:18px;color:#0b0b0b;letter-spacing:-.02em;vertical-align:middle;margin-left:10px;">The Prism<span style="color:#2563EB;">.</span></span></td>
+            <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:#8a8e96;text-transform:uppercase;">World Cup 2026</td>
+          </tr></table>
+        </td></tr>
+        <tr><td style="height:3px;background:#2563EB;font-size:0;line-height:0;">&nbsp;</td></tr>
+        <tr><td style="padding:26px 32px 8px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;font-weight:500;margin-bottom:12px;">Live &middot; ${esc(facts.dateLabel)}</div>
+          <h1 style="font-family:'Syne',Arial,sans-serif;font-weight:700;font-size:26px;line-height:1.14;letter-spacing:-.02em;color:#0b0b0b;margin:0 0 16px;">${esc(prose.subject)}</h1>
+          <p style="font-size:15px;line-height:1.65;color:#33353a;margin:0 0 16px;">${esc(prose.intro)}</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #ececee;border-radius:12px;border-collapse:separate;overflow:hidden;margin:0 0 16px;">
+            ${rows}
+          </table>
+          ${nextBlock}
+          <p style="font-size:15px;line-height:1.65;color:#33353a;margin:0 0 8px;">That's the kind of read The Prism builds on demand inside the World Cup 2026 hub &mdash; results, form and matchups refracted into a single picture, with the receipts underneath. No hot takes. Just what the numbers say.</p>
+        </td></tr>
+        <tr><td style="background:#f6f6f8;border-top:1px solid #ededf0;padding:18px 24px 20px;text-align:center;">
+          <div style="font-family:'Nunito',Arial,sans-serif;font-weight:700;font-size:12px;color:#0b0b0b;margin-bottom:8px;">The Prism<span style="color:#2563EB;">.</span></div>
+          <p style="margin:0 0 6px;font-size:11.5px;color:#9296a0;line-height:1.6;">You're receiving this because you requested early access at theprismai.com.</p>
+          <p style="margin:0;font-size:11.5px;color:#9296a0;"><a href="{{unsubscribe}}" style="color:#6b6f76;">Unsubscribe</a> &middot; <a href="https://theprismai.com" style="color:#6b6f76;">theprismai.com</a></p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
+// ---------- storage + notify ----------
+
+function supabase() {
+  const url = (process.env.SUPABASE_URL || "").replace(/\/$/, "");
+  const key = process.env.SUPABASE_SERVICE_KEY || "";
+  return url && key ? { url, key } : null;
+}
+
+async function storeLatest(subject, html, facts) {
+  const sb = supabase();
+  if (!sb) throw new Error("Supabase not configured");
+  const resp = await fetch(`${sb.url}/rest/v1/wc_dispatch?on_conflict=slug`, {
+    method: "POST",
+    headers: {
+      apikey: sb.key,
+      Authorization: `Bearer ${sb.key}`,
+      "Content-Type": "application/json",
+      Prefer: "resolution=merge-duplicates,return=minimal",
+    },
+    body: JSON.stringify({ slug: "latest", subject, html, facts, created_at: new Date().toISOString() }),
+  });
+  if (!resp.ok && resp.status !== 409) {
+    throw new Error(`Supabase store ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+  }
+}
+
+async function loadLatest() {
+  const sb = supabase();
+  if (!sb) return null;
+  const resp = await fetch(`${sb.url}/rest/v1/wc_dispatch?slug=eq.latest&select=subject,html`, {
+    headers: { apikey: sb.key, Authorization: `Bearer ${sb.key}` },
+  });
+  if (!resp.ok) return null;
+  const rows = await resp.json();
+  return rows && rows[0] ? rows[0] : null;
+}
+
+async function notify(subject, previewUrl) {
+  const hook = process.env.SLACK_DISPATCH_WEBHOOK || "";
+  if (!hook) return;
+  try {
+    await fetch(hook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: `🏟️ *World Cup dispatch ready* — "${subject}"\nPreview & copy: ${previewUrl}\nSend it to the waitlist as a Loops campaign when you're happy.`,
+      }),
+    });
+  } catch (err) {
+    console.error("wc-dispatch: slack notify failed", err);
+  }
+}
+
+// ---------- handler ----------
+
+export default async function handler(req, res) {
+  // ---- preview path: return the latest stored dispatch as HTML ----
+  if (req.query && (req.query.preview === "1" || req.query.preview === "true")) {
+    const gate = process.env.DISPATCH_PREVIEW_TOKEN || "";
+    if (gate && req.query.token !== gate) {
+      return res.status(401).send("Unauthorized");
+    }
+    const latest = await loadLatest();
+    if (!latest) return res.status(404).send("No dispatch generated yet.");
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    return res.status(200).send(latest.html);
+  }
+
+  // ---- generate path (cron) ----
+  const cronSecret = process.env.CRON_SECRET || "";
+  if (cronSecret && req.headers.authorization !== `Bearer ${cronSecret}`) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const today = new Date();
+  if (!wcActive(today)) {
+    return res.status(200).json({ skipped: true, reason: "World Cup not active" });
+  }
+
+  try {
+    const facts = await buildFacts(today);
+    if (!facts.isMatchday) {
+      // Rest day — don't send an empty dispatch.
+      return res.status(200).json({ skipped: true, reason: "no finished matches in window" });
+    }
+
+    const prose = await draftProse(facts);
+    const html = renderEmail(facts, prose);
+    await storeLatest(prose.subject, html, facts);
+
+    const base =
+      process.env.DISPATCH_BASE_URL ||
+      `https://${req.headers["x-forwarded-host"] || req.headers.host}`;
+    const token = process.env.DISPATCH_PREVIEW_TOKEN;
+    const previewUrl = `${base}/api/wc-dispatch?preview=1${token ? `&token=${token}` : ""}`;
+    await notify(prose.subject, previewUrl);
+
+    return res.status(200).json({
+      ok: true,
+      subject: prose.subject,
+      results: facts.results.length,
+      nextFixture: facts.nextFixture,
+      previewUrl,
+    });
+  } catch (err) {
+    console.error("wc-dispatch: generate failed", err);
+    return res.status(500).json({ error: "Dispatch generation failed", detail: String(err).slice(0, 200) });
+  }
+}
+
+// Exported for local testing (see scripts/preview-wc-dispatch.mjs).
+export const _internals = { buildFacts, draftProse, renderEmail, fallbackProse, wcActive };
