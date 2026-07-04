@@ -97,6 +97,7 @@ function parseResult(ev) {
     away: nm(away),
     awayScore: away.score,
     status: shortStatus(type.description),
+    round: (ev.season && ev.season.slug) || "",
     // Knockout extras: who advanced, and the shootout score if it went to pens.
     homeWin: home.winner === true,
     awayWin: away.winner === true,
@@ -197,10 +198,22 @@ async function buildFacts(today) {
     dateLabel: prettyDate(today),
     results,
     nextFixtures,
+    // Round context, derived from real ESPN data, so the prose can't misdescribe
+    // which round just happened vs which is next (e.g. R32 done, R16 today).
+    resultsRound: roundsLabel(results.map((r) => r.round)),
+    fixturesRound: roundsLabel(nextFixtures.map((f) => f.round)),
     stories,
     headlines: stories.map((s) => s.headline), // string list for the drafting prompt
     isMatchday: results.length > 0,
   };
+}
+
+// Turn a list of round slugs into one human label, e.g. ["round-of-32"] -> "Round of 32".
+// If a day genuinely spans rounds, join them ("Round of 16 & Quarter-finals").
+function roundsLabel(slugs) {
+  const uniq = [...new Set((slugs || []).filter(Boolean))];
+  if (!uniq.length) return "";
+  return uniq.map(prettyRound).join(" & ");
 }
 
 // Pick up to 3 distinct, substantive news stories from the ESPN news feed.
@@ -258,42 +271,55 @@ function pickStories(articles) {
 // ---------- drafting (Anthropic, raw HTTP — matches the repo's fetch-based idiom) ----------
 
 const DRAFT_SYSTEM =
-  "You are The Prism, an AI football analyst writing a short 'last 24 hours at the World Cup' " +
-  "email dispatch for a waitlist of football fans, coaches and scouts. Voice: sharp, confident, " +
-  "grounded, no hype, no emoji, British English. You are given the day's finished results and the " +
-  "upcoming fixtures as structured data.\n" +
-  "FACTUAL RULES:\n" +
-  "- The finished results are rendered separately in the email, so never restate a scoreline, and " +
-  "never invent a result, statistic or match event from THIS tournament that is not in the data.\n" +
-  "- For the upcoming-fixture previews you SHOULD draw on widely-established knowledge of the two " +
-  "teams — their playing style and identity, well-known key players, tournament pedigree, and any " +
-  "notable history between them — to say something real and specific about the matchup. Do not " +
-  "fabricate current-tournament stats, form runs or scorelines, and do not state as fact anything " +
-  "you are unsure about (e.g. a specific lineup). Write only the connective prose.";
+  "You are The Prism, an AI football analyst writing a short World Cup email dispatch for a waitlist " +
+  "of football fans, coaches and scouts. Voice: sharp, confident, grounded, no hype, no emoji, " +
+  "British English. You are given the finished results, the upcoming fixtures, and the round each " +
+  "belongs to, as structured data. Accuracy matters more than colour — this goes to real inboxes.\n" +
+  "FACTUAL RULES — follow strictly:\n" +
+  "- Use ONLY the supplied data for anything factual: teams, rounds, dates, who won. The results are " +
+  "rendered separately, so never restate a scoreline.\n" +
+  "- Be exact about the tournament timeline. The results belong to 'resultsRound'; the fixtures are " +
+  "'fixturesRound'. NEVER say a round has begun, opened or 'kicked off' when its fixtures are still " +
+  "upcoming, and never attribute a result to the wrong round.\n" +
+  "- Your training data is out of date on personnel, so DO NOT name managers or head coaches, do NOT " +
+  "claim any specific player will play, is injured, suspended or in the squad, and do NOT cite " +
+  "results, runs or placings from this or past tournaments unless they are in the data. Do not " +
+  "invent statistics.\n" +
+  "- You MAY characterise a nation's broad, enduring footballing identity and likely stylistic " +
+  "contrast in general terms, and lean on the stakes of the round. Keep it durable and safe: if a " +
+  "claim could be out of date, leave it out. Write only the connective prose.";
 
 async function draftProse(facts) {
   const key = process.env.ANTHROPIC_API_KEY || "";
   if (!key) return fallbackProse(facts);
 
   const userPrompt =
-    "Here is today's World Cup data (JSON):\n\n" +
+    "Here is the World Cup data (JSON):\n\n" +
     JSON.stringify(
-      { results: facts.results, nextFixtures: facts.nextFixtures, headlines: facts.headlines },
+      {
+        today: facts.dateLabel,
+        resultsRound: facts.resultsRound,
+        fixturesRound: facts.fixturesRound,
+        results: facts.results,
+        nextFixtures: facts.nextFixtures,
+        headlines: facts.headlines,
+      },
       null, 2
     ) +
     "\n\nWrite the connective prose for the dispatch. Rules:\n" +
     "- subject: <=60 chars, punchy; may name the biggest storyline by team, but NO scoreline.\n" +
     "- preview: <=90 chars, the email preview line.\n" +
-    "- intro: a fuller opening — 3 to 4 sentences (roughly 55-80 words) that sets the scene for the " +
-    "last 24 hours and the state of the tournament, drawing on the storylines in 'headlines' for " +
-    "colour. Sharp and grounded, British English. NO scorelines, and do not invent any fact not " +
-    "present in the data.\n" +
+    "- intro: a fuller opening — 3 to 4 sentences (roughly 55-80 words) that accurately sets the " +
+    "scene: the '" + (facts.resultsRound || "latest") + "' results are in, and the '" +
+    (facts.fixturesRound || "next fixtures") + "' is what's ahead. Be precise about which round is " +
+    "done and which is still to come — do NOT say the upcoming round has already started. You may use " +
+    "the storylines in 'headlines' for colour. Sharp, grounded, British English. NO scorelines, no " +
+    "invented facts.\n" +
     "- next_previews: an array with EXACTLY one entry per fixture in 'nextFixtures', in the SAME " +
-    "ORDER. Each entry is a 1-2 sentence preview (roughly 22-40 words) that says something REAL and " +
-    "SPECIFIC about that match: the storyline, the contrast in styles or identity, what is at stake " +
-    "at this stage, and/or a key player or two to watch. Name the teams and make each preview " +
-    "distinct — never a generic 'a tie worth watching' template. Draw on established knowledge of " +
-    "the sides (see the factual rules). NOT a prediction of the winner or score. Return an empty " +
+    "ORDER. Each entry is a 1-2 sentence preview (roughly 22-40 words) about that specific match: the " +
+    "stakes of this knockout round and the broad stylistic contrast between the two nations. Name the " +
+    "teams, make each distinct, keep it durable and safe per the factual rules (no managers, no named " +
+    "players, no past-tournament claims). NOT a prediction of the winner or score. Return an empty " +
     "array if there are no fixtures.";
 
   const body = {
@@ -351,16 +377,17 @@ async function draftProse(facts) {
 
 function fallbackProse(facts) {
   const fixtures = facts.nextFixtures || [];
+  const rr = facts.resultsRound || "the latest round";
+  const fr = facts.fixturesRound || "the next round";
   return {
     subject: "The World Cup, read by the numbers",
-    preview: "Last night's results and what's next — grounded in data, not vibes.",
+    preview: "The latest results and what's next — grounded in data, not vibes.",
     intro:
-      "The World Cup doesn't stop, and neither does The Prism. Another round has come and gone, and " +
-      "the picture is shifting fast — favourites tested, outsiders refusing to go quietly, and the " +
-      "shape of the knockout draw sharpening by the day. Here's how the last 24 hours actually looked " +
-      "once you strip out the noise, plus the stories worth your time and the day ahead.",
+      `The World Cup doesn't stop, and neither does The Prism. The ${rr} is settled, the bracket is ` +
+      `taking shape, and the ${fr} is up next. Here's how the results actually looked once you strip ` +
+      "out the noise, the stories worth your time, and the matches still to come.",
     next_previews: fixtures.map(
-      (f) => `${f.home} against ${f.away}${f.round ? ` — a ${prettyRound(f.round).toLowerCase()} tie` : ""} worth keeping an eye on.`
+      (f) => `${f.home} against ${f.away} — a ${prettyRound(f.round || fr).toLowerCase()} knockout, win or go home.`
     ),
   };
 }
