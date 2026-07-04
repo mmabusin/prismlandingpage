@@ -133,18 +133,68 @@ async function buildFacts(today) {
     .filter(Boolean)
     .sort((a, b) => new Date(a.date) - new Date(b.date))[0] || null;
 
-  const headlines = (newsData.articles || [])
-    .map((a) => a.headline)
-    .filter(Boolean)
-    .slice(0, 4);
+  const stories = pickStories(newsData.articles || []);
 
   return {
     dateLabel: prettyDate(today),
     results,
     nextFixture,
-    headlines,
+    stories,
+    headlines: stories.map((s) => s.headline), // string list for the drafting prompt
     isMatchday: results.length > 0,
   };
+}
+
+// Pick up to 3 distinct, substantive news stories from the ESPN news feed.
+// Guards against (a) video clips whose "description" just repeats the headline,
+// and (b) multiple stories on the SAME subject (e.g. four England–Mexico previews)
+// so the three shown span different storylines.
+const STORY_STOPWORDS = new Set([
+  "world", "clash", "ahead", "says", "with", "from", "that", "this", "they",
+  "their", "have", "been", "will", "about", "after", "over", "into", "your",
+  "when", "what", "cup", "the", "and", "for", "are",
+]);
+function significantWords(s) {
+  return new Set(
+    (s || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]+/g, " ")
+      .split(/\s+/)
+      .filter((w) => w.length >= 4 && !STORY_STOPWORDS.has(w))
+  );
+}
+// Two headlines are "the same story" if they share >=2 significant words.
+function sameSubject(aWords, bWords) {
+  let shared = 0;
+  for (const w of aWords) if (bWords.has(w)) shared++;
+  return shared >= 2;
+}
+function pickStories(articles) {
+  const norm = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const clean = (articles || [])
+    .map((a) => {
+      const headline = (a.headline || "").trim();
+      const description = (a.description || "").trim();
+      return {
+        headline,
+        // Drop descriptions that just mirror the headline (video clips).
+        description: description && norm(description) !== norm(headline) ? description : "",
+        link: (a.links && a.links.web && a.links.web.href) || "",
+      };
+    })
+    .filter((s) => s.headline);
+  // Prefer stories with a real summary; keep clips only to backfill to 3.
+  const ordered = [...clean.filter((s) => s.description), ...clean.filter((s) => !s.description)];
+  const out = [];
+  const taken = [];
+  for (const s of ordered) {
+    const words = significantWords(s.headline);
+    if (taken.some((w) => sameSubject(words, w))) continue; // different storyline only
+    out.push(s);
+    taken.push(words);
+    if (out.length === 3) break;
+  }
+  return out;
 }
 
 // ---------- drafting (Anthropic, raw HTTP — matches the repo's fetch-based idiom) ----------
@@ -170,7 +220,10 @@ async function draftProse(facts) {
     "\n\nWrite the connective prose for the dispatch. Rules:\n" +
     "- subject: <=60 chars, punchy; may name the biggest storyline by team, but NO scoreline.\n" +
     "- preview: <=90 chars, the email preview line.\n" +
-    "- intro: 1-2 sentences setting up 'here's the last 24 hours', no scorelines.\n" +
+    "- intro: a fuller opening — 3 to 4 sentences (roughly 55-80 words) that sets the scene for the " +
+    "last 24 hours and the state of the tournament, drawing on the storylines in 'headlines' for " +
+    "colour. Sharp and grounded, British English. NO scorelines, and do not invent any fact not " +
+    "present in the data.\n" +
     "- next_why: 1 sentence framing the next fixture as one to watch — a light tactical angle, " +
     "NOT a prediction of the winner or score. Empty string if there is no next fixture.";
 
@@ -229,8 +282,10 @@ function fallbackProse(facts) {
     subject: "The World Cup, read by the numbers",
     preview: "Last night's results and what's next — grounded in data, not vibes.",
     intro:
-      "The World Cup doesn't stop, and neither does The Prism. Here's how the last 24 hours " +
-      "actually looked once you strip out the noise.",
+      "The World Cup doesn't stop, and neither does The Prism. Another round has come and gone, and " +
+      "the picture is shifting fast — favourites tested, outsiders refusing to go quietly, and the " +
+      "shape of the knockout draw sharpening by the day. Here's how the last 24 hours actually looked " +
+      "once you strip out the noise, plus the stories worth your time and the fixture to circle next.",
     next_why: nf ? `${nf.home} v ${nf.away} is the one to circle next.` : "",
   };
 }
@@ -268,6 +323,28 @@ function renderEmail(facts, prose) {
       </div>`
     : "";
 
+  const stories = facts.stories || [];
+  const newsBlock = stories.length
+    ? `
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;font-weight:500;margin:6px 0 12px;">Around the tournament</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px;">
+        ${stories
+          .map(
+            (s, i) => `
+        <tr><td style="padding:${i ? "13px" : "0"} 0 13px;${i ? "border-top:1px solid #f1f1f3;" : ""}">
+          <div style="font-size:15px;font-weight:600;line-height:1.35;color:#0b0b0b;margin:0 0 ${s.description ? "5px" : s.link ? "6px" : "0"};">${
+            s.link
+              ? `<a href="${esc(s.link)}" style="color:#0b0b0b;text-decoration:none;">${esc(s.headline)}</a>`
+              : esc(s.headline)
+          }</div>
+          ${s.description ? `<div style="font-size:13.5px;line-height:1.55;color:#4b5563;margin:0 0 ${s.link ? "6px" : "0"};">${esc(s.description)}</div>` : ""}
+          ${s.link ? `<a href="${esc(s.link)}" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#2563EB;text-decoration:none;">Read &rarr;</a>` : ""}
+        </td></tr>`
+          )
+          .join("")}
+      </table>`
+    : "";
+
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(prose.subject)}</title>
@@ -284,7 +361,7 @@ function renderEmail(facts, prose) {
         <tr><td style="padding:22px 24px 16px;">
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>
             <td style="vertical-align:middle;">${PRISM_LOGO}<span style="font-family:'Nunito',Arial,sans-serif;font-weight:800;font-size:18px;color:#0b0b0b;letter-spacing:-.02em;vertical-align:middle;margin-left:10px;">The Prism<span style="color:#2563EB;">.</span></span></td>
-            <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:#8a8e96;text-transform:uppercase;">World Cup 2026</td>
+            <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:#8a8e96;text-transform:uppercase;">World Cup Dispatch</td>
           </tr></table>
         </td></tr>
         <tr><td style="height:3px;background:#2563EB;font-size:0;line-height:0;">&nbsp;</td></tr>
@@ -292,9 +369,10 @@ function renderEmail(facts, prose) {
           <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;font-weight:500;margin-bottom:12px;">Live &middot; ${esc(facts.dateLabel)}</div>
           <h1 style="font-family:'Syne',Arial,sans-serif;font-weight:700;font-size:26px;line-height:1.14;letter-spacing:-.02em;color:#0b0b0b;margin:0 0 16px;">${esc(prose.subject)}</h1>
           <p style="font-size:15px;line-height:1.65;color:#33353a;margin:0 0 16px;">${esc(prose.intro)}</p>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #ececee;border-radius:12px;border-collapse:separate;overflow:hidden;margin:0 0 16px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #ececee;border-radius:12px;border-collapse:separate;overflow:hidden;margin:0 0 18px;">
             ${rows}
           </table>
+          ${newsBlock}
           ${nextBlock}
           <p style="font-size:15px;line-height:1.65;color:#33353a;margin:0 0 8px;">That's the kind of read The Prism builds on demand inside the World Cup 2026 hub &mdash; results, form and matchups refracted into a single picture, with the receipts underneath. No hot takes. Just what the numbers say.</p>
         </td></tr>
