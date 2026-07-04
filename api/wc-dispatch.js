@@ -97,6 +97,12 @@ function parseResult(ev) {
     away: nm(away),
     awayScore: away.score,
     status: shortStatus(type.description),
+    round: (ev.season && ev.season.slug) || "",
+    // Knockout extras: who advanced, and the shootout score if it went to pens.
+    homeWin: home.winner === true,
+    awayWin: away.winner === true,
+    homePens: home.shootoutScore != null ? home.shootoutScore : null,
+    awayPens: away.shootoutScore != null ? away.shootoutScore : null,
   };
 }
 
@@ -109,7 +115,53 @@ function parseFixture(ev) {
   const home = cs.find((c) => c.homeAway === "home") || cs[0];
   const away = cs.find((c) => c.homeAway === "away") || cs[1];
   const nm = (c) => (c.team && (c.team.displayName || c.team.name)) || "?";
-  return { date: ev.date, home: nm(home), away: nm(away) };
+  const venue = comp.venue || {};
+  return {
+    date: ev.date,
+    home: nm(home),
+    away: nm(away),
+    round: (ev.season && ev.season.slug) || "",
+    venueName: venue.fullName || "",
+    venueCity: (venue.address && venue.address.city) || "",
+  };
+}
+
+// "round-of-16" -> "Round of 16", etc.
+function prettyRound(slug) {
+  const map = {
+    "round-of-16": "Round of 16",
+    "round-of-32": "Round of 32",
+    quarterfinals: "Quarter-final",
+    semifinals: "Semi-final",
+    "third-place": "Third-place play-off",
+    final: "Final",
+  };
+  if (!slug) return "";
+  if (map[slug]) return map[slug];
+  return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// ISO -> "2026-07-04" in UK time — used to group a day's fixtures together.
+function ukDay(iso) {
+  const d = new Date(iso);
+  return isNaN(d) ? "" : d.toLocaleDateString("en-CA", { timeZone: "Europe/London" });
+}
+// ISO -> "Saturday 4 Jul" (the matchday label) in UK time.
+function prettyDay(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  return d.toLocaleDateString("en-GB", {
+    weekday: "long", day: "numeric", month: "short", timeZone: "Europe/London",
+  });
+}
+// ISO -> "18:00 BST" kickoff time in UK time (the dispatch's home audience).
+function prettyTime(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  return d.toLocaleString("en-GB", {
+    hour: "2-digit", minute: "2-digit",
+    timeZone: "Europe/London", timeZoneName: "short",
+  });
 }
 
 async function buildFacts(today) {
@@ -128,51 +180,147 @@ async function buildFacts(today) {
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 6);
 
-  const nextFixture = upcoming
+  const upcomingParsed = upcoming
     .map(parseFixture)
     .filter(Boolean)
-    .sort((a, b) => new Date(a.date) - new Date(b.date))[0] || null;
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  // The next matchday's full slate: every scheduled game on the UK calendar day
+  // of the earliest upcoming fixture (cap at 8 to stay email-sane).
+  let nextFixtures = [];
+  if (upcomingParsed.length) {
+    const day0 = ukDay(upcomingParsed[0].date);
+    nextFixtures = upcomingParsed.filter((f) => ukDay(f.date) === day0).slice(0, 8);
+  }
 
-  const headlines = (newsData.articles || [])
-    .map((a) => a.headline)
-    .filter(Boolean)
-    .slice(0, 4);
+  const stories = pickStories(newsData.articles || []);
 
   return {
     dateLabel: prettyDate(today),
     results,
-    nextFixture,
-    headlines,
+    nextFixtures,
+    // Round context, derived from real ESPN data, so the prose can't misdescribe
+    // which round just happened vs which is next (e.g. R32 done, R16 today).
+    resultsRound: roundsLabel(results.map((r) => r.round)),
+    fixturesRound: roundsLabel(nextFixtures.map((f) => f.round)),
+    stories,
+    headlines: stories.map((s) => s.headline), // string list for the drafting prompt
     isMatchday: results.length > 0,
   };
+}
+
+// Turn a list of round slugs into one human label, e.g. ["round-of-32"] -> "Round of 32".
+// If a day genuinely spans rounds, join them ("Round of 16 & Quarter-finals").
+function roundsLabel(slugs) {
+  const uniq = [...new Set((slugs || []).filter(Boolean))];
+  if (!uniq.length) return "";
+  return uniq.map(prettyRound).join(" & ");
+}
+
+// Pick up to 3 distinct, substantive news stories from the ESPN news feed.
+// Guards against (a) video clips whose "description" just repeats the headline,
+// and (b) multiple stories on the SAME subject (e.g. four England–Mexico previews)
+// so the three shown span different storylines.
+const STORY_STOPWORDS = new Set([
+  "world", "clash", "ahead", "says", "with", "from", "that", "this", "they",
+  "their", "have", "been", "will", "about", "after", "over", "into", "your",
+  "when", "what", "cup", "the", "and", "for", "are",
+]);
+function significantWords(s) {
+  return new Set(
+    (s || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]+/g, " ")
+      .split(/\s+/)
+      .filter((w) => w.length >= 4 && !STORY_STOPWORDS.has(w))
+  );
+}
+// Two headlines are "the same story" if they share >=2 significant words.
+function sameSubject(aWords, bWords) {
+  let shared = 0;
+  for (const w of aWords) if (bWords.has(w)) shared++;
+  return shared >= 2;
+}
+function pickStories(articles) {
+  const norm = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const clean = (articles || [])
+    .map((a) => {
+      const headline = (a.headline || "").trim();
+      const description = (a.description || "").trim();
+      return {
+        headline,
+        // Drop descriptions that just mirror the headline (video clips).
+        description: description && norm(description) !== norm(headline) ? description : "",
+        link: (a.links && a.links.web && a.links.web.href) || "",
+      };
+    })
+    .filter((s) => s.headline);
+  // Prefer stories with a real summary; keep clips only to backfill to 3.
+  const ordered = [...clean.filter((s) => s.description), ...clean.filter((s) => !s.description)];
+  const out = [];
+  const taken = [];
+  for (const s of ordered) {
+    const words = significantWords(s.headline);
+    if (taken.some((w) => sameSubject(words, w))) continue; // different storyline only
+    out.push(s);
+    taken.push(words);
+    if (out.length === 3) break;
+  }
+  return out;
 }
 
 // ---------- drafting (Anthropic, raw HTTP — matches the repo's fetch-based idiom) ----------
 
 const DRAFT_SYSTEM =
-  "You are The Prism, an AI football analyst writing a short 'last 24 hours at the World Cup' " +
-  "email dispatch for a waitlist of football fans, coaches and scouts. Voice: sharp, confident, " +
-  "grounded in data, no hype, no emoji, British English. You are given the day's finished results " +
-  "and the next notable fixture as structured data. Those results are rendered separately in the " +
-  "email, so you MUST NOT restate any scoreline and MUST NOT invent any result, statistic, player " +
-  "or event that is not in the data. Write only the connective prose.";
+  "You are The Prism, an AI football analyst writing a short World Cup email dispatch for a waitlist " +
+  "of football fans, coaches and scouts. Voice: sharp, confident, grounded, no hype, no emoji, " +
+  "British English. You are given the finished results, the upcoming fixtures, and the round each " +
+  "belongs to, as structured data. Accuracy matters more than colour — this goes to real inboxes.\n" +
+  "FACTUAL RULES — follow strictly:\n" +
+  "- Use ONLY the supplied data for anything factual: teams, rounds, dates, who won. The results are " +
+  "rendered separately, so never restate a scoreline.\n" +
+  "- Be exact about the tournament timeline. The results belong to 'resultsRound'; the fixtures are " +
+  "'fixturesRound'. NEVER say a round has begun, opened or 'kicked off' when its fixtures are still " +
+  "upcoming, and never attribute a result to the wrong round.\n" +
+  "- Your training data is out of date on personnel, so DO NOT name managers or head coaches, do NOT " +
+  "claim any specific player will play, is injured, suspended or in the squad, and do NOT cite " +
+  "results, runs or placings from this or past tournaments unless they are in the data. Do not " +
+  "invent statistics.\n" +
+  "- You MAY characterise a nation's broad, enduring footballing identity and likely stylistic " +
+  "contrast in general terms, and lean on the stakes of the round. Keep it durable and safe: if a " +
+  "claim could be out of date, leave it out. Write only the connective prose.";
 
 async function draftProse(facts) {
   const key = process.env.ANTHROPIC_API_KEY || "";
   if (!key) return fallbackProse(facts);
 
   const userPrompt =
-    "Here is today's World Cup data (JSON):\n\n" +
+    "Here is the World Cup data (JSON):\n\n" +
     JSON.stringify(
-      { results: facts.results, nextFixture: facts.nextFixture, headlines: facts.headlines },
+      {
+        today: facts.dateLabel,
+        resultsRound: facts.resultsRound,
+        fixturesRound: facts.fixturesRound,
+        results: facts.results,
+        nextFixtures: facts.nextFixtures,
+        headlines: facts.headlines,
+      },
       null, 2
     ) +
     "\n\nWrite the connective prose for the dispatch. Rules:\n" +
     "- subject: <=60 chars, punchy; may name the biggest storyline by team, but NO scoreline.\n" +
     "- preview: <=90 chars, the email preview line.\n" +
-    "- intro: 1-2 sentences setting up 'here's the last 24 hours', no scorelines.\n" +
-    "- next_why: 1 sentence framing the next fixture as one to watch — a light tactical angle, " +
-    "NOT a prediction of the winner or score. Empty string if there is no next fixture.";
+    "- intro: a fuller opening — 3 to 4 sentences (roughly 55-80 words) that accurately sets the " +
+    "scene: the '" + (facts.resultsRound || "latest") + "' results are in, and the '" +
+    (facts.fixturesRound || "next fixtures") + "' is what's ahead. Be precise about which round is " +
+    "done and which is still to come — do NOT say the upcoming round has already started. You may use " +
+    "the storylines in 'headlines' for colour. Sharp, grounded, British English. NO scorelines, no " +
+    "invented facts.\n" +
+    "- next_previews: an array with EXACTLY one entry per fixture in 'nextFixtures', in the SAME " +
+    "ORDER. Each entry is a 1-2 sentence preview (roughly 22-40 words) about that specific match: the " +
+    "stakes of this knockout round and the broad stylistic contrast between the two nations. Name the " +
+    "teams, make each distinct, keep it durable and safe per the factual rules (no managers, no named " +
+    "players, no past-tournament claims). NOT a prediction of the winner or score. Return an empty " +
+    "array if there are no fixtures.";
 
   const body = {
     model: MODEL,
@@ -188,9 +336,9 @@ async function draftProse(facts) {
             subject: { type: "string" },
             preview: { type: "string" },
             intro: { type: "string" },
-            next_why: { type: "string" },
+            next_previews: { type: "array", items: { type: "string" } },
           },
-          required: ["subject", "preview", "intro", "next_why"],
+          required: ["subject", "preview", "intro", "next_previews"],
           additionalProperties: false,
         },
       },
@@ -216,6 +364,10 @@ async function draftProse(facts) {
     const parsed = JSON.parse(text.text);
     // Guard against an empty/garbled draft.
     if (!parsed.subject || !parsed.intro) return fallbackProse(facts);
+    // Keep previews aligned 1:1 with the fixtures (the model may over/under-return).
+    const n = (facts.nextFixtures || []).length;
+    const previews = Array.isArray(parsed.next_previews) ? parsed.next_previews : [];
+    parsed.next_previews = Array.from({ length: n }, (_, i) => previews[i] || "");
     return parsed;
   } catch (err) {
     console.error("wc-dispatch: anthropic unreachable", err);
@@ -224,14 +376,19 @@ async function draftProse(facts) {
 }
 
 function fallbackProse(facts) {
-  const nf = facts.nextFixture;
+  const fixtures = facts.nextFixtures || [];
+  const rr = facts.resultsRound || "the latest round";
+  const fr = facts.fixturesRound || "the next round";
   return {
     subject: "The World Cup, read by the numbers",
-    preview: "Last night's results and what's next — grounded in data, not vibes.",
+    preview: "The latest results and what's next — grounded in data, not vibes.",
     intro:
-      "The World Cup doesn't stop, and neither does The Prism. Here's how the last 24 hours " +
-      "actually looked once you strip out the noise.",
-    next_why: nf ? `${nf.home} v ${nf.away} is the one to circle next.` : "",
+      `The World Cup doesn't stop, and neither does The Prism. The ${rr} is settled, the bracket is ` +
+      `taking shape, and the ${fr} is up next. Here's how the results actually looked once you strip ` +
+      "out the noise, the stories worth your time, and the matches still to come.",
+    next_previews: fixtures.map(
+      (f) => `${f.home} against ${f.away} — a ${prettyRound(f.round || fr).toLowerCase()} knockout, win or go home.`
+    ),
   };
 }
 
@@ -248,24 +405,69 @@ const PRISM_LOGO = `<img src="https://theprismai.com/prism-mark.png" width="34" 
 
 function renderEmail(facts, prose) {
   const rows = facts.results
-    .map(
-      (r) => `
+    .map((r) => {
+      // Bold the side that advanced (only when there's a decided winner).
+      const nameStyle = (win) =>
+        `font-size:14px;font-weight:${win ? 700 : 500};color:${win ? "#0b0b0b" : "#26272b"};`;
+      const hasPens = r.homePens != null && r.awayPens != null;
+      const scoreCell = hasPens
+        ? `${esc(r.homeScore)} &ndash; ${esc(r.awayScore)}<div style="font-family:'JetBrains Mono',monospace;font-weight:400;font-size:10px;color:#8a8e96;margin-top:2px;">${esc(r.homePens)}&ndash;${esc(r.awayPens)} pens</div>`
+        : `${esc(r.homeScore)} &ndash; ${esc(r.awayScore)}`;
+      return `
       <tr>
-        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-size:14px;color:#26272b;font-weight:500;">${esc(r.home)}</td>
-        <td style="padding:11px 8px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:15px;color:#0b0b0b;text-align:center;white-space:nowrap;">${esc(r.homeScore)} &ndash; ${esc(r.awayScore)}</td>
-        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-size:14px;color:#26272b;font-weight:500;text-align:right;">${esc(r.away)}</td>
-        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;color:#8a8e96;text-align:right;">${esc(r.status)}</td>
-      </tr>`
-    )
+        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;${nameStyle(r.homeWin)}">${esc(r.home)}</td>
+        <td style="padding:11px 8px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:15px;color:#0b0b0b;text-align:center;white-space:nowrap;">${scoreCell}</td>
+        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;text-align:right;${nameStyle(r.awayWin)}">${esc(r.away)}</td>
+        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;color:#8a8e96;text-align:right;vertical-align:top;">${esc(r.status)}</td>
+      </tr>`;
+    })
     .join("");
 
-  const nextBlock = facts.nextFixture
+  const fixtures = facts.nextFixtures || [];
+  const previews = Array.isArray(prose.next_previews) ? prose.next_previews : [];
+  const dayLabel = fixtures.length ? prettyDay(fixtures[0].date) : "";
+  const nextBlock = fixtures.length
     ? `
-      <div style="background:#eef2fe;border:1px solid #dbe4fc;border-radius:12px;padding:12px 15px;margin:0 0 16px;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#2563EB;margin-bottom:5px;">Next up</div>
-        <div style="font-size:15px;font-weight:600;color:#0b0b0b;">${esc(facts.nextFixture.home)} v ${esc(facts.nextFixture.away)}</div>
-        ${prose.next_why ? `<div style="font-size:13px;color:#4b5563;margin-top:3px;">${esc(prose.next_why)}</div>` : ""}
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;font-weight:500;margin:6px 0 12px;">Coming up${dayLabel ? ` &middot; ${esc(dayLabel)}` : ""}</div>
+      <div style="background:#eef2fe;border:1px solid #dbe4fc;border-radius:12px;padding:2px 16px;margin:0 0 18px;">
+        ${fixtures
+          .map((f, i) => {
+            const meta = [prettyRound(f.round), prettyTime(f.date), [f.venueName, f.venueCity].filter(Boolean).join(", ")]
+              .filter(Boolean)
+              .map(esc)
+              .join(" &middot; ");
+            const why = previews[i] || "";
+            return `
+        <div style="padding:14px 0;${i ? "border-top:1px solid #dbe4fc;" : ""}">
+          <div style="font-size:15px;font-weight:600;color:#0b0b0b;">${esc(f.home)} v ${esc(f.away)}</div>
+          ${meta ? `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.03em;color:#7b8497;margin-top:4px;">${meta}</div>` : ""}
+          ${why ? `<div style="font-size:13px;line-height:1.55;color:#4b5563;margin-top:6px;">${esc(why)}</div>` : ""}
+        </div>`;
+          })
+          .join("")}
       </div>`
+    : "";
+
+  const stories = facts.stories || [];
+  const newsBlock = stories.length
+    ? `
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;font-weight:500;margin:6px 0 12px;">Around the tournament</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px;">
+        ${stories
+          .map(
+            (s, i) => `
+        <tr><td style="padding:${i ? "13px" : "0"} 0 13px;${i ? "border-top:1px solid #f1f1f3;" : ""}">
+          <div style="font-size:15px;font-weight:600;line-height:1.35;color:#0b0b0b;margin:0 0 ${s.description ? "5px" : s.link ? "6px" : "0"};">${
+            s.link
+              ? `<a href="${esc(s.link)}" style="color:#0b0b0b;text-decoration:none;">${esc(s.headline)}</a>`
+              : esc(s.headline)
+          }</div>
+          ${s.description ? `<div style="font-size:13.5px;line-height:1.55;color:#4b5563;margin:0 0 ${s.link ? "6px" : "0"};">${esc(s.description)}</div>` : ""}
+          ${s.link ? `<a href="${esc(s.link)}" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#2563EB;text-decoration:none;">Read &rarr;</a>` : ""}
+        </td></tr>`
+          )
+          .join("")}
+      </table>`
     : "";
 
   return `<!DOCTYPE html>
@@ -284,7 +486,7 @@ function renderEmail(facts, prose) {
         <tr><td style="padding:22px 24px 16px;">
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>
             <td style="vertical-align:middle;">${PRISM_LOGO}<span style="font-family:'Nunito',Arial,sans-serif;font-weight:800;font-size:18px;color:#0b0b0b;letter-spacing:-.02em;vertical-align:middle;margin-left:10px;">The Prism<span style="color:#2563EB;">.</span></span></td>
-            <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:#8a8e96;text-transform:uppercase;">World Cup 2026</td>
+            <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:#8a8e96;text-transform:uppercase;">World Cup Dispatch</td>
           </tr></table>
         </td></tr>
         <tr><td style="height:3px;background:#2563EB;font-size:0;line-height:0;">&nbsp;</td></tr>
@@ -292,9 +494,10 @@ function renderEmail(facts, prose) {
           <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;font-weight:500;margin-bottom:12px;">Live &middot; ${esc(facts.dateLabel)}</div>
           <h1 style="font-family:'Syne',Arial,sans-serif;font-weight:700;font-size:26px;line-height:1.14;letter-spacing:-.02em;color:#0b0b0b;margin:0 0 16px;">${esc(prose.subject)}</h1>
           <p style="font-size:15px;line-height:1.65;color:#33353a;margin:0 0 16px;">${esc(prose.intro)}</p>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #ececee;border-radius:12px;border-collapse:separate;overflow:hidden;margin:0 0 16px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #ececee;border-radius:12px;border-collapse:separate;overflow:hidden;margin:0 0 18px;">
             ${rows}
           </table>
+          ${newsBlock}
           ${nextBlock}
           <p style="font-size:15px;line-height:1.65;color:#33353a;margin:0 0 8px;">That's the kind of read The Prism builds on demand inside the World Cup 2026 hub &mdash; results, form and matchups refracted into a single picture, with the receipts underneath. No hot takes. Just what the numbers say.</p>
         </td></tr>
@@ -410,7 +613,7 @@ export default async function handler(req, res) {
       ok: true,
       subject: prose.subject,
       results: facts.results.length,
-      nextFixture: facts.nextFixture,
+      fixtures: facts.nextFixtures.length,
       previewUrl,
     });
   } catch (err) {
