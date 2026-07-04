@@ -97,6 +97,11 @@ function parseResult(ev) {
     away: nm(away),
     awayScore: away.score,
     status: shortStatus(type.description),
+    // Knockout extras: who advanced, and the shootout score if it went to pens.
+    homeWin: home.winner === true,
+    awayWin: away.winner === true,
+    homePens: home.shootoutScore != null ? home.shootoutScore : null,
+    awayPens: away.shootoutScore != null ? away.shootoutScore : null,
   };
 }
 
@@ -109,7 +114,53 @@ function parseFixture(ev) {
   const home = cs.find((c) => c.homeAway === "home") || cs[0];
   const away = cs.find((c) => c.homeAway === "away") || cs[1];
   const nm = (c) => (c.team && (c.team.displayName || c.team.name)) || "?";
-  return { date: ev.date, home: nm(home), away: nm(away) };
+  const venue = comp.venue || {};
+  return {
+    date: ev.date,
+    home: nm(home),
+    away: nm(away),
+    round: (ev.season && ev.season.slug) || "",
+    venueName: venue.fullName || "",
+    venueCity: (venue.address && venue.address.city) || "",
+  };
+}
+
+// "round-of-16" -> "Round of 16", etc.
+function prettyRound(slug) {
+  const map = {
+    "round-of-16": "Round of 16",
+    "round-of-32": "Round of 32",
+    quarterfinals: "Quarter-final",
+    semifinals: "Semi-final",
+    "third-place": "Third-place play-off",
+    final: "Final",
+  };
+  if (!slug) return "";
+  if (map[slug]) return map[slug];
+  return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// ISO -> "2026-07-04" in UK time — used to group a day's fixtures together.
+function ukDay(iso) {
+  const d = new Date(iso);
+  return isNaN(d) ? "" : d.toLocaleDateString("en-CA", { timeZone: "Europe/London" });
+}
+// ISO -> "Saturday 4 Jul" (the matchday label) in UK time.
+function prettyDay(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  return d.toLocaleDateString("en-GB", {
+    weekday: "long", day: "numeric", month: "short", timeZone: "Europe/London",
+  });
+}
+// ISO -> "18:00 BST" kickoff time in UK time (the dispatch's home audience).
+function prettyTime(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  return d.toLocaleString("en-GB", {
+    hour: "2-digit", minute: "2-digit",
+    timeZone: "Europe/London", timeZoneName: "short",
+  });
 }
 
 async function buildFacts(today) {
@@ -128,17 +179,24 @@ async function buildFacts(today) {
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 6);
 
-  const nextFixture = upcoming
+  const upcomingParsed = upcoming
     .map(parseFixture)
     .filter(Boolean)
-    .sort((a, b) => new Date(a.date) - new Date(b.date))[0] || null;
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  // The next matchday's full slate: every scheduled game on the UK calendar day
+  // of the earliest upcoming fixture (cap at 8 to stay email-sane).
+  let nextFixtures = [];
+  if (upcomingParsed.length) {
+    const day0 = ukDay(upcomingParsed[0].date);
+    nextFixtures = upcomingParsed.filter((f) => ukDay(f.date) === day0).slice(0, 8);
+  }
 
   const stories = pickStories(newsData.articles || []);
 
   return {
     dateLabel: prettyDate(today),
     results,
-    nextFixture,
+    nextFixtures,
     stories,
     headlines: stories.map((s) => s.headline), // string list for the drafting prompt
     isMatchday: results.length > 0,
@@ -202,10 +260,16 @@ function pickStories(articles) {
 const DRAFT_SYSTEM =
   "You are The Prism, an AI football analyst writing a short 'last 24 hours at the World Cup' " +
   "email dispatch for a waitlist of football fans, coaches and scouts. Voice: sharp, confident, " +
-  "grounded in data, no hype, no emoji, British English. You are given the day's finished results " +
-  "and the next notable fixture as structured data. Those results are rendered separately in the " +
-  "email, so you MUST NOT restate any scoreline and MUST NOT invent any result, statistic, player " +
-  "or event that is not in the data. Write only the connective prose.";
+  "grounded, no hype, no emoji, British English. You are given the day's finished results and the " +
+  "upcoming fixtures as structured data.\n" +
+  "FACTUAL RULES:\n" +
+  "- The finished results are rendered separately in the email, so never restate a scoreline, and " +
+  "never invent a result, statistic or match event from THIS tournament that is not in the data.\n" +
+  "- For the upcoming-fixture previews you SHOULD draw on widely-established knowledge of the two " +
+  "teams — their playing style and identity, well-known key players, tournament pedigree, and any " +
+  "notable history between them — to say something real and specific about the matchup. Do not " +
+  "fabricate current-tournament stats, form runs or scorelines, and do not state as fact anything " +
+  "you are unsure about (e.g. a specific lineup). Write only the connective prose.";
 
 async function draftProse(facts) {
   const key = process.env.ANTHROPIC_API_KEY || "";
@@ -214,7 +278,7 @@ async function draftProse(facts) {
   const userPrompt =
     "Here is today's World Cup data (JSON):\n\n" +
     JSON.stringify(
-      { results: facts.results, nextFixture: facts.nextFixture, headlines: facts.headlines },
+      { results: facts.results, nextFixtures: facts.nextFixtures, headlines: facts.headlines },
       null, 2
     ) +
     "\n\nWrite the connective prose for the dispatch. Rules:\n" +
@@ -224,8 +288,13 @@ async function draftProse(facts) {
     "last 24 hours and the state of the tournament, drawing on the storylines in 'headlines' for " +
     "colour. Sharp and grounded, British English. NO scorelines, and do not invent any fact not " +
     "present in the data.\n" +
-    "- next_why: 1 sentence framing the next fixture as one to watch — a light tactical angle, " +
-    "NOT a prediction of the winner or score. Empty string if there is no next fixture.";
+    "- next_previews: an array with EXACTLY one entry per fixture in 'nextFixtures', in the SAME " +
+    "ORDER. Each entry is a 1-2 sentence preview (roughly 22-40 words) that says something REAL and " +
+    "SPECIFIC about that match: the storyline, the contrast in styles or identity, what is at stake " +
+    "at this stage, and/or a key player or two to watch. Name the teams and make each preview " +
+    "distinct — never a generic 'a tie worth watching' template. Draw on established knowledge of " +
+    "the sides (see the factual rules). NOT a prediction of the winner or score. Return an empty " +
+    "array if there are no fixtures.";
 
   const body = {
     model: MODEL,
@@ -241,9 +310,9 @@ async function draftProse(facts) {
             subject: { type: "string" },
             preview: { type: "string" },
             intro: { type: "string" },
-            next_why: { type: "string" },
+            next_previews: { type: "array", items: { type: "string" } },
           },
-          required: ["subject", "preview", "intro", "next_why"],
+          required: ["subject", "preview", "intro", "next_previews"],
           additionalProperties: false,
         },
       },
@@ -269,6 +338,10 @@ async function draftProse(facts) {
     const parsed = JSON.parse(text.text);
     // Guard against an empty/garbled draft.
     if (!parsed.subject || !parsed.intro) return fallbackProse(facts);
+    // Keep previews aligned 1:1 with the fixtures (the model may over/under-return).
+    const n = (facts.nextFixtures || []).length;
+    const previews = Array.isArray(parsed.next_previews) ? parsed.next_previews : [];
+    parsed.next_previews = Array.from({ length: n }, (_, i) => previews[i] || "");
     return parsed;
   } catch (err) {
     console.error("wc-dispatch: anthropic unreachable", err);
@@ -277,7 +350,7 @@ async function draftProse(facts) {
 }
 
 function fallbackProse(facts) {
-  const nf = facts.nextFixture;
+  const fixtures = facts.nextFixtures || [];
   return {
     subject: "The World Cup, read by the numbers",
     preview: "Last night's results and what's next — grounded in data, not vibes.",
@@ -285,8 +358,10 @@ function fallbackProse(facts) {
       "The World Cup doesn't stop, and neither does The Prism. Another round has come and gone, and " +
       "the picture is shifting fast — favourites tested, outsiders refusing to go quietly, and the " +
       "shape of the knockout draw sharpening by the day. Here's how the last 24 hours actually looked " +
-      "once you strip out the noise, plus the stories worth your time and the fixture to circle next.",
-    next_why: nf ? `${nf.home} v ${nf.away} is the one to circle next.` : "",
+      "once you strip out the noise, plus the stories worth your time and the day ahead.",
+    next_previews: fixtures.map(
+      (f) => `${f.home} against ${f.away}${f.round ? ` — a ${prettyRound(f.round).toLowerCase()} tie` : ""} worth keeping an eye on.`
+    ),
   };
 }
 
@@ -303,23 +378,46 @@ const PRISM_LOGO = `<img src="https://theprismai.com/prism-mark.png" width="34" 
 
 function renderEmail(facts, prose) {
   const rows = facts.results
-    .map(
-      (r) => `
+    .map((r) => {
+      // Bold the side that advanced (only when there's a decided winner).
+      const nameStyle = (win) =>
+        `font-size:14px;font-weight:${win ? 700 : 500};color:${win ? "#0b0b0b" : "#26272b"};`;
+      const hasPens = r.homePens != null && r.awayPens != null;
+      const scoreCell = hasPens
+        ? `${esc(r.homeScore)} &ndash; ${esc(r.awayScore)}<div style="font-family:'JetBrains Mono',monospace;font-weight:400;font-size:10px;color:#8a8e96;margin-top:2px;">${esc(r.homePens)}&ndash;${esc(r.awayPens)} pens</div>`
+        : `${esc(r.homeScore)} &ndash; ${esc(r.awayScore)}`;
+      return `
       <tr>
-        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-size:14px;color:#26272b;font-weight:500;">${esc(r.home)}</td>
-        <td style="padding:11px 8px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:15px;color:#0b0b0b;text-align:center;white-space:nowrap;">${esc(r.homeScore)} &ndash; ${esc(r.awayScore)}</td>
-        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-size:14px;color:#26272b;font-weight:500;text-align:right;">${esc(r.away)}</td>
-        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;color:#8a8e96;text-align:right;">${esc(r.status)}</td>
-      </tr>`
-    )
+        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;${nameStyle(r.homeWin)}">${esc(r.home)}</td>
+        <td style="padding:11px 8px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:15px;color:#0b0b0b;text-align:center;white-space:nowrap;">${scoreCell}</td>
+        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;text-align:right;${nameStyle(r.awayWin)}">${esc(r.away)}</td>
+        <td style="padding:11px 14px;border-bottom:1px solid #f1f1f3;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;color:#8a8e96;text-align:right;vertical-align:top;">${esc(r.status)}</td>
+      </tr>`;
+    })
     .join("");
 
-  const nextBlock = facts.nextFixture
+  const fixtures = facts.nextFixtures || [];
+  const previews = Array.isArray(prose.next_previews) ? prose.next_previews : [];
+  const dayLabel = fixtures.length ? prettyDay(fixtures[0].date) : "";
+  const nextBlock = fixtures.length
     ? `
-      <div style="background:#eef2fe;border:1px solid #dbe4fc;border-radius:12px;padding:12px 15px;margin:0 0 16px;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#2563EB;margin-bottom:5px;">Next up</div>
-        <div style="font-size:15px;font-weight:600;color:#0b0b0b;">${esc(facts.nextFixture.home)} v ${esc(facts.nextFixture.away)}</div>
-        ${prose.next_why ? `<div style="font-size:13px;color:#4b5563;margin-top:3px;">${esc(prose.next_why)}</div>` : ""}
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;font-weight:500;margin:6px 0 12px;">Coming up${dayLabel ? ` &middot; ${esc(dayLabel)}` : ""}</div>
+      <div style="background:#eef2fe;border:1px solid #dbe4fc;border-radius:12px;padding:2px 16px;margin:0 0 18px;">
+        ${fixtures
+          .map((f, i) => {
+            const meta = [prettyRound(f.round), prettyTime(f.date), [f.venueName, f.venueCity].filter(Boolean).join(", ")]
+              .filter(Boolean)
+              .map(esc)
+              .join(" &middot; ");
+            const why = previews[i] || "";
+            return `
+        <div style="padding:14px 0;${i ? "border-top:1px solid #dbe4fc;" : ""}">
+          <div style="font-size:15px;font-weight:600;color:#0b0b0b;">${esc(f.home)} v ${esc(f.away)}</div>
+          ${meta ? `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.03em;color:#7b8497;margin-top:4px;">${meta}</div>` : ""}
+          ${why ? `<div style="font-size:13px;line-height:1.55;color:#4b5563;margin-top:6px;">${esc(why)}</div>` : ""}
+        </div>`;
+          })
+          .join("")}
       </div>`
     : "";
 
@@ -488,7 +586,7 @@ export default async function handler(req, res) {
       ok: true,
       subject: prose.subject,
       results: facts.results.length,
-      nextFixture: facts.nextFixture,
+      fixtures: facts.nextFixtures.length,
       previewUrl,
     });
   } catch (err) {
