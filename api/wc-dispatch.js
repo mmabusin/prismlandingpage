@@ -504,7 +504,7 @@ function renderEmail(facts, prose) {
         <tr><td style="background:#f6f6f8;border-top:1px solid #ededf0;padding:18px 24px 20px;text-align:center;">
           <div style="font-family:'Nunito',Arial,sans-serif;font-weight:700;font-size:12px;color:#0b0b0b;margin-bottom:8px;">The Prism<span style="color:#2563EB;">.</span></div>
           <p style="margin:0 0 6px;font-size:11.5px;color:#9296a0;line-height:1.6;">You're receiving this because you requested early access at theprismai.com.</p>
-          <p style="margin:0;font-size:11.5px;color:#9296a0;"><a href="{{unsubscribe}}" style="color:#6b6f76;">Unsubscribe</a> &middot; <a href="https://theprismai.com" style="color:#6b6f76;">theprismai.com</a></p>
+          <p style="margin:0;font-size:11.5px;color:#9296a0;"><a href="{unsubscribe_link}" style="color:#6b6f76;">Unsubscribe</a> &middot; <a href="https://theprismai.com" style="color:#6b6f76;">theprismai.com</a></p>
         </td></tr>
       </table>
     </td></tr>
@@ -541,7 +541,7 @@ async function storeLatest(subject, html, facts) {
 async function loadLatest() {
   const sb = supabase();
   if (!sb) return null;
-  const resp = await fetch(`${sb.url}/rest/v1/wc_dispatch?slug=eq.latest&select=subject,html`, {
+  const resp = await fetch(`${sb.url}/rest/v1/wc_dispatch?slug=eq.latest&select=subject,html,created_at`, {
     headers: { apikey: sb.key, Authorization: `Bearer ${sb.key}` },
   });
   if (!resp.ok) return null;
@@ -589,6 +589,19 @@ export default async function handler(req, res) {
   const today = new Date();
   if (!wcActive(today)) {
     return res.status(200).json({ skipped: true, reason: "World Cup not active" });
+  }
+
+  // Idempotent per day: if today's dispatch was already generated, return it unchanged
+  // so the preview link stays stable and any zip built from it matches exactly.
+  // Each generate re-drafts via the AI (fresh subject/intro), so without this the
+  // preview would drift from an already-downloaded zip. Pass ?force=1 to regenerate.
+  const force = req.query && (req.query.force === "1" || req.query.force === "true");
+  if (!force) {
+    const existing = await loadLatest();
+    if (existing && existing.created_at &&
+        new Date(existing.created_at).toISOString().slice(0, 10) === today.toISOString().slice(0, 10)) {
+      return res.status(200).json({ ok: true, cached: true, subject: existing.subject });
+    }
   }
 
   try {
