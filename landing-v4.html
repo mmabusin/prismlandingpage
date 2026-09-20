@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Prism — Football Intelligence</title>
+  <meta name="description" content="Pro-level football analysis, finally yours. Ask any football question — get scout reports, shortlists, and live World Cup 2026 insight in seconds." />
+  <meta name="theme-color" content="#0b0b0b" />
+  <link rel="canonical" href="https://theprismai.com/" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='6' fill='%230b0b0b'/%3E%3Cline x1='4' y1='6' x2='4' y2='22' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3Cline x1='24' y1='6' x2='24' y2='22' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3Cline x1='4' y1='6' x2='24' y2='6' stroke='white' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='14' cy='16' r='3' fill='%232563EB'/%3E%3C/svg%3E" />
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="The Prism" />
+  <meta property="og:title" content="The Prism — Football Intelligence" />
+  <meta property="og:description" content="Pro-level football analysis, finally yours. Ask any football question — get scout reports, shortlists, and live World Cup 2026 insight in seconds." />
+  <meta property="og:url" content="https://theprismai.com/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="The Prism — Football Intelligence" />
+  <meta name="twitter:description" content="Pro-level football analysis, finally yours. Reports, shortlists, and live World Cup 2026 insight in seconds." />
+  <!-- og:image / twitter:image intentionally omitted until a 1200×630 share image exists. Add og-image.png to this folder and re-add the tags + twitter:card=summary_large_image. -->
+  <!-- Analytics — Plausible. Remove this line to disable. -->
+  <script defer data-domain="theprismai.com" src="https://plausible.io/js/script.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Nunito:wght@600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0b0b0b;
+      --surface:   #111111;
+      --surface2:  #161616;
+      --surface3:  #1c1c1c;
+      --border:    #1e1e1e;
+      --border2:   #2a2a2a;
+      --accent:    #2563EB;
+      --accent-lo: rgba(37,99,235,0.10);
+      --accent-md: rgba(37,99,235,0.22);
+      --text:      #ffffff;
+      --text-dim:  #a3a3a3;
+      --text-muted:#737373;
+      --teal:      #22d3ee;
+      --green:     #4ade80;
+      --orange:    #fb923c;
+      --red:       #f87171;
+      --font-hero: 'Syne', system-ui, sans-serif;
+      --font-brand:'Nunito', system-ui, sans-serif;
+      --font:      'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius:    12px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(.16,1,.3,1), transform 0.6s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.07s; }
+    .reveal-delay-2 { transition-delay: 0.14s; }
+    .reveal-delay-3 { transition-delay: 0.21s; }
+    .reveal-delay-4 { transition-delay: 0.28s; }
+    .reveal-delay-5 { transition-delay: 0.35s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 36px; height: 58px;
+      background: rgba(11,11,11,0.85);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-name { font-family: var(--font-brand); font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .nav-logo-dot { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 0.82rem; font-weight: 500; color: var(--text-dim); text-decoration: none; transition: color .15s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      padding: 8px 18px; background: var(--accent); color: #fff;
+      font-family: var(--font); font-size: 0.82rem; font-weight: 600;
+      border: none; border-radius: var(--radius-sm); cursor: pointer;
+      text-decoration: none; transition: opacity .15s; white-space: nowrap;
+    }
+    .nav-cta:hover { opacity: 0.88; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 120px 32px 80px; overflow: hidden; text-align: center;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 80% 65% at 50% 40%, black 30%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 40%, black 30%, transparent 100%);
+    }
+    .hero-field {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+      /* fade the network out toward the bottom so it never fights the mock UI */
+      mask-image: linear-gradient(to bottom, black 0%, black 62%, transparent 92%);
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 62%, transparent 92%);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-field { display: none; }
+    }
+    .hero-prism {
+      position: absolute; top: -18%; left: 50%; transform: translateX(-50%);
+      width: 860px; height: 560px; pointer-events: none; z-index: 0;
+    }
+    .prism-beam { position: absolute; bottom: 0; left: 50%; width: 2px; height: 320px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.16)); transform-origin: bottom center; }
+    .prism-node { position: absolute; bottom: 320px; left: 50%; transform: translateX(-50%); width: 7px; height: 7px; background: #fff; border-radius: 50%; box-shadow: 0 0 20px 5px rgba(255,255,255,0.38); }
+    .ray { position: absolute; bottom: 320px; left: 50%; width: 1.5px; transform-origin: bottom; }
+    .ray-1 { height: 210px; background: linear-gradient(to top, #e23b4a, transparent); transform: translateX(-50%) rotate(-40deg); }
+    .ray-2 { height: 228px; background: linear-gradient(to top, #fb923c, transparent); transform: translateX(-50%) rotate(-27deg); }
+    .ray-3 { height: 238px; background: linear-gradient(to top, #facc15, transparent); transform: translateX(-50%) rotate(-13deg); }
+    .ray-4 { height: 242px; background: linear-gradient(to top, #4ade80, transparent); transform: translateX(-50%) rotate(0deg); }
+    .ray-5 { height: 238px; background: linear-gradient(to top, #22d3ee, transparent); transform: translateX(-50%) rotate(13deg); }
+    .ray-6 { height: 228px; background: linear-gradient(to top, #818cf8, transparent); transform: translateX(-50%) rotate(27deg); }
+    .ray-7 { height: 210px; background: linear-gradient(to top, #a855f7, transparent); transform: translateX(-50%) rotate(40deg); }
+    .hero-glow-a { position: absolute; top: 8%; left: 18%; width: 480px; height: 380px; background: radial-gradient(ellipse, rgba(37,99,235,0.11) 0%, transparent 70%); pointer-events: none; }
+    .hero-glow-b { position: absolute; top: 18%; right: 12%; width: 380px; height: 320px; background: radial-gradient(ellipse, rgba(168,85,247,0.06) 0%, transparent 70%); pointer-events: none; }
+    .hero-inner { position: relative; z-index: 1; max-width: 800px; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px; border: 1px solid var(--border2); border-radius: 999px;
+      background: var(--surface); font-family: var(--font-mono); font-size: 0.7rem;
+      color: var(--text-dim); margin-bottom: 26px;
+    }
+    .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulse 2.2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+    .hero-headline {
+      font-family: var(--font-hero); font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 700;
+      line-height: 1.08; letter-spacing: -0.025em; color: var(--text);
+      margin-bottom: 14px; max-width: 660px; margin-left: auto; margin-right: auto;
+    }
+    .hero-headline em { font-style: normal; background: linear-gradient(135deg, #fff 30%, #6b9fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub {
+      font-size: 0.98rem; font-weight: 400; color: var(--text-dim);
+      line-height: 1.7; max-width: 540px; margin: 0 auto 38px;
+    }
+    .hero-sub strong { color: var(--text); font-weight: 500; }
+    .hero-form { display: flex; gap: 10px; max-width: 420px; margin: 0 auto 16px; }
+    .hero-input {
+      flex: 1; padding: 12px 16px; background: var(--surface2);
+      border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      color: var(--text); font-family: var(--font); font-size: 0.86rem; outline: none;
+      transition: border-color .15s;
+    }
+    .hero-input::placeholder { color: var(--text-muted); }
+    .hero-input:focus { border-color: var(--accent); }
+    .hero-submit {
+      padding: 12px 20px; background: var(--accent); color: #fff;
+      font-family: var(--font); font-size: 0.86rem; font-weight: 600;
+      border: none; border-radius: var(--radius-sm); cursor: pointer;
+      white-space: nowrap; transition: opacity .15s;
+    }
+    .hero-submit:hover { opacity: 0.88; }
+    .hero-note { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* ── Mock UI shared ── */
+    .hero-mock {
+      margin-top: 60px; max-width: 700px; margin-left: auto; margin-right: auto;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: 0 28px 72px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.03);
+    }
+    .mock-bar {
+      display: flex; align-items: center; gap: 7px; padding: 11px 16px;
+      background: var(--surface2); border-bottom: 1px solid var(--border);
+    }
+    .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mock-dot-r { background: #e23b4a; }
+    .mock-dot-y { background: #fb923c; }
+    .mock-dot-g { background: #4ade80; }
+    .mock-title { flex: 1; text-align: center; font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-muted); }
+    .mock-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .mock-msg { display: flex; gap: 10px; align-items: flex-start; }
+    .mock-avatar { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; }
+    .mock-avatar-user { background: var(--accent); color: #fff; }
+    .mock-avatar-ai { background: var(--surface3); color: var(--text-dim); border: 1px solid var(--border2); }
+    .mock-bubble { background: var(--surface3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 13px; font-size: 0.81rem; color: var(--text-dim); line-height: 1.5; }
+    .mock-bubble-user { background: var(--accent-lo); border-color: var(--accent-md); color: var(--text); }
+    .mock-card { background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); overflow: hidden; margin-top: 4px; }
+    .mock-card-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid var(--border); }
+    .mock-player-info { display: flex; flex-direction: column; gap: 2px; }
+    .mock-player-name { font-family: var(--font-brand); font-size: 0.9rem; font-weight: 700; color: var(--text); }
+    .mock-player-meta { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); }
+    .mock-badge { padding: 3px 9px; border-radius: 999px; font-family: var(--font-mono); font-size: 0.6rem; font-weight: 500; }
+    .badge-callup  { background: rgba(74,222,128,0.1); color: var(--green); border: 1px solid rgba(74,222,128,0.22); }
+    .badge-monitor { background: rgba(251,146,60,0.1); color: var(--orange); border: 1px solid rgba(251,146,60,0.22); }
+    .badge-consider{ background: rgba(163,163,163,0.1); color: var(--text-muted); border: 1px solid var(--border2); }
+    .badge-live { background: rgba(220,38,38,0.12); color: #f87171; border: 1px solid rgba(220,38,38,0.25); }
+    .mock-stats { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .mock-stat { padding: 10px 12px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px; }
+    .mock-stat:last-child { border-right: none; }
+    .mock-stat-val { font-family: var(--font-mono); font-size: 0.98rem; font-weight: 500; color: var(--text); }
+    .mock-stat-lbl { font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .mock-stat-sub { font-family: var(--font-mono); font-size: 0.58rem; color: var(--teal); }
+    .typing-cursor { display: inline-block; width: 2px; height: 0.85em; background: var(--accent); margin-left: 2px; vertical-align: middle; animation: blink .8s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── SHARED SECTIONS ── */
+    section { padding: 96px 32px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+    .section-headline { font-family: var(--font-hero); font-size: clamp(1.55rem, 2.6vw, 2.1rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.12; margin-bottom: 14px; }
+    .section-sub { font-size: 0.95rem; color: var(--text-dim); line-height: 1.65; max-width: 500px; }
+
+    /* ── HOW IT WORKS ── */
+    .hiw { background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .hiw-header { margin-bottom: 56px; }
+    /* ── WAYS TAB SWITCHER ── */
+    .ways-hint { display: flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 auto 12px; transition: opacity .35s ease, transform .35s ease; }
+    .ways-hint svg { width: 13px; height: 13px; color: var(--accent); animation: ways-hint-nudge 1.8s ease-in-out infinite; }
+    @keyframes ways-hint-nudge { 0%,100% { transform: translate(0,0); } 50% { transform: translate(2px,2px); } }
+    .ways-hint.hidden { opacity: 0; transform: translateY(-4px); pointer-events: none; }
+    .ways-tab-bar { display: flex; gap: 3px; padding: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; width: fit-content; margin: 0 auto 28px; }
+    .ways-tab { position: relative; padding: 9px 22px; font-size: 0.82rem; font-family: var(--font-brand); font-weight: 600; color: var(--text-muted); background: none; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: color .15s, background .15s, border-color .15s; overflow: hidden; white-space: nowrap; }
+    .ways-tab:hover { color: var(--text-dim); background: rgba(255,255,255,0.04); }
+    .ways-tab.active { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+    .ways-tab-prog { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); border-radius: 1px; width: 0; transition: none; }
+    .ways-tab.active .ways-tab-prog { animation: ways-prog 6s linear forwards; }
+    .ways-tab-bar.no-auto .ways-tab-prog { animation: none; width: 0; }
+    .ways-tab-bar.no-auto .ways-tab.active .ways-tab-prog { width: 100%; }
+    @keyframes ways-prog { from { width: 0 } to { width: 100% } }
+    .ways-panel { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); display: grid; }
+    /* All panes share one grid cell, so the panel is always as tall as the tallest
+       pane — switching tabs never changes the height, so the page never jumps. */
+    .ways-pane { grid-area: 1 / 1; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .22s ease; }
+    .ways-pane.active { opacity: 1; visibility: visible; pointer-events: auto; }
+    @keyframes ways-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    /* Chat ranked leaderboard */
+    .rank-list { display: flex; flex-direction: column; }
+    .rank-row { display: flex; align-items: center; gap: 12px; padding: 9px 14px; border-top: 1px solid var(--border); }
+    .rank-num { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600; color: var(--accent); width: 16px; text-align: center; flex-shrink: 0; }
+    .rank-info { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .rank-name { font-family: var(--font-brand); font-size: 0.82rem; font-weight: 700; color: var(--text); }
+    .rank-meta { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); }
+    .rank-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .rank-stat { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-dim); }
+    .rank-rating { font-family: var(--font-mono); font-size: 0.92rem; font-weight: 500; color: var(--text); }
+    /* National selection report */
+    .natrep-head { padding: 16px 18px 12px; border-bottom: 1px solid var(--border); }
+    .natrep-title { font-family: var(--font-brand); font-size: 1rem; font-weight: 800; letter-spacing: -0.015em; color: var(--text); }
+    .natrep-meta { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); margin-top: 3px; }
+    .natrep-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+    .natrep-col { background: var(--surface); padding: 14px 16px; }
+    .natrep-pos { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .natrep-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 0; }
+    .natrep-player { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .natrep-name { font-family: var(--font-brand); font-size: 0.78rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .natrep-info { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); }
+    .natrep-right { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+    .natrep-score { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); }
+    .natrep-verdict { display: flex; align-items: flex-start; gap: 10px; padding: 13px 18px; border-top: 1px solid var(--border); }
+    .natrep-right .mock-badge { padding: 2px 6px; font-size: 0.52rem; }
+
+    /* live dot (used in coverage league tags) */
+    .feature-live-dot { width: 5px; height: 5px; border-radius: 50%; background: #f87171; animation: pulse 1.5s ease-in-out infinite; }
+
+    /* verdict strip (used in scout-report + national-selection panes) */
+    .verdict-bar { width: 3px; align-self: stretch; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
+    .verdict-text { font-size: 0.76rem; color: var(--text-dim); line-height: 1.55; }
+
+    /* ── COVERAGE ── */
+    .coverage { background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .coverage-inner { max-width: 1100px; margin: 0 auto; }
+    .coverage-header { margin-bottom: 52px; }
+    .coverage-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 32px; }
+    .coverage-stat { background: var(--surface); padding: 32px 28px; display: flex; flex-direction: column; gap: 6px; }
+    .coverage-stat-val { font-family: var(--font-mono); font-size: 2.4rem; font-weight: 500; color: var(--text); line-height: 1; }
+    .coverage-stat-val span { color: var(--accent); }
+    .coverage-stat-lbl { font-size: 0.82rem; color: var(--text-dim); }
+    .coverage-stat-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .coverage-leagues { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .league-tag { padding: 5px 14px; border: 1px solid var(--border2); border-radius: 999px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); background: var(--surface); }
+    .coverage-note { font-size: 0.75rem; color: var(--text-muted); align-self: center; padding-left: 8px; }
+
+    /* ── WHO IT'S FOR ── */
+    .who { background: var(--surface); border-top: 1px solid var(--border); }
+    .who-header { margin-bottom: 48px; }
+    .who-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .who-card { background: var(--bg); padding: 28px 24px; display: flex; flex-direction: column; gap: 12px; }
+    .who-title { font-family: var(--font-brand); font-size: 0.9rem; font-weight: 700; color: var(--text); }
+    .who-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.62; }
+    .who-usecase { margin-top: auto; font-family: var(--font-mono); font-size: 0.63rem; color: var(--accent); padding: 7px 11px; background: var(--accent-lo); border: 1px solid var(--accent-md); border-radius: 6px; line-height: 1.5; }
+
+    /* ── FAQ ── */
+    .faq { background: var(--bg); border-top: 1px solid var(--border); }
+    .faq-header { margin-bottom: 48px; }
+    .faq-list { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .faq-item { background: var(--surface); border-bottom: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-trigger { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 28px; cursor: pointer; user-select: none; }
+    .faq-trigger:hover { background: rgba(255,255,255,0.015); }
+    .faq-q { font-family: var(--font-brand); font-size: 0.92rem; font-weight: 700; color: var(--text); line-height: 1.35; }
+    .faq-icon { flex-shrink: 0; width: 22px; height: 22px; border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.92rem; line-height: 1; color: var(--text-dim); transition: transform .22s, border-color .22s, color .22s; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); border-color: var(--accent); color: var(--accent); }
+    .faq-body { max-height: 0; overflow: hidden; transition: max-height .28s cubic-bezier(0.4,0,0.2,1); }
+    .faq-body.open { max-height: 400px; }
+    .faq-a { padding: 0 28px 20px; font-size: 0.82rem; color: var(--text-dim); line-height: 1.65; }
+    .faq-a strong { color: var(--text); font-weight: 600; }
+    .faq-contact { text-align: center; margin-top: 26px; font-size: 0.86rem; color: var(--text-dim); }
+    .faq-contact a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .faq-contact a:hover { text-decoration: underline; }
+
+    /* ── CUSTOM BUILDER MOCK ── */
+    .builder-mock { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .builder-pos-row { display: flex; gap: 4px; flex-wrap: wrap; padding: 11px 14px; border-bottom: 1px solid var(--border); background: var(--surface2); }
+    .builder-pos-chip { font-size: 0.62rem; font-family: var(--font-mono); padding: 4px 9px; border: 1px solid var(--border2); border-radius: 4px; color: var(--text-muted); }
+    .builder-pos-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+    .builder-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+    .builder-panel { background: var(--surface); padding: 12px 14px; }
+    .builder-panel-title { font-size: 0.62rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+    .builder-stat-lib { display: flex; flex-direction: column; gap: 2px; }
+    .builder-lib-item { font-size: 0.68rem; color: var(--text-dim); padding: 4px 8px; border-radius: 3px; display: flex; align-items: center; gap: 6px; }
+    .builder-lib-item::before { content: '+'; font-size: 0.65rem; color: var(--accent); font-weight: 700; opacity: 0.7; }
+    .builder-priority-list { display: flex; flex-direction: column; gap: 7px; }
+    .builder-priority-item { display: flex; align-items: center; gap: 7px; }
+    .builder-priority-name { font-size: 0.67rem; color: var(--text); flex: 1; }
+    .builder-bar-wrap { width: 50px; height: 3px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .builder-bar { height: 100%; background: var(--accent); border-radius: 2px; }
+    .builder-pct { font-family: var(--font-mono); font-size: 0.6rem; color: var(--accent); width: 26px; text-align: right; }
+    .builder-constraints { padding: 9px 14px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: var(--surface2); }
+    .builder-c-label { font-size: 0.61rem; color: var(--text-muted); }
+    .builder-c-val { font-family: var(--font-mono); font-size: 0.61rem; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border2); padding: 2px 6px; border-radius: 3px; }
+    .builder-find-btn { display: block; margin: 10px 14px 0; padding: 9px; background: var(--accent); color: #fff; font-family: var(--font); font-size: 0.75rem; font-weight: 600; border: none; border-radius: 5px; text-align: center; cursor: default; }
+    .builder-results { padding: 8px 14px 14px; display: flex; flex-direction: column; gap: 5px; }
+    .builder-result-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--surface2); border-radius: 4px; border: 1px solid var(--border); }
+    .builder-rank { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); width: 14px; }
+    .builder-rname { font-size: 0.72rem; color: var(--text); flex: 1; font-family: var(--font-brand); font-weight: 600; }
+    .builder-rclub { font-size: 0.61rem; color: var(--text-muted); }
+    .builder-rscore { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); font-weight: 600; }
+    .builder-profile-bar { display: flex; align-items: center; gap: 9px; padding: 9px 14px; border-bottom: 1px solid var(--border); }
+    .builder-profile-lbl { font-family: var(--font-mono); font-size: 0.56rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+    .builder-profile-name { font-family: var(--font-brand); font-size: 0.74rem; font-weight: 700; color: var(--text); }
+    .builder-profile-tag { font-family: var(--font-mono); font-size: 0.55rem; color: var(--accent); background: var(--accent-lo); border: 1px solid var(--accent-md); padding: 2px 7px; border-radius: 999px; margin-left: auto; }
+    .builder-results-head { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px 3px; }
+    .builder-results-title { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+    .builder-results-sub { font-family: var(--font-mono); font-size: 0.56rem; color: var(--text-muted); }
+    .builder-rmid { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .builder-rtag { font-size: 0.55rem; color: var(--text-muted); font-family: var(--font-mono); }
+    .builder-modes { display: flex; gap: 4px; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--surface2); }
+    .builder-mode { font-family: var(--font-brand); font-size: 0.66rem; font-weight: 600; padding: 5px 11px; border-radius: 6px; border: 1px solid var(--border2); color: var(--text-muted); background: none; }
+    .builder-mode.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    #ways-search .builder-mode { cursor: pointer; transition: color .14s, border-color .14s, background .14s; }
+    #ways-search .builder-mode:not(.active):hover { color: var(--text-dim); border-color: var(--text-muted); }
+    .smode-pane { display: none; }
+    .smode-pane.active { display: block; animation: ways-in .2s ease-out; }
+    /* Ready-made templates */
+    .ready-intro { padding: 12px 16px 4px; font-size: 0.72rem; color: var(--text-dim); line-height: 1.5; }
+    .ready-intro strong { color: var(--text); font-weight: 600; }
+    .ready-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 16px 4px; }
+    .ready-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 10px 12px; transition: border-color .14s; }
+    .ready-card.active { border-color: var(--accent); background: var(--accent-lo); }
+    .ready-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+    .ready-name { font-family: var(--font-brand); font-size: 0.74rem; font-weight: 700; color: var(--text); }
+    .ready-check { font-size: 0.7rem; color: var(--accent); font-weight: 700; }
+    .ready-desc { font-size: 0.62rem; color: var(--text-muted); line-height: 1.45; }
+    /* AI search */
+    .ai-search-box { display: flex; align-items: flex-start; gap: 10px; margin: 14px 16px 0; padding: 13px 14px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; }
+    .ai-search-icon { width: 15px; height: 15px; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+    .ai-search-text { font-size: 0.78rem; color: var(--text); line-height: 1.5; }
+    .ai-thinking { display: flex; align-items: flex-start; gap: 9px; margin: 10px 16px 0; font-size: 0.68rem; color: var(--text-muted); line-height: 1.5; }
+    .ai-thinking em { color: var(--text-dim); font-style: normal; font-family: var(--font-mono); font-size: 0.63rem; }
+
+    /* ── TEAM DNA MOCK ── */
+    .dna-mock-header { padding: 14px 18px 10px; border-bottom: 1px solid var(--border); }
+    .dna-mock-team { font-family: var(--font-brand); font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .dna-mock-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .dna-mock-record { display: flex; gap: 14px; margin-top: 8px; }
+    .dna-record-item { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-dim); }
+    .dna-record-item span { color: var(--accent); font-weight: 600; }
+    .dna-fingerprint { padding: 14px 18px; display: flex; flex-direction: column; gap: 9px; }
+    .dna-fp-axis { display: grid; grid-template-columns: 118px 1fr 36px 52px; align-items: center; gap: 10px; }
+    .dna-fp-lbl { font-size: 0.67rem; color: var(--text-dim); }
+    .dna-fp-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .dna-fp-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+    .dna-fp-score { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text); text-align: right; }
+    .dna-badge-elite { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(37,99,235,0.14); color: var(--accent); text-transform: uppercase; text-align: center; }
+    .dna-badge-high { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(21,128,61,0.14); color: #4ade80; text-transform: uppercase; text-align: center; }
+    .dna-badge-med { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; background: rgba(251,146,60,0.12); color: #fb923c; text-transform: uppercase; text-align: center; }
+    .dna-evidence-chips { padding: 0 18px 14px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .dna-chip { font-size: 0.6rem; color: var(--text-muted); padding: 3px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; }
+    .dna-section { padding: 13px 18px; border-top: 1px solid var(--border); }
+    .dna-section-lbl { font-family: var(--font-mono); font-size: 0.58rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .dna-identity { font-size: 0.74rem; color: var(--text-dim); line-height: 1.62; }
+    .dna-identity strong { color: var(--text); font-weight: 600; }
+    .dna-keymen { display: flex; flex-direction: column; gap: 9px; }
+    .dna-keyman { display: flex; gap: 10px; align-items: flex-start; }
+    .dna-keyman-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.56rem; font-weight: 700; color: var(--accent); }
+    .dna-keyman-body { flex: 1; min-width: 0; }
+    .dna-keyman-top { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .dna-keyman-name { font-family: var(--font-brand); font-size: 0.78rem; font-weight: 700; color: var(--text); }
+    .dna-keyman-role { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.05em; padding: 1px 6px; border-radius: 3px; background: rgba(37,99,235,0.12); color: var(--accent); text-transform: uppercase; }
+    .dna-keyman-stat { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); margin-left: auto; }
+    .dna-keyman-desc { font-size: 0.67rem; color: var(--text-muted); line-height: 1.5; margin-top: 2px; }
+
+    /* ── WORLD CUP MOCK ── */
+    .wc-mock { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .wc-head { display: flex; align-items: center; gap: 9px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: linear-gradient(90deg, rgba(37,99,235,0.08), transparent); }
+    .wc-head-trophy { font-size: 1rem; line-height: 1; }
+    .wc-head-title { font-family: var(--font-brand); font-size: 0.86rem; font-weight: 800; color: var(--text); letter-spacing: -0.01em; }
+    .wc-head-stage { font-family: var(--font-mono); font-size: 0.57rem; color: var(--text-muted); }
+    .wc-live { display: flex; align-items: center; gap: 6px; margin-left: auto; font-family: var(--font-mono); font-size: 0.55rem; color: #f87171; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .wc-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #f87171; animation: pulse-dot-red 1.8s infinite; }
+    @keyframes pulse-dot-red { 0% { box-shadow: 0 0 0 0 rgba(248,113,113,.5) } 70% { box-shadow: 0 0 0 6px rgba(248,113,113,0) } 100% { box-shadow: 0 0 0 0 rgba(248,113,113,0) } }
+    .wc-lead-lbl { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 7px; font-family: var(--font-mono); font-size: 0.57rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+    .wc-lead-lbl span { color: var(--accent); }
+    .wc-perf { display: flex; align-items: center; gap: 10px; padding: 7px 16px; border-top: 1px solid var(--border); }
+    .wc-perf-rank { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; color: var(--text-muted); width: 14px; flex-shrink: 0; }
+    .wc-perf-flag { font-size: 0.95rem; line-height: 1; flex-shrink: 0; }
+    .wc-perf-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+    .wc-perf-name { font-family: var(--font-brand); font-size: 0.76rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wc-perf-team { font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-muted); }
+    .wc-perf-stat { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; color: var(--accent); flex-shrink: 0; }
+    .wc-intel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border-top: 1px solid var(--border); margin-top: 11px; }
+    .wc-intel-card { background: var(--surface); padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; }
+    .wc-intel-lbl { font-family: var(--font-mono); font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .wc-intel-val { font-family: var(--font-brand); font-size: 0.72rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wc-intel-val.accent { color: var(--accent); }
+    .wc-take { display: flex; align-items: flex-start; gap: 9px; padding: 12px 16px; border-top: 1px solid var(--border); background: var(--accent-lo); }
+    .wc-take svg { flex-shrink: 0; margin-top: 1px; }
+    .wc-take-text { font-size: 0.68rem; color: var(--text-dim); line-height: 1.5; }
+    .wc-take-text b { color: var(--text); font-weight: 600; }
+    .wc-bracket { border-top: 1px solid var(--border); padding: 11px 16px 12px; }
+    .wc-bracket-lbl { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: 0.57rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 9px; }
+    .wc-bracket-lbl span { color: var(--accent); }
+    .wc-bracket-ties { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .wc-bracket-tie { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 7px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; }
+    .wc-bt-team { font-family: var(--font-brand); font-size: 0.66rem; font-weight: 600; color: var(--text); white-space: nowrap; }
+    .wc-bt-vs { font-family: var(--font-mono); font-size: 0.5rem; color: var(--text-muted); }
+    .wc-news { border-top: 1px solid var(--border); padding: 11px 16px 13px; display: flex; flex-direction: column; gap: 7px; }
+    .wc-news-item { display: flex; gap: 8px; align-items: flex-start; }
+    .wc-news-dot { color: var(--accent); font-size: 0.62rem; line-height: 1.5; flex-shrink: 0; }
+    .wc-news-text { font-size: 0.66rem; color: var(--text-dim); line-height: 1.5; }
+
+    /* ── FULL PLAYER PROFILE MOCK ── */
+    .profile-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 18px; border-bottom: 1px solid var(--border); }
+    .profile-name { font-family: var(--font-brand); font-size: 1.1rem; font-weight: 800; letter-spacing: -0.015em; color: var(--text); }
+    .profile-meta { font-family: var(--font-mono); font-size: 0.61rem; color: var(--text-muted); margin-top: 3px; }
+    .profile-rating { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+    .profile-rating-val { font-family: var(--font-mono); font-size: 1.55rem; font-weight: 500; color: var(--accent); line-height: 1; }
+    .profile-rating-lbl { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; }
+    .profile-section { padding: 12px 18px 4px; }
+    .profile-sec-lbl { font-family: var(--font-mono); font-size: 0.58rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 9px; }
+    .profile-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .profile-stat { background: var(--surface); padding: 9px 11px; display: flex; flex-direction: column; gap: 2px; }
+    .profile-stat-val { font-family: var(--font-mono); font-size: 1.05rem; font-weight: 500; color: var(--text); line-height: 1; }
+    .profile-stat-lbl { font-size: 0.57rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .profile-stat-sub { font-family: var(--font-mono); font-size: 0.57rem; color: var(--teal); }
+    .profile-verdict { display: flex; align-items: flex-start; gap: 10px; margin: 12px 18px 0; padding: 12px 14px; border: 1px solid var(--border); border-radius: 6px; }
+    .profile-chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 12px 18px 16px; }
+    .profile-chip { font-size: 0.6rem; font-family: var(--font-mono); padding: 3px 9px; border-radius: 4px; border: 1px solid var(--border); }
+    .profile-chip-pos { color: #4ade80; background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.2); }
+    .profile-chip-neg { color: #fb923c; background: rgba(251,146,60,0.08); border-color: rgba(251,146,60,0.2); }
+
+    /* ── SPOTLIGHT ── */
+    .spotlight { border-top: 1px solid var(--border); padding: 96px 36px; }
+    .spotlight-alt { background: rgba(255,255,255,0.012); }
+    .spotlight-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+    .spotlight-reverse .builder-mock, .spotlight-reverse .pulse-mock { order: -1; }
+    .spotlight-copy { display: flex; flex-direction: column; gap: 18px; }
+    .spotlight-eyebrow { display: flex; align-items: center; gap: 11px; }
+    .spotlight-num { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; color: var(--accent); letter-spacing: 0.05em; }
+    .spotlight-divider { width: 18px; height: 1px; background: var(--accent-md); }
+    .spotlight-eyebrow .section-label { margin: 0; }
+    .spotlight-headline { font-family: var(--font-hero); font-size: clamp(1.6rem, 2.6vw, 2.3rem); font-weight: 700; letter-spacing: -0.028em; line-height: 1.12; margin: 0; }
+    .spotlight-sub { font-size: 0.9rem; color: var(--text-dim); line-height: 1.72; margin: 0; }
+    .spotlight-bullets { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 10px; }
+    .spotlight-bullets li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.83rem; color: var(--text-dim); line-height: 1.55; }
+    .spotlight-bullets li::before { content: '→'; color: var(--accent); font-size: 0.75rem; margin-top: 2px; flex-shrink: 0; }
+    .spotlight-bullets li strong { color: var(--text); font-weight: 600; }
+    @media (max-width: 860px) {
+      .spotlight { padding: 64px 24px; }
+      .spotlight-inner { grid-template-columns: 1fr; gap: 40px; }
+      .spotlight-reverse .builder-mock, .spotlight-reverse .pulse-mock { order: 0; }
+    }
+
+    /* ── CTA ── */
+    .cta-section { background: var(--bg); border-top: 1px solid var(--border); padding: 112px 32px; text-align: center; }
+    .cta-inner { max-width: 560px; margin: 0 auto; }
+    .cta-logo { margin-bottom: 32px; display: flex; justify-content: center; }
+    .cta-glow-wrap { position: relative; display: inline-block; }
+    .cta-glow-wrap::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 280px; height: 280px; background: radial-gradient(ellipse, rgba(37,99,235,0.22) 0%, transparent 70%); pointer-events: none; }
+    .cta-headline { font-family: var(--font-hero); font-size: clamp(1.7rem, 3vw, 2.6rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 14px; }
+    .cta-sub { font-size: 0.95rem; color: var(--text-dim); line-height: 1.65; margin-bottom: 34px; }
+    .cta-form { display: flex; gap: 10px; max-width: 400px; margin: 0 auto 14px; }
+    .cta-input { flex: 1; padding: 12px 16px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font); font-size: 0.86rem; outline: none; transition: border-color .15s; }
+    .cta-input::placeholder { color: var(--text-muted); }
+    .cta-input:focus { border-color: var(--accent); }
+    .cta-btn { padding: 12px 20px; background: var(--accent); color: #fff; font-family: var(--font); font-size: 0.86rem; font-weight: 600; border: none; border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+    .cta-btn:hover { opacity: 0.88; }
+    .cta-note { font-size: 0.72rem; color: var(--text-muted); }
+    .cta-contact { font-size: 0.75rem; color: var(--text-muted); margin-top: 12px; }
+    .cta-contact a { color: var(--text-dim); text-decoration: none; border-bottom: 1px solid var(--border2); transition: color .15s, border-color .15s; }
+    .cta-contact a:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── WAITLIST CONFIRMATION (shared by hero + CTA, swapped in on success) ── */
+    .wl-confirm { max-width: 460px; margin: 0 auto 16px; text-align: center; animation: wl-in .5s cubic-bezier(.16,1,.3,1); }
+    @keyframes wl-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .wl-confirm-badge {
+      width: 44px; height: 44px; margin: 0 auto 16px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent-lo); border: 1px solid var(--accent-md);
+      color: var(--accent); font-size: 1.15rem; font-weight: 700;
+    }
+    .wl-confirm-title { font-family: var(--font-hero); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .wl-confirm-sub { font-size: 0.84rem; color: var(--text-dim); line-height: 1.6; max-width: 400px; margin: 0 auto 22px; }
+    .wl-share-lbl { display: block; font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px; }
+    .wl-share-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .wl-share-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 14px; background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: var(--radius-sm); color: var(--text-dim);
+      font-family: var(--font); font-size: 0.78rem; font-weight: 500; cursor: pointer;
+      transition: border-color .15s, color .15s, background .15s;
+    }
+    .wl-share-btn:hover { border-color: var(--accent); color: var(--text); background: var(--surface3); }
+    .wl-share-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 28px 36px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+    .footer-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .footer-brand { font-family: var(--font-brand); font-size: 0.86rem; font-weight: 700; color: var(--text-dim); letter-spacing: -0.01em; }
+    .footer-copy { font-size: 0.7rem; color: var(--text-muted); }
+    .footer-link { font-size: 0.74rem; color: var(--text-dim); text-decoration: none; transition: color .15s; }
+    .footer-link:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1000px) {
+      .coverage-stats { grid-template-columns: repeat(2, 1fr); }
+      .who-grid { grid-template-columns: repeat(2, 1fr); }
+      .faq-list { border-radius: var(--radius-sm); }
+    }
+    @media (max-width: 720px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      section { padding: 68px 20px; }
+      /* Mobile: show every tab at once as a 2-row segmented grid — no sideways
+         scroll, nothing hidden. 'National Selection' spans the full width. */
+      .ways-tab-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: 100%; max-width: 420px; }
+      .ways-tab { padding: 11px 8px; font-size: 0.78rem; text-align: center; justify-content: center; }
+      .ways-tab:last-child { grid-column: 1 / -1; }
+      .ways-tab-prog { border-radius: 0 0 8px 8px; }
+      .who-grid { grid-template-columns: 1fr 1fr; }
+      .hero-form, .cta-form { flex-direction: column; }
+      .mock-stats { grid-template-columns: repeat(2, 1fr); }
+      .mock-stat:nth-child(2) { border-right: none; }
+      .mock-stat:nth-child(3) { border-top: 1px solid var(--border); }
+      .natrep-grid { grid-template-columns: 1fr; }
+      .profile-stat-grid { grid-template-columns: repeat(2, 1fr); }
+      .builder-modes { flex-wrap: wrap; }
+    }
+    @media (max-width: 520px) {
+      .who-grid { grid-template-columns: 1fr; }
+      .coverage-stats { grid-template-columns: 1fr 1fr; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <svg style="display:none">
+    <symbol id="prism-logo" viewBox="0 0 28 28">
+      <rect width="28" height="28" rx="6" fill="#0b0b0b"/>
+      <line x1="4" y1="6" x2="4" y2="22" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+      <line x1="24" y1="6" x2="24" y2="22" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+      <line x1="4" y1="6" x2="24" y2="6" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+      <line x1="4" y1="22" x2="24" y2="22" stroke="white" stroke-width="1.2" opacity=".4"/>
+      <line x1="9" y1="6" x2="9" y2="22" stroke="white" stroke-width=".8" opacity=".4"/>
+      <line x1="14" y1="6" x2="14" y2="22" stroke="white" stroke-width=".8" opacity=".4"/>
+      <line x1="19" y1="6" x2="19" y2="22" stroke="white" stroke-width=".8" opacity=".4"/>
+      <line x1="4" y1="11" x2="24" y2="11" stroke="white" stroke-width=".8" opacity=".4"/>
+      <line x1="4" y1="16" x2="24" y2="16" stroke="white" stroke-width=".8" opacity=".4"/>
+      <circle cx="14" cy="16" r="3" fill="#2563EB"/>
+    </symbol>
+  </svg>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <svg width="26" height="26"><use href="#prism-logo"/></svg>
+      <span class="nav-logo-name">The Prism<span class="nav-logo-dot">.</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#coverage">Coverage</a></li>
+      <li><a href="#who">Who it's for</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a href="#waitlist" class="nav-cta">Request Early Access</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <canvas id="hero-field" class="hero-field" aria-hidden="true"></canvas>
+    <div class="hero-prism" aria-hidden="true">
+      <div class="prism-beam"></div><div class="prism-node"></div>
+      <div class="ray ray-1"></div><div class="ray ray-2"></div>
+      <div class="ray ray-3"></div><div class="ray ray-4"></div>
+      <div class="ray ray-5"></div><div class="ray ray-6"></div>
+      <div class="ray ray-7"></div>
+    </div>
+    <div class="hero-glow-a" aria-hidden="true"></div>
+    <div class="hero-glow-b" aria-hidden="true"></div>
+
+    <div class="hero-inner">
+      <div class="hero-eyebrow reveal">
+        <span class="eyebrow-dot"></span>
+        Early Access — Limited Spots Available
+      </div>
+      <h1 class="hero-headline reveal reveal-delay-1">
+        AI-powered football<br>intelligence <em>at your fingertips.</em>
+      </h1>
+      <p class="hero-sub reveal reveal-delay-2">
+        Enterprise-level football analysis, for everyone. Whether you're a scout building a shortlist, a coach studying an opponent, or a fan who just wants to go deeper — The Prism turns what's on your mind into <strong>reports, shortlists, and tangible results</strong>.
+      </p>
+      <form class="hero-form reveal reveal-delay-3" onsubmit="handleSubmit(event,'hero')">
+        <input class="hero-input" type="email" id="hero-email" placeholder="Enter your email" autocomplete="email"/>
+        <button class="hero-submit" type="submit">Request Early Access</button>
+      </form>
+      <p class="hero-note reveal reveal-delay-4">No credit card required · Invite-only beta</p>
+
+      <div class="hero-mock reveal reveal-delay-5">
+        <div class="mock-bar">
+          <span class="mock-dot mock-dot-r"></span>
+          <span class="mock-dot mock-dot-y"></span>
+          <span class="mock-dot mock-dot-g"></span>
+          <span class="mock-title">the-prism · football intelligence</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-msg">
+            <div class="mock-avatar mock-avatar-user">M</div>
+            <div class="mock-bubble mock-bubble-user">
+              Find me a CB under 23 in the Bundesliga with elite aerial ability and progressive passing<span class="typing-cursor"></span>
+            </div>
+          </div>
+          <div class="mock-msg">
+            <div class="mock-avatar mock-avatar-ai">
+              <svg viewBox="0 0 28 28" width="13" height="13"><use href="#prism-logo"/></svg>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+              <div class="mock-bubble">
+                Scanning Bundesliga defenders — filtering age ≤ 23, ranking by aerials won, clearances, and long ball accuracy across the current season…
+              </div>
+              <div class="mock-card">
+                <div class="mock-card-header">
+                  <div class="mock-player-info">
+                    <div class="mock-player-name">Castello Lukeba</div>
+                    <div class="mock-player-meta">CB · 21y · RB Leipzig · 🇫🇷 · Bundesliga 24/25</div>
+                  </div>
+                  <div class="mock-badge badge-callup">● CALLUP</div>
+                </div>
+                <div class="mock-stats">
+                  <div class="mock-stat">
+                    <span class="mock-stat-val">3.4</span>
+                    <span class="mock-stat-lbl">Aerials Won</span>
+                    <span class="mock-stat-sub">per 90</span>
+                  </div>
+                  <div class="mock-stat">
+                    <span class="mock-stat-val">74%</span>
+                    <span class="mock-stat-lbl">Long Ball Acc.</span>
+                    <span class="mock-stat-sub">per 90</span>
+                  </div>
+                  <div class="mock-stat">
+                    <span class="mock-stat-val">4.1</span>
+                    <span class="mock-stat-lbl">Clearances</span>
+                    <span class="mock-stat-sub">per 90</span>
+                  </div>
+                  <div class="mock-stat">
+                    <span class="mock-stat-val">7.2</span>
+                    <span class="mock-stat-lbl">Rating</span>
+                    <span class="mock-stat-sub">avg</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="hiw" id="how">
+    <div class="section-inner">
+      <div class="hiw-header">
+        <p class="section-label reveal">How it works</p>
+        <h2 class="section-headline reveal reveal-delay-1">One platform, multiple ways in.</h2>
+        <p class="section-sub reveal reveal-delay-2">Ask any question, search for a profile, pull a full player or team report, or build a national squad. All of this, and much more, right at your fingertips.</p>
+      </div>
+      <div class="reveal">
+        <!-- Tab hint — nudges people to click through; disappears once they do -->
+        <div class="ways-hint" id="waysHint">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 2l6.6 17.2 2.2-7 7-2.2z"/></svg>
+          Click any tab to explore
+        </div>
+        <!-- Tab bar -->
+        <div class="ways-tab-bar">
+          <button class="ways-tab active" data-ways="chat">Chat<span class="ways-tab-prog"></span></button>
+          <button class="ways-tab" data-ways="search">Player Search<span class="ways-tab-prog"></span></button>
+          <button class="ways-tab" data-ways="reports">Player Reports<span class="ways-tab-prog"></span></button>
+          <button class="ways-tab" data-ways="team">Team Analysis<span class="ways-tab-prog"></span></button>
+          <button class="ways-tab" data-ways="national">National Selection<span class="ways-tab-prog"></span></button>
+        </div>
+
+        <!-- Tab panel -->
+        <div class="ways-panel">
+
+          <!-- ── PANE 1: Chat ── -->
+          <div class="ways-pane active" id="ways-chat">
+            <div class="mock-bar">
+              <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+              <span class="mock-title">the-prism · chat</span>
+            </div>
+            <div class="mock-body">
+              <div class="mock-msg">
+                <div class="mock-avatar mock-avatar-user">M</div>
+                <div class="mock-bubble mock-bubble-user">Give me the top 5 performing Moroccan U25 players in Europe this season 🇲🇦</div>
+              </div>
+              <div class="mock-msg">
+                <div class="mock-avatar mock-avatar-ai"><svg viewBox="0 0 28 28" width="13" height="13"><use href="#prism-logo"/></svg></div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+                  <div class="mock-bubble">Scanning Moroccan players aged ≤ 25 across the top 5 European leagues — ranking by season rating, goal contributions, and minutes played…</div>
+                  <div class="mock-card">
+                    <div class="mock-card-header">
+                      <div class="mock-player-info">
+                        <div class="mock-player-name">🇲🇦 Morocco · Under 25 · Europe</div>
+                        <div class="mock-player-meta">5 players · ranked by rating · 25/26 season</div>
+                      </div>
+                      <div class="mock-badge badge-callup">TOP 5</div>
+                    </div>
+                    <div class="rank-list">
+                      <div class="rank-row">
+                        <span class="rank-num">1</span>
+                        <div class="rank-info"><span class="rank-name">Amine Adli</span><span class="rank-meta">LW · 24 · Leverkusen · Bundesliga</span></div>
+                        <div class="rank-right"><span class="rank-stat">8 G+A</span><span class="rank-rating">7.4</span></div>
+                      </div>
+                      <div class="rank-row">
+                        <span class="rank-num">2</span>
+                        <div class="rank-info"><span class="rank-name">Eliesse Ben Seghir</span><span class="rank-meta">CAM · 20 · Monaco · Ligue 1</span></div>
+                        <div class="rank-right"><span class="rank-stat">11 G+A</span><span class="rank-rating">7.2</span></div>
+                      </div>
+                      <div class="rank-row">
+                        <span class="rank-num">3</span>
+                        <div class="rank-info"><span class="rank-name">Abde Ezzalzouli</span><span class="rank-meta">LW · 23 · Real Betis · La Liga</span></div>
+                        <div class="rank-right"><span class="rank-stat">9 G+A</span><span class="rank-rating">7.1</span></div>
+                      </div>
+                      <div class="rank-row">
+                        <span class="rank-num">4</span>
+                        <div class="rank-info"><span class="rank-name">Bilal El Khannouss</span><span class="rank-meta">CAM · 21 · Leicester City · Premier League</span></div>
+                        <div class="rank-right"><span class="rank-stat">7 G+A</span><span class="rank-rating">7.0</span></div>
+                      </div>
+                      <div class="rank-row">
+                        <span class="rank-num">5</span>
+                        <div class="rank-info"><span class="rank-name">Amir Richardson</span><span class="rank-meta">CM · 22 · Fiorentina · Serie A</span></div>
+                        <div class="rank-right"><span class="rank-stat">5 G+A</span><span class="rank-rating">6.8</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── PANE 2: Player Search ── -->
+          <div class="ways-pane" id="ways-search">
+            <div class="mock-bar">
+              <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+              <span class="mock-title">the-prism · player search</span>
+            </div>
+            <div class="builder-modes">
+              <button class="builder-mode active" data-smode="build">Build a profile</button>
+              <button class="builder-mode" data-smode="ready">Ready-made profile</button>
+              <button class="builder-mode" data-smode="ai">AI search</button>
+            </div>
+
+            <!-- MODE: Build a profile -->
+            <div class="smode-pane active" id="smode-build">
+              <div class="builder-pos-row">
+                <span class="builder-pos-chip">GK</span>
+                <span class="builder-pos-chip active">CB</span>
+                <span class="builder-pos-chip">LB/RB</span>
+                <span class="builder-pos-chip">DM</span>
+                <span class="builder-pos-chip">CM</span>
+                <span class="builder-pos-chip">CAM</span>
+                <span class="builder-pos-chip">LW/RW</span>
+                <span class="builder-pos-chip">ST</span>
+              </div>
+              <div class="builder-panels">
+                <div class="builder-panel">
+                  <div class="builder-panel-title">Stat Library</div>
+                  <div class="builder-stat-lib">
+                    <div class="builder-lib-item">Aerials Won / 90</div>
+                    <div class="builder-lib-item">Clearances / 90</div>
+                    <div class="builder-lib-item">Interceptions / 90</div>
+                    <div class="builder-lib-item">Pass Accuracy</div>
+                    <div class="builder-lib-item">Duels Won %</div>
+                    <div class="builder-lib-item">Progressive Carries</div>
+                  </div>
+                </div>
+                <div class="builder-panel">
+                  <div class="builder-panel-title">Your Priorities</div>
+                  <div class="builder-priority-list">
+                    <div class="builder-priority-item"><span class="builder-priority-name">Aerials Won</span><div class="builder-bar-wrap"><div class="builder-bar" style="width:35%"></div></div><span class="builder-pct">35%</span></div>
+                    <div class="builder-priority-item"><span class="builder-priority-name">Clearances</span><div class="builder-bar-wrap"><div class="builder-bar" style="width:30%"></div></div><span class="builder-pct">30%</span></div>
+                    <div class="builder-priority-item"><span class="builder-priority-name">Pass Accuracy</span><div class="builder-bar-wrap"><div class="builder-bar" style="width:20%"></div></div><span class="builder-pct">20%</span></div>
+                    <div class="builder-priority-item"><span class="builder-priority-name">Tackles / 90</span><div class="builder-bar-wrap"><div class="builder-bar" style="width:15%"></div></div><span class="builder-pct">15%</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="builder-constraints">
+                <span class="builder-c-label">Age:</span><span class="builder-c-val">18 – 24</span>
+                <span class="builder-c-label">Min mins:</span><span class="builder-c-val">900+</span>
+                <span class="builder-c-label">Leagues:</span><span class="builder-c-val">PL · BL · SA · L1 · LL</span>
+              </div>
+              <div class="builder-find-btn">Find Players</div>
+              <div class="builder-results-head">
+                <span class="builder-results-title">14 matches found</span>
+                <span class="builder-results-sub">ranked by fit to your profile</span>
+              </div>
+              <div class="builder-results">
+                <div class="builder-result-row"><span class="builder-rank">#1</span><div class="builder-rmid"><span class="builder-rname">C. Lukeba</span><span class="builder-rtag">CB · RB Leipzig · BL · elite aerials, progressive</span></div><span class="builder-rscore">89%</span></div>
+                <div class="builder-result-row"><span class="builder-rank">#2</span><div class="builder-rmid"><span class="builder-rname">P. Gvardiol</span><span class="builder-rtag">CB · Man City · PL · ball-carrier, strong duels</span></div><span class="builder-rscore">81%</span></div>
+                <div class="builder-result-row"><span class="builder-rank">#3</span><div class="builder-rmid"><span class="builder-rname">E. Dier</span><span class="builder-rtag">CB · Bayern · BL · aerial, high pass accuracy</span></div><span class="builder-rscore">76%</span></div>
+              </div>
+            </div>
+
+            <!-- MODE: Ready-made profile -->
+            <div class="smode-pane" id="smode-ready">
+              <div class="builder-pos-row">
+                <span class="builder-pos-chip">GK</span>
+                <span class="builder-pos-chip active">CB</span>
+                <span class="builder-pos-chip">LB/RB</span>
+                <span class="builder-pos-chip">DM</span>
+                <span class="builder-pos-chip">CM</span>
+                <span class="builder-pos-chip">CAM</span>
+                <span class="builder-pos-chip">LW/RW</span>
+                <span class="builder-pos-chip">ST</span>
+              </div>
+              <div class="ready-intro">Proven templates for a <strong>Centre-Back</strong> — pick one and tweak, or run it as-is.</div>
+              <div class="ready-grid">
+                <div class="ready-card active">
+                  <div class="ready-card-top"><span class="ready-name">Ball-Playing CB</span><span class="ready-check">✓</span></div>
+                  <div class="ready-desc">Progresses from the back. Aerials + pass accuracy + carries.</div>
+                </div>
+                <div class="ready-card">
+                  <div class="ready-card-top"><span class="ready-name">Aerial Dominator</span></div>
+                  <div class="ready-desc">Wins everything in the box. Aerials + clearances + duels.</div>
+                </div>
+                <div class="ready-card">
+                  <div class="ready-card-top"><span class="ready-name">Aggressive Stopper</span></div>
+                  <div class="ready-desc">Steps out and front-foots. Tackles + interceptions + recoveries.</div>
+                </div>
+                <div class="ready-card">
+                  <div class="ready-card-top"><span class="ready-name">No-Nonsense CB</span></div>
+                  <div class="ready-desc">Defends the box first. Blocks + clearances + headers.</div>
+                </div>
+              </div>
+              <div class="builder-results-head">
+                <span class="builder-results-title">Ball-Playing CB · 14 matches</span>
+                <span class="builder-results-sub">template applied</span>
+              </div>
+              <div class="builder-results">
+                <div class="builder-result-row"><span class="builder-rank">#1</span><div class="builder-rmid"><span class="builder-rname">C. Lukeba</span><span class="builder-rtag">CB · RB Leipzig · BL · elite aerials, progressive</span></div><span class="builder-rscore">89%</span></div>
+                <div class="builder-result-row"><span class="builder-rank">#2</span><div class="builder-rmid"><span class="builder-rname">P. Gvardiol</span><span class="builder-rtag">CB · Man City · PL · ball-carrier, strong duels</span></div><span class="builder-rscore">81%</span></div>
+                <div class="builder-result-row"><span class="builder-rank">#3</span><div class="builder-rmid"><span class="builder-rname">N. Schlotterbeck</span><span class="builder-rtag">CB · Dortmund · BL · line-breaking passer</span></div><span class="builder-rscore">78%</span></div>
+              </div>
+            </div>
+
+            <!-- MODE: AI search -->
+            <div class="smode-pane" id="smode-ai">
+              <div class="ai-search-box">
+                <svg class="ai-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>
+                <span class="ai-search-text">Left-footed ball-playing CB under 23, comfortable building from the back and dominant in the air</span>
+              </div>
+              <div class="ai-thinking">
+                <svg viewBox="0 0 28 28" width="12" height="12" style="flex-shrink:0;"><use href="#prism-logo"/></svg>
+                <span>Parsing your description — <em>left-footed · CB · age ≤ 23 · build-up + aerial weighting</em> — and ranking the top 5 leagues…</span>
+              </div>
+              <div class="builder-results-head">
+                <span class="builder-results-title">9 matches found</span>
+                <span class="builder-results-sub">ranked by fit to your description</span>
+              </div>
+              <div class="builder-results">
+                <div class="builder-result-row"><span class="builder-rank">#1</span><div class="builder-rmid"><span class="builder-rname">C. Lukeba</span><span class="builder-rtag">CB · 21 · RB Leipzig · BL · left-footed, progressive</span></div><span class="builder-rscore">92%</span></div>
+                <div class="builder-result-row"><span class="builder-rank">#2</span><div class="builder-rmid"><span class="builder-rname">L. Badé</span><span class="builder-rtag">CB · 22 · Sevilla · LL · aerially dominant, calm</span></div><span class="builder-rscore">84%</span></div>
+                <div class="builder-result-row"><span class="builder-rank">#3</span><div class="builder-rmid"><span class="builder-rname">J. Tah</span><span class="builder-rtag">CB · 23 · Leverkusen · BL · ball-carrier, press-resistant</span></div><span class="builder-rscore">79%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── PANE 3: Reports & Analysis (full player profile) ── -->
+          <div class="ways-pane" id="ways-reports">
+            <div class="mock-bar">
+              <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+              <span class="mock-title">the-prism · scout report · michael olise</span>
+            </div>
+            <div class="profile-head">
+              <div class="profile-id">
+                <div class="profile-name">Michael Olise</div>
+                <div class="profile-meta">RW · 23y · Bayern München · 🇫🇷 · Bundesliga 25/26 · 30 apps · 2,540 mins</div>
+              </div>
+              <div class="profile-rating">
+                <span class="profile-rating-val">7.6</span>
+                <span class="profile-rating-lbl">Avg Rating</span>
+              </div>
+            </div>
+            <div class="profile-section">
+              <div class="profile-sec-lbl">Attacking</div>
+              <div class="profile-stat-grid">
+                <div class="profile-stat"><span class="profile-stat-val">12</span><span class="profile-stat-lbl">Goals</span><span class="profile-stat-sub">0.43 / 90</span></div>
+                <div class="profile-stat"><span class="profile-stat-val">2.7</span><span class="profile-stat-lbl">Shots</span><span class="profile-stat-sub">per 90</span></div>
+                <div class="profile-stat"><span class="profile-stat-val">0.34</span><span class="profile-stat-lbl">xG</span><span class="profile-stat-sub">per 90</span></div>
+                <div class="profile-stat"><span class="profile-stat-val">2.9</span><span class="profile-stat-lbl">Dribbles</span><span class="profile-stat-sub">per 90</span></div>
+              </div>
+            </div>
+            <div class="profile-section">
+              <div class="profile-sec-lbl">Creativity & Passing</div>
+              <div class="profile-stat-grid">
+                <div class="profile-stat"><span class="profile-stat-val">11</span><span class="profile-stat-lbl">Assists</span><span class="profile-stat-sub">0.39 / 90</span></div>
+                <div class="profile-stat"><span class="profile-stat-val">2.6</span><span class="profile-stat-lbl">Key Passes</span><span class="profile-stat-sub">per 90</span></div>
+                <div class="profile-stat"><span class="profile-stat-val">0.41</span><span class="profile-stat-lbl">xA</span><span class="profile-stat-sub">per 90</span></div>
+                <div class="profile-stat"><span class="profile-stat-val">84%</span><span class="profile-stat-lbl">Pass Acc.</span><span class="profile-stat-sub">final third</span></div>
+              </div>
+            </div>
+            <div class="profile-verdict">
+              <div class="verdict-bar"></div>
+              <div class="verdict-text">An elite chance creator and direct dribbler operating off the right. Among the league's top 5 for combined goal involvements from open play, with set-piece delivery adding a second dimension. <strong style="color:var(--green)">Profile: Elite creative winger.</strong></div>
+            </div>
+            <div class="profile-chips">
+              <span class="profile-chip profile-chip-pos">+ Top-5 goal involvements</span>
+              <span class="profile-chip profile-chip-pos">+ Elite dead-ball delivery</span>
+              <span class="profile-chip profile-chip-pos">+ 1v1 dribble threat</span>
+              <span class="profile-chip profile-chip-neg">– Defensive workrate</span>
+            </div>
+          </div>
+
+          <!-- ── PANE: Team Analysis (Opponent DNA) ── -->
+          <div class="ways-pane" id="ways-team">
+            <div class="mock-bar">
+              <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+              <span class="mock-title">the-prism · team dna · psg</span>
+            </div>
+            <div class="dna-mock-header">
+              <div class="dna-mock-team">Paris Saint-Germain</div>
+              <div class="dna-mock-meta">Ligue 1 · 2024/25 · 34 matches</div>
+              <div class="dna-mock-record">
+                <span class="dna-record-item">W <span>24</span></span>
+                <span class="dna-record-item">D <span>5</span></span>
+                <span class="dna-record-item">L <span>5</span></span>
+                <span class="dna-record-item">xG/game <span>2.3</span></span>
+                <span class="dna-record-item">Poss <span>61%</span></span>
+              </div>
+            </div>
+            <div class="dna-fingerprint">
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Pressing Intensity</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:82%"></div></div>
+                <div class="dna-fp-score">82</div>
+                <div class="dna-badge-high">HIGH</div>
+              </div>
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Possession Control</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:91%"></div></div>
+                <div class="dna-fp-score">91</div>
+                <div class="dna-badge-elite">ELITE</div>
+              </div>
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Build-up Style</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:88%"></div></div>
+                <div class="dna-fp-score">88</div>
+                <div class="dna-badge-elite">ELITE</div>
+              </div>
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Defensive Line</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:68%"></div></div>
+                <div class="dna-fp-score">68</div>
+                <div class="dna-badge-med">MED</div>
+              </div>
+              <div class="dna-fp-axis">
+                <div class="dna-fp-lbl">Transition Speed</div>
+                <div class="dna-fp-track"><div class="dna-fp-fill" style="width:85%"></div></div>
+                <div class="dna-fp-score">85</div>
+                <div class="dna-badge-elite">ELITE</div>
+              </div>
+            </div>
+            <div class="dna-evidence-chips">
+              <span class="dna-chip">673 passes/game</span>
+              <span class="dna-chip">91.3% pass acc.</span>
+              <span class="dna-chip">16.8 PPDA</span>
+              <span class="dna-chip">High press triggers</span>
+              <span class="dna-chip">Wide attacker system</span>
+            </div>
+            <div class="dna-section">
+              <div class="dna-section-lbl">Tactical Identity</div>
+              <div class="dna-identity">A <strong>possession-dominant</strong> side built on positional rotations and relentless ball circulation. Beats the press through patient build-up before springing <strong>quick wide transitions</strong> — fullbacks invert, wingers hold width, and the front line presses high to win the ball back inside 6 seconds.</div>
+            </div>
+            <div class="dna-section">
+              <div class="dna-section-lbl">Key Men</div>
+              <div class="dna-keymen">
+                <div class="dna-keyman">
+                  <div class="dna-keyman-avatar">OD</div>
+                  <div class="dna-keyman-body">
+                    <div class="dna-keyman-top"><span class="dna-keyman-name">Ousmane Dembélé</span><span class="dna-keyman-role">Talisman</span><span class="dna-keyman-stat">21 G+A</span></div>
+                    <div class="dna-keyman-desc">Free-roaming wide forward — the team's primary outlet in transition and top chance creator.</div>
+                  </div>
+                </div>
+                <div class="dna-keyman">
+                  <div class="dna-keyman-avatar">VR</div>
+                  <div class="dna-keyman-body">
+                    <div class="dna-keyman-top"><span class="dna-keyman-name">Vitinha</span><span class="dna-keyman-role">Metronome</span><span class="dna-keyman-stat">88% pass</span></div>
+                    <div class="dna-keyman-desc">Dictates tempo from deep — highest touch and progressive-pass volume in the side.</div>
+                  </div>
+                </div>
+                <div class="dna-keyman">
+                  <div class="dna-keyman-avatar">NM</div>
+                  <div class="dna-keyman-body">
+                    <div class="dna-keyman-top"><span class="dna-keyman-name">Nuno Mendes</span><span class="dna-keyman-role">Engine</span><span class="dna-keyman-stat">3.1 prog/90</span></div>
+                    <div class="dna-keyman-desc">Inverting left-back who drives the press and overloads the half-space on the break.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── PANE 5: National Selection ── -->
+          <div class="ways-pane" id="ways-national">
+            <div class="mock-bar">
+              <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+              <span class="mock-title">the-prism · national selection · senegal</span>
+            </div>
+            <div class="natrep-head">
+              <div class="natrep-title">🇸🇳 Senegal — National Selection</div>
+              <div class="natrep-meta">18 candidates scanned · Europe-based · ranked by position</div>
+            </div>
+            <div class="natrep-grid">
+              <div class="natrep-col">
+                <div class="natrep-pos">Forwards</div>
+                <div class="natrep-row"><div class="natrep-player"><span class="natrep-name">Nicolas Jackson</span><span class="natrep-info">ST · 24 · Chelsea · PL</span></div><div class="natrep-right"><span class="natrep-score">7.1</span><span class="mock-badge badge-callup">● CALLUP</span></div></div>
+                <div class="natrep-row"><div class="natrep-player"><span class="natrep-name">Iliman Ndiaye</span><span class="natrep-info">LW · 25 · Everton · PL</span></div><div class="natrep-right"><span class="natrep-score">6.9</span><span class="mock-badge badge-callup">● CALLUP</span></div></div>
+                <div class="natrep-row"><div class="natrep-player"><span class="natrep-name">Boulaye Dia</span><span class="natrep-info">ST · 28 · Lazio · SA</span></div><div class="natrep-right"><span class="natrep-score">6.5</span><span class="mock-badge badge-monitor">○ MONITOR</span></div></div>
+              </div>
+              <div class="natrep-col">
+                <div class="natrep-pos">Midfield</div>
+                <div class="natrep-row"><div class="natrep-player"><span class="natrep-name">Pape Matar Sarr</span><span class="natrep-info">CM · 22 · Tottenham · PL</span></div><div class="natrep-right"><span class="natrep-score">7.0</span><span class="mock-badge badge-callup">● CALLUP</span></div></div>
+                <div class="natrep-row"><div class="natrep-player"><span class="natrep-name">Lamine Camara</span><span class="natrep-info">CM · 21 · Monaco · L1</span></div><div class="natrep-right"><span class="natrep-score">6.8</span><span class="mock-badge badge-callup">● CALLUP</span></div></div>
+                <div class="natrep-row"><div class="natrep-player"><span class="natrep-name">Habib Diarra</span><span class="natrep-info">CM · 21 · Strasbourg · L1</span></div><div class="natrep-right"><span class="natrep-score">6.6</span><span class="mock-badge badge-monitor">○ MONITOR</span></div></div>
+              </div>
+              <div class="natrep-col">
+                <div class="natrep-pos">Defence</div>
+                <div class="natrep-row"><div class="natrep-player"><span class="natrep-name">Moussa Niakhaté</span><span class="natrep-info">CB · 28 · Lyon · L1</span></div><div class="natrep-right"><span class="natrep-score">7.2</span><span class="mock-badge badge-callup">● CALLUP</span></div></div>
+                <div class="natrep-row"><div class="natrep-player"><span class="natrep-name">El Hadji Malick Diouf</span><span class="natrep-info">LB · 20 · West Ham · PL</span></div><div class="natrep-right"><span class="natrep-score">6.7</span><span class="mock-badge badge-monitor">○ MONITOR</span></div></div>
+                <div class="natrep-row"><div class="natrep-player"><span class="natrep-name">Formose Mendy</span><span class="natrep-info">CB · 24 · Amiens · L2</span></div><div class="natrep-right"><span class="natrep-score">6.3</span><span class="mock-badge badge-consider">○ CONSIDER</span></div></div>
+              </div>
+            </div>
+            <div class="natrep-verdict">
+              <div class="verdict-bar"></div>
+              <div class="verdict-text">Strong spine available across all three thirds. Niakhaté and Sarr anchor a settled core, while Camara and Diouf headline an exciting young intake. <strong style="color:var(--green)">7 of 8 first-choice picks are under 25.</strong></div>
+            </div>
+          </div>
+
+        </div><!-- end ways-panel -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SPOTLIGHT: WORLD CUP 2026 -->
+  <section class="spotlight">
+    <div class="spotlight-inner">
+      <div class="spotlight-copy reveal">
+        <div class="spotlight-eyebrow"><span class="section-label">World Cup 2026 · Live Now</span></div>
+        <h2 class="spotlight-headline">The World Cup, read in real time.</h2>
+        <p class="spotlight-sub">Prism follows the whole tournament live — AI analysis and news, match-by-match predictions, results, power rankings, and the players lighting it up. One place to know what just happened and what's coming next.</p>
+        <ul class="spotlight-bullets">
+          <li><strong>Top performers &amp; the Golden Boot race</strong>, ranked live</li>
+          <li><strong>ThePrism predictions</strong> — win probabilities for every fixture</li>
+          <li>Live results, group standings &amp; team <strong>power rankings</strong></li>
+          <li>AI match analysis, news, and a "what to watch" next</li>
+        </ul>
+      </div>
+      <div class="wc-mock reveal reveal-delay-1">
+        <div class="mock-bar" style="border-radius:0">
+          <span class="mock-dot mock-dot-r"></span><span class="mock-dot mock-dot-y"></span><span class="mock-dot mock-dot-g"></span>
+          <span class="mock-title">the-prism · world cup 2026</span>
+        </div>
+        <div class="wc-head">
+          <span class="wc-head-trophy">🏆</span>
+          <div style="display:flex;flex-direction:column;gap:1px;">
+            <span class="wc-head-title">World Cup 2026</span>
+            <span class="wc-head-stage">Round of 32 · Live</span>
+          </div>
+          <span class="wc-live"><span class="wc-live-dot"></span>Live</span>
+        </div>
+        <div class="wc-lead-lbl">Golden Boot Race <span>Goals</span></div>
+        <div class="wc-perf">
+          <span class="wc-perf-rank">1</span><span class="wc-perf-flag">🇫🇷</span>
+          <div class="wc-perf-info"><span class="wc-perf-name">Kylian Mbappé</span><span class="wc-perf-team">France · 4 apps</span></div>
+          <span class="wc-perf-stat">6</span>
+        </div>
+        <div class="wc-perf">
+          <span class="wc-perf-rank">2</span><span class="wc-perf-flag">🇳🇴</span>
+          <div class="wc-perf-info"><span class="wc-perf-name">Erling Haaland</span><span class="wc-perf-team">Norway · 3 apps</span></div>
+          <span class="wc-perf-stat">5</span>
+        </div>
+        <div class="wc-perf">
+          <span class="wc-perf-rank">3</span><span class="wc-perf-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+          <div class="wc-perf-info"><span class="wc-perf-name">Harry Kane</span><span class="wc-perf-team">England · 4 apps</span></div>
+          <span class="wc-perf-stat">5</span>
+        </div>
+        <div class="wc-intel">
+          <div class="wc-intel-card"><span class="wc-intel-lbl">Title pick</span><span class="wc-intel-val accent">🇫🇷 France</span></div>
+          <div class="wc-intel-card"><span class="wc-intel-lbl">Top assists</span><span class="wc-intel-val">Olise · 5</span></div>
+          <div class="wc-intel-card"><span class="wc-intel-lbl">Latest</span><span class="wc-intel-val">🇫🇷 3–0 🇸🇪</span></div>
+        </div>
+        <div class="wc-bracket">
+          <div class="wc-bracket-lbl">Knockout Bracket <span>Round of 16</span></div>
+          <div class="wc-bracket-ties">
+            <div class="wc-bracket-tie"><span class="wc-bt-team">🇫🇷 France</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇵🇾 Paraguay</span></div>
+            <div class="wc-bracket-tie"><span class="wc-bt-team">🇲🇦 Morocco</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇨🇦 Canada</span></div>
+            <div class="wc-bracket-tie"><span class="wc-bt-team">🇧🇷 Brazil</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇳🇴 Norway</span></div>
+            <div class="wc-bracket-tie"><span class="wc-bt-team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</span><span class="wc-bt-vs">v</span><span class="wc-bt-team">🇲🇽 Mexico</span></div>
+          </div>
+        </div>
+        <div class="wc-news">
+          <div class="wc-bracket-lbl">Latest News <span>ESPN</span></div>
+          <div class="wc-news-item"><span class="wc-news-dot">▸</span><span class="wc-news-text">Pubs cleared to stay open until 5 a.m. for the England v Mexico World Cup clash</span></div>
+          <div class="wc-news-item"><span class="wc-news-dot">▸</span><span class="wc-news-text">Gomez: Pulisic needs to spearhead the USMNT attack against Belgium</span></div>
+        </div>
+        <div class="wc-take">
+          <svg viewBox="0 0 28 28" width="13" height="13"><use href="#prism-logo"/></svg>
+          <span class="wc-take-text"><b>ThePrism take:</b> France look the team to beat after a 3–0 win over Sweden, with Mbappé already on 8 goal involvements. Morocco stunned the Netherlands 3–2 on penalties to reach the last 16.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COVERAGE -->
+  <section class="coverage" id="coverage">
+    <div class="coverage-inner">
+      <div class="coverage-header">
+        <p class="section-label reveal">Coverage</p>
+        <h2 class="section-headline reveal reveal-delay-1">One platform. The full picture.</h2>
+        <p class="section-sub reveal reveal-delay-2">Live data, just one prompt away.</p>
+      </div>
+      <div class="coverage-stats">
+        <div class="coverage-stat reveal"><div class="coverage-stat-val">5</div><div class="coverage-stat-lbl">Leagues covered</div><div class="coverage-stat-sub">Top 5 European leagues</div></div>
+        <div class="coverage-stat reveal reveal-delay-1"><div class="coverage-stat-val">70<span>+</span></div><div class="coverage-stat-lbl">Stats per player, per season</div><div class="coverage-stat-sub">Goals to aerials, xG to duels</div></div>
+        <div class="coverage-stat reveal reveal-delay-2"><div class="coverage-stat-val">4</div><div class="coverage-stat-lbl">Report types</div><div class="coverage-stat-sub">Scout · Comparison · National · Tactical</div></div>
+        <div class="coverage-stat reveal reveal-delay-3"><div class="coverage-stat-val">4</div><div class="coverage-stat-lbl">Position models</div><div class="coverage-stat-sub">GK · DEF · MID · FWD — each scored separately</div></div>
+      </div>
+      <div class="coverage-leagues reveal">
+        <span class="league-tag">Premier League</span>
+        <span class="league-tag">Bundesliga</span>
+        <span class="league-tag">Serie A</span>
+        <span class="league-tag">Ligue 1</span>
+        <span class="league-tag">La Liga</span>
+        <span class="league-tag" style="border-color:rgba(37,99,235,0.4);color:var(--accent);background:var(--accent-lo);"><span class="feature-live-dot" style="margin-right:5px;"></span>World Cup 2026 · Live</span>
+        <span class="coverage-note">+ more leagues coming soon</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO IT'S FOR -->
+  <section class="who" id="who">
+    <div class="section-inner">
+      <div class="who-header">
+        <p class="section-label reveal">Who it's for</p>
+        <h2 class="section-headline reveal reveal-delay-1">Built for anyone who loves the game.</h2>
+        <p class="section-sub reveal reveal-delay-2">Enterprise-level analysis capabilities, democratised. Whether you work in football or just follow it — Prism gives you the same tools the professionals use.</p>
+      </div>
+      <div class="who-grid">
+        <div class="who-card reveal">
+          <div class="who-title">Scout / Head of Recruitment</div>
+          <div class="who-desc">Build shortlists in minutes. Find players matching your exact positional and statistical profile across Europe's top 5 leagues.</div>
+          <div class="who-usecase">"Show me the top creative midfielders in Serie A under 24 by key passes"</div>
+        </div>
+        <div class="who-card reveal reveal-delay-1">
+          <div class="who-title">Performance Analyst</div>
+          <div class="who-desc">Per-90 metrics, position-specific models, and multi-season data — all in one place, available the moment you ask.</div>
+          <div class="who-usecase">"Compare our squad's pressing stats vs the league average this season"</div>
+        </div>
+        <div class="who-card reveal reveal-delay-2">
+          <div class="who-title">Coach</div>
+          <div class="who-desc">Understand your opponents before you face them. Spot the patterns in their play. Know your next signing inside out.</div>
+          <div class="who-usecase">"Break down Dortmund's pressing triggers and high line from recent matches"</div>
+        </div>
+        <div class="who-card reveal">
+          <div class="who-title">Sporting Director</div>
+          <div class="who-desc">Cross-league comparisons and data-backed shortlists — everything you need to validate a recommendation fast.</div>
+          <div class="who-usecase">"How does our top target compare to the best CBs available in his age bracket?"</div>
+        </div>
+        <div class="who-card reveal reveal-delay-1">
+          <div class="who-title">Talent Watcher</div>
+          <div class="who-desc">Track emerging players across Europe's top 5 leagues before the headlines catch up. Be first to the next big name.</div>
+          <div class="who-usecase">"Who are the best U21 midfielders in Ligue 1 right now?"</div>
+        </div>
+        <div class="who-card reveal reveal-delay-2">
+          <div class="who-title">Football Fan</div>
+          <div class="who-desc">Settle arguments. Find the next Pedri. Dig into the numbers behind the player you've been watching all season. The same data the pros use — now yours.</div>
+          <div class="who-usecase">"Is Bellingham actually performing better than last season? Show me the numbers."</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="section-inner">
+      <div class="faq-header">
+        <p class="section-label reveal">FAQ</p>
+        <h2 class="section-headline reveal reveal-delay-1">Questions, answered.</h2>
+        <p class="section-sub reveal reveal-delay-2">Everything you need to know before you get started.</p>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <div class="faq-trigger" onclick="toggleFaq(this)">
+            <div class="faq-q">Do I need a football background to use The Prism?</div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-body">
+            <div class="faq-a">Not at all. Just ask your question in plain English — Prism handles the analysis. Whether you're a professional scout or a weekend fan, the platform works the same way for everyone.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-trigger" onclick="toggleFaq(this)">
+            <div class="faq-q">What leagues and competitions are covered?</div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-body">
+            <div class="faq-a">We cover the <strong>Premier League, Bundesliga, Serie A, Ligue 1, and La Liga</strong> — plus <strong>live World Cup 2026 data</strong>, updated as matches are played. More leagues are coming soon.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-trigger" onclick="toggleFaq(this)">
+            <div class="faq-q">What can I actually ask it?</div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-body">
+            <div class="faq-a">Anything football. "Who are the top young CBs in the Bundesliga?" "How does Salah compare to Mbappé this season?" "Build me a national team shortlist for Germany." "Who are the standout performers at World Cup 2026?" Just type it.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-trigger" onclick="toggleFaq(this)">
+            <div class="faq-q">How is this different from other stats platforms?</div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-body">
+            <div class="faq-a">You ask questions, you get answers — not raw data tables to figure out yourself. Every output is structured, contextualised, and designed to help you make a decision. No dashboards to learn, no exports to wrangle.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-trigger" onclick="toggleFaq(this)">
+            <div class="faq-q">How current is the data?</div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-body">
+            <div class="faq-a">Live. Data is pulled in real time when you ask. World Cup 2026 match data updates as games are played — so what you get back reflects what actually happened, not yesterday's cache.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-trigger" onclick="toggleFaq(this)">
+            <div class="faq-q">Is early access free?</div>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-body">
+            <div class="faq-a">Early access is invite-only and free for beta users. We're bringing people in gradually to make sure the experience is right before opening up more broadly. Join the waitlist and we'll be in touch.</div>
+          </div>
+        </div>
+      </div>
+      <p class="faq-contact reveal">Still have a question? Email us at <a href="mailto:hello@theprismai.com">hello@theprismai.com</a> and we'll get back to you.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="waitlist">
+    <div class="cta-inner">
+      <div class="cta-logo">
+        <div class="cta-glow-wrap"><svg width="48" height="48"><use href="#prism-logo"/></svg></div>
+      </div>
+      <h2 class="cta-headline reveal">Be first in the door.</h2>
+      <p class="cta-sub reveal reveal-delay-1">Early access is limited. Tell us you're interested and we'll be in touch when your spot is ready.</p>
+      <form class="cta-form reveal reveal-delay-2" onsubmit="handleSubmit(event,'cta')">
+        <input class="cta-input" type="email" id="cta-email" placeholder="Enter your email" autocomplete="email"/>
+        <button class="cta-btn" type="submit">Request Early Access</button>
+      </form>
+      <p class="cta-note reveal reveal-delay-3">No credit card · Invite-only · Built for football people</p>
+      <p class="cta-contact reveal reveal-delay-4">Questions first? Email us at <a href="mailto:hello@theprismai.com">hello@theprismai.com</a></p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="#top" class="footer-logo">
+      <svg width="22" height="22"><use href="#prism-logo"/></svg>
+      <span class="footer-brand">The Prism<span style="color:var(--accent)">.</span></span>
+    </a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+      <a href="#waitlist" class="footer-link">Early access</a>
+      <a href="/privacy" class="footer-link">Privacy</a>
+      <a href="mailto:hello@theprismai.com" class="footer-link">Contact</a>
+      <span class="footer-copy">© 2026 The Prism</span>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 80 + i * 70);
+    });
+    (function initWaysTabs() {
+      const tabs = document.querySelectorAll('.ways-tab');
+      const panes = document.querySelectorAll('.ways-pane');
+      const order = ['chat', 'search', 'reports', 'team', 'national'];
+      let timer;
+      let auto = true;   // auto-advance until the user takes control, then stop for good
+      function switchTo(id) {
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          const p = t.querySelector('.ways-tab-prog');
+          const np = p.cloneNode(true); p.replaceWith(np);
+        });
+        panes.forEach(p => p.classList.remove('active'));
+        document.querySelector(`.ways-tab[data-ways="${id}"]`).classList.add('active');
+        document.getElementById(`ways-${id}`).classList.add('active');
+        clearTimeout(timer);
+        // Only keep the carousel going while it's still auto-driving. Once the user
+        // clicks a tab we hand them the wheel and never yank it away mid-read.
+        if (auto) {
+          const next = order[(order.indexOf(id) + 1) % order.length];
+          timer = setTimeout(() => switchTo(next), 6000);
+        }
+      }
+      const tabBar = document.querySelector('.ways-tab-bar');
+      const waysHint = document.getElementById('waysHint');
+      function stopAuto() { auto = false; clearTimeout(timer); if (tabBar) tabBar.classList.add('no-auto'); if (waysHint) waysHint.classList.add('hidden'); }
+      tabs.forEach(t => t.addEventListener('click', () => { stopAuto(); switchTo(t.dataset.ways); }));
+
+      // Sub-modes inside Player Search (Build / Ready-made / AI)
+      const modeBtns = document.querySelectorAll('#ways-search .builder-mode');
+      const modePanes = document.querySelectorAll('#ways-search .smode-pane');
+      modeBtns.forEach(b => b.addEventListener('click', () => {
+        stopAuto();   // exploring the sub-modes counts as taking control
+        modeBtns.forEach(x => x.classList.remove('active'));
+        modePanes.forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.getElementById('smode-' + b.dataset.smode).classList.add('active');
+      }));
+
+      timer = setTimeout(() => switchTo('search'), 6000);
+    })();
+    function toggleFaq(trigger) {
+      const item = trigger.closest('.faq-item');
+      const body = item.querySelector('.faq-body');
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-body').classList.remove('open');
+      });
+      if (!wasOpen) {
+        item.classList.add('open');
+        body.classList.add('open');
+      }
+    }
+    async function handleSubmit(e, source) {
+      e.preventDefault();
+      const input = document.getElementById(source === 'hero' ? 'hero-email' : 'cta-email');
+      const btn = e.target.querySelector('button');
+      const email = input.value.trim();
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        input.focus();
+        input.style.borderColor = '#f87171';
+        return;
+      }
+      const original = btn.textContent;
+      btn.textContent = 'Joining…';
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, source })
+        });
+        if (!res.ok) throw new Error('failed');
+        if (window.plausible) plausible('Waitlist Signup', { props: { source } });
+        showWaitlistConfirmation(e.target);
+      } catch (err) {
+        btn.textContent = 'Try again';
+        btn.disabled = false;
+        input.style.borderColor = '#f87171';
+        setTimeout(() => { btn.textContent = original; }, 2200);
+      }
+    }
+
+    /* ── Waitlist confirmation + organic share ── */
+    const SHARE_URL = 'https://theprismai.com';
+    const SHARE_TEXT = "The Prism — enterprise-level football analysis, for everyone. Ask anything and get scout reports, shortlists and World Cup 2026 intel in seconds. Get early access:";
+
+    // Swap the submitted form (and its note) for a "you're in" panel with a soft share prompt.
+    function showWaitlistConfirmation(formEl) {
+      const note = formEl.nextElementSibling;
+      const panel = document.createElement('div');
+      panel.className = 'wl-confirm';
+      panel.innerHTML = `
+        <div class="wl-confirm-badge">✓</div>
+        <h3 class="wl-confirm-title">You're on the list.</h3>
+        <p class="wl-confirm-sub">Check your inbox — your first Prism dispatch is on its way. We're opening early access in waves, so keep an eye out for your invite.</p>
+        <span class="wl-share-lbl">Know a football person? Bring them in.</span>
+        <div class="wl-share-btns">
+          <button type="button" class="wl-share-btn" onclick="shareWaitlist('x', this)">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span class="wl-share-label">Share on X</span>
+          </button>
+          <button type="button" class="wl-share-btn" onclick="shareWaitlist('whatsapp', this)">
+            <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.2c-.24.68-1.42 1.3-1.95 1.34-.5.05-1.13.24-3.66-.76-3.08-1.21-5.04-4.34-5.19-4.54-.15-.2-1.24-1.65-1.24-3.15 0-1.5.79-2.24 1.07-2.54.28-.31.61-.38.81-.38.2 0 .4.002.58.01.19.008.44-.07.68.52.24.6.83 2.06.9 2.2.07.15.12.32.02.52-.1.2-.15.32-.29.5-.15.17-.31.39-.44.52-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12.99 2.06 1.3 2.36 1.45.29.15.46.12.63-.07.17-.2.72-.84.91-1.13.2-.29.39-.24.66-.15.27.1 1.71.81 2 .96.29.15.49.22.56.34.07.12.07.72-.17 1.4z"/></svg>
+            <span class="wl-share-label">WhatsApp</span>
+          </button>
+          <button type="button" class="wl-share-btn" onclick="shareWaitlist('copy', this)">
+            <svg viewBox="0 0 24 24"><path d="M3.9 12a3.1 3.1 0 0 1 3.1-3.1h3v-1.8h-3a4.9 4.9 0 0 0 0 9.8h3v-1.8h-3A3.1 3.1 0 0 1 3.9 12zm4.1 1h8v-2H8v2zm9-6.9h-3v1.8h3a3.1 3.1 0 0 1 0 6.2h-3v1.8h3a4.9 4.9 0 0 0 0-9.8z"/></svg>
+            <span class="wl-share-label">Copy link</span>
+          </button>
+        </div>`;
+      formEl.replaceWith(panel);
+      if (note && (note.classList.contains('hero-note') || note.classList.contains('cta-note'))) {
+        note.remove();
+      }
+    }
+
+    function shareWaitlist(kind, btn) {
+      if (kind === 'x') {
+        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(SHARE_TEXT) + '&url=' + encodeURIComponent(SHARE_URL), '_blank', 'noopener');
+      } else if (kind === 'whatsapp') {
+        window.open('https://wa.me/?text=' + encodeURIComponent(SHARE_TEXT + ' ' + SHARE_URL), '_blank', 'noopener');
+      } else if (kind === 'copy') {
+        const label = btn.querySelector('.wl-share-label');
+        const flash = () => { if (!label) return; const prev = label.textContent; label.textContent = 'Copied!'; setTimeout(() => { label.textContent = prev; }, 1600); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(SHARE_URL).then(flash).catch(flash);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = SHARE_URL; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); } catch (e) {}
+          document.body.removeChild(ta); flash();
+        }
+      }
+      if (window.plausible) plausible('Waitlist Share', { props: { method: kind } });
+    }
+
+    /* ── Hero passing-network field ── */
+    (function initHeroField() {
+      const canvas = document.getElementById('hero-field');
+      if (!canvas) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const hero = canvas.closest('.hero');
+      const ctx = canvas.getContext('2d');
+      let W = 0, H = 0, t = 0, raf = null, running = false;
+
+      // 4-3-3 formation, normalised coordinates (a living passing network)
+      const FORMATION = [
+        [0.50, 0.94],                                           // GK
+        [0.22, 0.78], [0.40, 0.81], [0.60, 0.81], [0.78, 0.78], // back four
+        [0.30, 0.58], [0.50, 0.62], [0.70, 0.58],               // midfield three
+        [0.24, 0.36], [0.50, 0.32], [0.76, 0.36]                // front three
+      ];
+      let nodes = [], pulses = [];
+
+      function buildNodes() {
+        nodes = FORMATION.map(([x, y]) => ({
+          bx: x, by: y,
+          ph: Math.random() * Math.PI * 2,
+          sp: 0.3 + Math.random() * 0.5
+        }));
+        pulses = [];
+      }
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = hero.clientWidth; H = hero.clientHeight;
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      const LINK_DIST = () => W * (W < 640 ? 0.42 : 0.30);
+
+      function draw() {
+        t++;
+        ctx.clearRect(0, 0, W, H);
+
+        // live positions (gentle breathing drift)
+        const N = nodes.map(n => ({
+          x: (n.bx + Math.sin(t * 0.005 * n.sp + n.ph) * 0.013) * W,
+          y: (n.by + Math.cos(t * 0.005 * n.sp + n.ph) * 0.013) * H,
+          ph: n.ph, sp: n.sp
+        }));
+
+        // connections
+        const maxD = LINK_DIST();
+        for (let i = 0; i < N.length; i++) {
+          for (let j = i + 1; j < N.length; j++) {
+            const dx = N[i].x - N[j].x, dy = N[i].y - N[j].y;
+            const d = Math.hypot(dx, dy);
+            if (d < maxD) {
+              const pulse = 0.5 + 0.5 * Math.sin(t * 0.018 + N[i].ph);
+              const fade = 1 - d / maxD;
+              ctx.strokeStyle = `rgba(56,116,245,${(0.09 + pulse * 0.13) * fade})`;
+              ctx.lineWidth = 0.6 + pulse * 0.8;
+              ctx.beginPath();
+              ctx.moveTo(N[i].x, N[i].y);
+              ctx.lineTo(N[j].x, N[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // spawn a travelling pass every so often
+        if (t % 34 === 0 && N.length > 1) {
+          const a = Math.floor(Math.random() * N.length);
+          let b = Math.floor(Math.random() * N.length);
+          if (b === a) b = (b + 1) % N.length;
+          pulses.push({ ax: N[a].x, ay: N[a].y, bx: N[b].x, by: N[b].y, p: 0 });
+        }
+        pulses = pulses.filter(p => p.p < 1);
+        for (const p of pulses) {
+          p.p += 0.022;
+          const e = p.p < 0.5 ? 2 * p.p * p.p : 1 - Math.pow(-2 * p.p + 2, 2) / 2; // ease in-out
+          const x = p.ax + (p.bx - p.ax) * e, y = p.ay + (p.by - p.ay) * e;
+          const g = ctx.createRadialGradient(x, y, 0, x, y, 6);
+          g.addColorStop(0, `rgba(147,197,253,${0.9 * (1 - p.p)})`);
+          g.addColorStop(1, 'transparent');
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+        }
+
+        // nodes
+        for (const n of N) {
+          const pulse = 0.5 + 0.5 * Math.sin(t * 0.014 * n.sp + n.ph);
+          const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 18 + pulse * 10);
+          g.addColorStop(0, `rgba(37,99,235,${0.30 * pulse})`);
+          g.addColorStop(1, 'transparent');
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(n.x, n.y, 18 + pulse * 10, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = `rgba(160,200,255,${0.65 + pulse * 0.35})`;
+          ctx.beginPath(); ctx.arc(n.x, n.y, 2.2 + pulse * 1.4, 0, Math.PI * 2); ctx.fill();
+        }
+
+        raf = requestAnimationFrame(draw);
+      }
+
+      function start() { if (!running) { running = true; raf = requestAnimationFrame(draw); } }
+      function stop()  { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
+
+      buildNodes();
+      resize();
+      window.addEventListener('resize', () => { resize(); });
+
+      // pause when the hero scrolls out of view
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => e.isIntersecting ? start() : stop());
+      }, { threshold: 0.01 });
+      io.observe(hero);
+
+      // pause when the tab is hidden
+      document.addEventListener('visibilitychange', () => {
+        document.hidden ? stop() : start();
+      });
+
+      start();
+    })();
+  </script>
+</body>
+</html>
