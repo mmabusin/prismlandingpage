@@ -6,6 +6,7 @@
   <title>The Prism · Football intelligence you can ask</title>
   <meta name="description" content="Ask The Prism about any player, team or league in Europe's top five. It finds the numbers, then tells you what they mean." />
   <meta name="theme-color" content="#ffffff" />
+  <meta name="color-scheme" content="light" />
   <link rel="canonical" href="https://www.theprismai.com/" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='6' fill='%23ffffff'/%3E%3Cline x1='4' y1='6' x2='4' y2='22' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3Cline x1='24' y1='6' x2='24' y2='22' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3Cline x1='4' y1='6' x2='24' y2='6' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='14' cy='16' r='3' fill='%232563EB'/%3E%3C/svg%3E" />
   <meta property="og:type" content="website" />
@@ -78,23 +79,11 @@
       --page: 1120px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #141414; --surface: #1a1a1a; --surface2: #1c1c1c; --surface3: #1f1f1f;
-        --border: #262626; --border2: #2a2a2a; --border-strong: #404040;
-        --accent-dim: rgba(37,99,235,0.12); --accent-soft: rgba(37,99,235,0.15);
-        --text: #ffffff; --text-dim: #d4d4d4; --text-muted: #a3a3a3;
-        --muted-1: #d4d4d4; --muted-2: #a3a3a3; --muted-3: #737373;
-        --user-bg: #1c1c1c; --surface-light: #1f1f1f;
-        --card-bg: #1a1a1a; --card-pill-bg: #1f1f1f;
-        --card-accent-border: rgba(37,99,235,.35);
-        --card-btn-bg: #2563EB; --card-btn-fg: #ffffff; --card-btn-bg-hover: #1d4ed8;
-        --shadow-card: none;
-      }
-      body { color-scheme: dark; }
-    }
-
-    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    /* The page is light, always. The app has a dark mode behind its own toggle,
+       but this page is the shop window and it should look the same to everyone,
+       so it does not follow the visitor's system setting. `color-scheme: light`
+       keeps form fields, scrollbars and autofill light on a dark machine. */
+    html { color-scheme: light; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
     body {
       font-family: var(--font); background: var(--bg); color: var(--text);
       -webkit-font-smoothing: antialiased; overflow-x: hidden; line-height: 1.55;
