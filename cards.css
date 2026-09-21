@@ -796,3 +796,135 @@ body.dark .ntr-monitor { background: rgba(180,83,9,.15); color: #f97316; }
       .team-dna-report .dna-squad-grid,
       .wc-groups-grid, .sl-card-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ── terminal panels (Home) ── */
+.term-panel {
+  grid-column: span 4; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-sm); display: flex; flex-direction: column; overflow: hidden;
+  min-width: 0;
+}
+.term-panel.wide { grid-column: span 6; }
+.term-panel.w8 { grid-column: span 8; }
+.term-panel.full { grid-column: span 12; }
+@media (max-width: 1180px) {
+.term-panel { grid-column: span 6; }
+.term-panel.wide, .term-panel.w8, .term-panel.full { grid-column: span 12; }
+}
+@media (max-width: 720px) {
+.term-panel, .term-panel.wide, .term-panel.w8, .term-panel.full { grid-column: span 12; }
+}
+.term-hd {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 7px 10px; border-bottom: 1px solid var(--border); background: var(--surface2);
+}
+.term-hd .t {
+  font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.term-hd .t .lv { width: 5px; height: 5px; border-radius: 50%; background: var(--live); }
+.term-hd .code {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .05em; color: var(--text-muted);
+  border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px;
+}
+.term-note {
+  padding: 5px 10px; font-size: 9px; color: var(--text-muted);
+  border-bottom: 1px solid var(--border); background: var(--surface2); line-height: 1.45;
+}
+.trow {
+  display: flex; align-items: center; gap: 8px; padding: 5px 10px;
+  font-size: var(--fs-body-sm); border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .1s; min-width: 0;
+}
+.trow:last-child { border-bottom: none; }
+.trow:hover { background: var(--accent-dim); }
+.trow .rk { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); width: 13px; flex-shrink: 0; }
+.trow .nm { flex: 1 1 auto; min-width: 46px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trow .nm small { color: var(--text-muted); }
+.trow .val { font-family: var(--font-mono); font-size: var(--fs-body-sm); font-weight: 500; flex-shrink: 0; }
+.trow .php { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--surface3); flex-shrink: 0; display: inline-block; }
+.tscore { font-family: var(--font-mono); font-size: var(--fs-body-sm); font-weight: 500; color: var(--accent); flex-shrink: 0; }
+/* board rows: position chip */
+.trow .pos {
+  font-family: var(--font-mono); font-size: 8px; font-weight: 500; letter-spacing: .04em;
+  color: var(--text-muted); border: 1px solid var(--border); border-radius: 3px;
+  padding: 1px 4px; flex-shrink: 0; width: 30px; text-align: center;
+}
+.trow .val.dn { color: var(--danger); }
+/* ── Terminal loading skeleton ──────────────────────────────────────────────
+   Panel-shaped placeholder used by _v3TermSkeleton() while the Leagues
+   terminal's fetches are in flight. It replaces the old behaviour where the
+   legacy league picker flashed for the whole cold load. Row metrics match
+   .trow / .trow .php so the layout does not shift when data lands. */
+.term-skel .sk-row { padding: 6px 10px; }
+/* .term-hd shares --surface2 with .sk, so the title bar needs its own tint. */
+.term-skel .term-hd .sk { background: color-mix(in srgb, var(--text) 11%, transparent); }
+/* ── Home skeleton ────────────────────────────────────────────────────────
+   Shaped like .term-panel so the real content swaps in without the layout
+   jumping. Shown only on a first-ever visit — after that the stale-while-
+   revalidate cache paints real data immediately. */
+.sk-panel .term-hd { border-bottom: 1px solid var(--border); }
+/* ── Home panel rows ── */
+.trow.tmv { cursor: pointer; }
+/* .term-panel carries `grid-column: span 4` for the terminal's four-column
+   grid. Left alone it makes each panel span this two-column grid as well, so
+   the pair stacks instead of sitting side by side. */
+.hw-grid > .term-panel { grid-column: auto; }
+/* ═══════════════════════════════════════════════════════════════════════════
+   Indexes — the tester's own panels, and the builder that makes them.
+   Appended at the END of the file on purpose: v3 rules must outrank the
+   inherited v2 ones by source order rather than by !important.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* A panel the user made, marked by a spectrum edge rather than a badge: it reads
+   as theirs at a glance without adding another label to a dense grid. */
+.term-panel.ix-panel {
+  border-left: 2px solid var(--accent);
+}
+.term-panel.ix-panel .term-hd .t { color: var(--text); }
+.term-hd .code.ix-code { cursor: pointer; }
+.term-hd .code.ix-code:hover { color: var(--accent); border-color: var(--accent); }
+/* Column labels. Right-aligned to sit over the numbers, and the score label
+   carries the accent its own column uses so the two are unmistakably paired. */
+.ix-cols {
+  display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap;
+  padding: 4px 10px 5px;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .06em;
+  text-transform: uppercase; border-bottom: 1px solid var(--border);
+}
+.ix-col-s { color: var(--accent); }
+.ix-col-v { color: var(--text-muted); }
+.ix-col-ok { color: var(--success); }
+/* The strip sits under a sub-heading inside a panel that already has a note, so
+   it must not add a second heavy rule across the panel. */
+.tsub + .ix-cols { border-bottom-color: var(--border); padding-top: 2px; }
+.ix-hd-r { display: inline-flex; align-items: center; gap: 6px; }
+.ix-edit {
+  padding: 1px 6px; font-family: var(--font-mono); font-size: 9px; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--text-muted); background: none;
+  border: 1px solid var(--border); border-radius: 3px; cursor: pointer;
+}
+.ix-edit:hover { color: var(--accent); border-color: var(--accent); }
+.term-panel.ix-panel .term-hd .code { color: var(--accent); border-color: var(--accent); }
+/* The standing "one more" tile, at the end of the tester's own panels. */
+.term-panel.ix-new {
+  border-style: dashed; background: none; cursor: pointer;
+  align-items: center; justify-content: center;
+  /* Sit at the top of the grid cell rather than stretching to match the height
+     of the index beside it, which turns a prompt into a large empty box. */
+  align-self: start;
+}
+.term-panel.ix-new:hover { border-color: var(--accent); background: var(--accent-dim); }
+/* A panel that must begin a row. Used by the scout board, which leads a line of
+   three: the board, the week's goals and the week's best performances. Without
+   it that line starts wherever the index panels above it happen to end, and the
+   trio splits across two rows for any tester with the wrong number of indexes
+   saved. Only the start is pinned, so the responsive span rules still apply and
+   the trio folds to two-up and then one-up on narrower screens. */
+.term-panel.row-start { grid-column: 1 / span 4; }
+@media (max-width: 1180px) {
+.term-panel.row-start { grid-column: 1 / span 6; }
+}
+@media (max-width: 720px) {
+.term-panel.row-start { grid-column: 1 / span 12; }
+}

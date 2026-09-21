@@ -26,8 +26,7 @@
     /* ══════════════════════════════════════════════════════════════
        The Prism — landing page (v5)
        Tokens, type and component grammar are the app's own, so the
-       page and the product read as one thing. Light first, dark on
-       the visitor's system preference.
+       page and the product read as one thing. Always light.
        ══════════════════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -52,6 +51,8 @@
       --teal:      #2563EB;
       --success:   #16a34a;
       --danger:    #e23b4a;
+      --warning:   #f97316;
+      --ink-text:  #ffffff;   /* text on the ink-dark card header */
       --muted-1: #525252; --muted-2: #737373; --muted-3: #a3a3a3;
       --user-bg: #fafafa;
       --surface-light: #fafafa;
@@ -73,6 +74,8 @@
       --fs-label: 0.68rem;
       --fs-meta: 0.72rem;
       --fs-body: 0.84rem;
+      --fs-body-sm: 0.78rem;
+      --live: #e5392f;
       --text-xs: 0.625rem;
 
       --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-pill: 9999px;
@@ -99,8 +102,8 @@
     h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.03em; font-weight: 800; }
     h2 { font-size: clamp(1.5rem, 3.6vw, 2.1rem); line-height: 1.12; }
     .lede { color: var(--text-dim); font-size: 0.95rem; max-width: 60ch; margin-top: 10px; }
-    section { padding: 72px 0; border-top: 1px solid var(--border); }
-    .sec-head { margin-bottom: 30px; }
+    section { padding: 60px 0; border-top: 1px solid var(--border); }
+    .sec-head { margin-bottom: 24px; }
 
     /* ── Nav ── */
     nav {
@@ -108,11 +111,14 @@
       backdrop-filter: saturate(180%) blur(12px); border-bottom: 1px solid var(--border);
     }
     .nav-in { max-width: var(--page); margin: 0 auto; padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 22px; }
-    .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    /* The brand holds the left edge, so the CTA sits hard right whether or not
+       the links are showing. Hanging the auto margin off the links instead put
+       the button next to the wordmark the moment they were hidden on a phone. */
+    .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; margin-right: auto; }
     .brand svg { color: var(--text); }
     .brand-name { font-family: var(--font-display); font-weight: 800; font-size: 1rem; letter-spacing: -0.025em; }
     .brand-dot { color: var(--accent); }
-    .nav-links { margin-left: auto; display: flex; gap: 4px; list-style: none; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
     .nav-links a {
       font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 600;
       text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted);
@@ -131,18 +137,22 @@
     @media (max-width: 860px) { .nav-links { display: none; } }
 
     /* ── Hero ── */
-    .hero { padding: 64px 0 56px; border-top: 0; }
+    .hero { padding: 48px 0 52px; border-top: 0; }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono);
       font-size: var(--fs-label); text-transform: uppercase; letter-spacing: .1em;
       color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--r-pill);
       padding: 5px 12px; background: var(--surface2);
     }
-    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    /* On a narrow phone the full line wraps to two and the pill loses its shape,
+       so the qualifier drops and the badge stays one line. */
+    @media (max-width: 430px) { .eyebrow-rest { display: none; } }
     h1 {
       font-size: clamp(2.1rem, 5.6vw, 3.45rem); line-height: 1.04; margin: 20px 0 0; max-width: 17ch;
     }
     .hero-sub { color: var(--text-dim); font-size: 1.02rem; max-width: 54ch; margin-top: 16px; }
+    .hero-sub strong { color: var(--text); font-weight: 600; }
     .hero-form { display: flex; gap: 8px; margin-top: 26px; max-width: 430px; }
     .field {
       flex: 1; min-width: 0; height: 42px; border: 1px solid var(--border-strong);
@@ -211,48 +221,96 @@
       margin-top: 12px; display: flex; gap: 14px; flex-wrap: wrap;
     }
 
-    /* ── Split panels (numbers vs read) ── */
-    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
-    .panel { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
-    .panel-head {
-      padding: 11px 16px; border-bottom: 1px solid var(--border); background: var(--surface2);
-      font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 700;
-      text-transform: uppercase; letter-spacing: .1em; color: var(--text-muted);
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    }
-    .panel-head .ai { color: var(--accent); }
-    .panel-body { padding: 16px; font-size: var(--fs-body); color: var(--text-dim); }
-    .panel-body strong { color: var(--text); }
-
-    /* ── Three-step strip ── */
-    .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 26px; }
-    @media (max-width: 720px) { .flow { grid-template-columns: 1fr; } }
-    .flow-step { border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; background: var(--surface2); position: relative; }
-    .flow-step .n { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--accent); letter-spacing: .1em; }
-    .flow-step h3 { font-size: 0.95rem; margin: 6px 0 4px; }
-    .flow-step p { font-size: var(--fs-meta); color: var(--text-muted); }
-
     .points { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 26px; }
     @media (max-width: 720px) { .points { grid-template-columns: 1fr; } }
     .point { border-left: 2px solid var(--accent); padding-left: 16px; }
     .point h3 { font-size: 1.02rem; margin-bottom: 6px; }
     .point p { color: var(--text-dim); font-size: var(--fs-body); }
 
-    /* ── Tiles ── */
-    .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    @media (max-width: 960px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 620px) { .tiles { grid-template-columns: 1fr; } }
-    .tile {
-      border: 1px solid var(--border); border-radius: var(--r-md); padding: 18px;
-      background: var(--surface); transition: border-color .15s;
+    /* ── Colour ──
+       The app's own accents, used with a little more confidence on the landing page:
+       the spectrum rule from the Refractions masthead, one blue, and pale blue bands
+       so the page alternates rather than running as one long white sheet. */
+    .h1-accent { color: var(--accent); }
+    .eyebrow .dot { box-shadow: 0 0 0 0 rgba(37,99,235,.45); animation: pulse-dot 2.4s ease-out infinite; }
+    @keyframes pulse-dot { 0% { box-shadow: 0 0 0 0 rgba(37,99,235,.45); } 70%, 100% { box-shadow: 0 0 0 7px rgba(37,99,235,0); } }
+    .hero .answer-frame { position: relative; border-top: 0; padding-top: 21px; }
+    .hero .answer-frame::before {
+      content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--spectrum);
     }
-    .tile:hover { border-color: var(--border-strong); }
-    .tile .tname {
-      font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 700;
-      text-transform: uppercase; letter-spacing: .1em; color: var(--accent); margin-bottom: 8px;
+    section.band { background: linear-gradient(180deg, #f5f8ff 0%, #fbfcff 100%); }
+    section.band .shot, section.band .term-panel, section.band .askbar, section.band .ix-rule { background-color: #fff; }
+
+    /* prose the app writes between and after its cards */
+    .rp-p { font-size: var(--fs-body); color: var(--text-dim); margin: 12px 0 0; line-height: 1.65; }
+    .rp-p strong { color: var(--text); }
+    .rp-h { font-size: 1rem; margin: 16px 0 4px; }
+    .rp-list { margin: 10px 0 0 18px; font-size: var(--fs-body); color: var(--text-dim); }
+
+    /* ── Real screens ── */
+    .shots { display: flex; flex-direction: column; gap: 14px; }
+    .shot {
+      margin: 0; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden;
+      background: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 32px -18px rgba(0,0,0,.18);
     }
-    .tile p { font-size: var(--fs-body); color: var(--text-dim); }
+    .shot img { display: block; width: 100%; height: auto; }
+    .shot-cap { font-size: var(--fs-meta); color: var(--text-muted); margin-top: 12px; max-width: 70ch; }
+
+    /* ── Long recorded answers: capped with a fade, opened on request ── */
+    .answer-frame.capped { max-height: 560px; overflow: hidden; position: relative; }
+    .answer-frame.capped::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 110px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0), var(--surface) 85%); pointer-events: none;
+    }
+    .more {
+      display: none; margin: 10px auto 0; font-family: var(--font-mono); font-size: var(--fs-label);
+      font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--accent);
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-pill);
+      padding: 7px 14px; cursor: pointer;
+    }
+    .more.show { display: block; }
+
+    /* A screenshot cut mid-panel: fade the cut so it reads as deliberate */
+    .shot.fade { position: relative; }
+    .shot.fade::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 90%); pointer-events: none;
+    }
+    .shot picture { display: block; }
+    .more-m { display: none; }
+    @media (max-width: 620px) {
+      /* The hero's comparison card is a full season of two players stacked; on a
+         phone that is a screen and a half before anything else on the page. */
+      .answer-frame.capped-m { max-height: 460px; overflow: hidden; position: relative; }
+      .answer-frame.capped-m::after {
+        content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 100px;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), var(--surface) 85%); pointer-events: none;
+      }
+      .more-m.show { display: block; }
+    }
+
+    /* ── Index demo ── */
+    .ix-demo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px 28px; align-items: start; }
+    .ix-left { display: flex; flex-direction: column; gap: 20px; }
+    @media (max-width: 860px) { .ix-demo { grid-template-columns: 1fr; } }
+    .ix-step-lbl {
+      font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 600; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-muted); margin-bottom: 8px; display: flex; align-items: center; gap: 10px;
+    }
+    .ix-rule {
+      border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: var(--r-md);
+      background: var(--surface2); padding: 14px 16px; font-size: 0.92rem; color: var(--text); min-height: 74px;
+      opacity: 0; transition: opacity .4s;
+    }
+    .ix-rule.in { opacity: 1; }
+    .ix-saved {
+      color: var(--success); letter-spacing: .06em; opacity: 0; transition: opacity .3s;
+    }
+    .ix-saved.in { opacity: 1; }
+    #ix-panel { opacity: 0; transform: translateY(8px); transition: opacity .45s, transform .45s; }
+    #ix-panel.in { opacity: 1; transform: none; }
+    #ix-panel .term-panel { background: var(--surface); }
+    #ix-panel .trow { cursor: default; }
 
     /* ── Refractions ── */
     .rfx-rule { height: 3px; background: var(--spectrum); border-radius: 2px; margin-bottom: 26px; }
@@ -313,6 +371,34 @@
     .wl-btn:hover { border-color: var(--accent); color: var(--text); }
     .wl-btn svg { width: 13px; height: 13px; fill: currentColor; }
 
+    /* ── Phones ──
+       Tighter vertical rhythm (the desktop padding leaves a dead band above the
+       fold on a phone), and the recorded cards get to scroll inside their own
+       frame rather than being clipped by it: they are the app's real markup at
+       the app's real density, so a 375px column cannot hold every row. */
+    @media (max-width: 620px) {
+      .hero { padding: 26px 0 44px; }
+      section { padding: 48px 0; }
+      h1 { margin-top: 16px; }
+      .askwrap { margin-top: 28px; }
+      .answer-frame { padding: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .dna-header, .dna-meta, .dna-record, .rb-head, .rb-tagbar { flex-wrap: wrap; }
+      /* The report CSS sizes these for a desktop column (a 190px label track, a
+         100px score track and a 206px indent). Matched selector weight so these
+         win over cards.css rather than needing !important. */
+      .team-dna-report .dna-header { padding: 18px 16px; }
+      .team-dna-report .dna-fingerprint { padding: 16px 14px; }
+      .team-dna-report .dna-fp-top { grid-template-columns: 104px 1fr 44px; gap: 8px; }
+      .team-dna-report .dna-fp-evidence { padding-left: 0; }
+      .team-dna-report .dna-fp-label { font-size: 12px; }
+      /* A truncated question reads as a bug, so let it wrap and let the bar grow. */
+      .askbar { height: auto; min-height: 46px; padding: 10px 14px; border-radius: var(--r-lg); align-items: flex-start; }
+      .askbar .spark { margin-top: 2px; }
+      .askbar .q { white-space: normal; overflow: visible; text-overflow: clip; }
+      .rb-tabs, .ntr-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .replay-meta { gap: 10px; }
+    }
+
     .reveal { opacity: 0; transform: translateY(16px); transition: opacity .5s cubic-bezier(.16,1,.3,1), transform .5s cubic-bezier(.16,1,.3,1); }
     .reveal.in { opacity: 1; transform: none; }
 
@@ -347,7 +433,7 @@
       </a>
       <ul class="nav-links">
         <li><a href="#watch">Watch it work</a></li>
-        <li><a href="#app">The app</a></li>
+        <li><a href="#indexes">Indexes</a></li>
         <li><a href="#refractions">Refractions</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
@@ -358,9 +444,9 @@
   <!-- ── HERO ── -->
   <header class="hero" id="top">
     <div class="wrap">
-      <span class="eyebrow"><span class="dot"></span> Private beta · Europe's top five leagues</span>
-      <h1>Enterprise-level football analysis, for everyone.</h1>
-      <p class="hero-sub">Use The Prism to turn what's on your mind into reports, shortlists and real answers. Settle arguments, make decisions, or fulfil your curiosity.</p>
+      <span class="eyebrow"><span class="dot"></span> Private beta<span class="eyebrow-rest"> · Europe's top five leagues</span></span>
+      <h1>Enterprise-level football analysis, <span class="h1-accent">for everyone.</span></h1>
+      <p class="hero-sub"><strong>AI-powered football intelligence at your fingertips.</strong> Ask it anything to settle arguments, make decisions, or fulfil your curiosity.</p>
 
       <form class="hero-form" id="form-hero" novalidate>
         <input class="field" type="email" id="email-hero" placeholder="Your email" autocomplete="email" aria-label="Your email" />
@@ -377,10 +463,25 @@
           <span class="q" id="demo-q"></span>
         </div>
         <div class="steps" id="demo-steps"></div>
-        <div class="answer" id="demo-answer"><div class="answer-frame" id="demo-frame"></div></div>
+        <div class="answer" id="demo-answer"><div class="answer-frame capped-m" id="demo-frame"></div><button type="button" class="more more-m" id="demo-more">Show the full answer</button></div>
       </div>
     </div>
   </header>
+
+  <!-- ── MATCHDAY: real Home panels ── -->
+  <section id="matchday" class="band">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="label">Every matchday</p>
+        <h2>Scores and news, the moment they land.</h2>
+        <p class="lede">Every result in the five leagues as it goes in, next to the day's headlines. Open any match to see how it actually went.</p>
+      </div>
+      <div class="shots reveal">
+        <figure class="shot"><picture><source media="(max-width: 620px)" srcset="img/home-gameweek-m.webp" width="370" height="580"><img src="img/home-gameweek.webp" width="1248" height="470" alt="The Gameweek panel on The Prism's Home: every fixture of the current matchday in all five leagues, with scores" loading="lazy"></picture></figure>
+        <figure class="shot"><picture><source media="(max-width: 620px)" srcset="img/home-news-m.webp" width="370" height="343"><img src="img/home-news.webp" width="1248" height="300" alt="The News Wire panel on The Prism's Home: the day's headlines across the five leagues" loading="lazy"></picture></figure>
+      </div>
+    </div>
+  </section>
 
   <!-- ── WATCH IT WORK ── -->
   <section id="watch">
@@ -388,37 +489,58 @@
       <div class="sec-head reveal">
         <p class="label">Watch it work</p>
         <h2>Pick a question and watch it work.</h2>
-        <p class="lede" id="watch-lede">Real answers from the app. You see the steps as well as the result.</p>
+        <p class="lede" id="watch-lede">Real answers from the app, at the time of recording. You see the steps as well as the result.</p>
       </div>
       <div class="reveal">
         <div class="chips" id="replay-chips" role="tablist" aria-label="Recorded questions"></div>
-        <div class="askbar" style="margin-bottom:14px"><span class="spark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></span><span class="q" id="replay-q"></span></div>
+        <div class="askbar" style="margin-bottom:12px"><span class="spark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></span><span class="q" id="replay-q"></span></div>
         <div class="steps" id="replay-steps"></div>
-        <div class="answer in" style="margin-top:14px"><div class="answer-frame" id="replay-answer"></div></div>
+        <div class="answer in" style="margin-top:12px">
+          <div class="answer-frame capped" id="replay-frame"><div id="replay-answer"></div></div>
+          <button type="button" class="more" id="replay-more">Show the full answer</button>
+        </div>
         <p class="replay-meta" id="replay-meta"></p>
       </div>
     </div>
   </section>
 
-  <!-- ── BEYOND THE CHAT ── -->
+  <!-- ── YOUR INDEXES: a real index, built live ── -->
+  <section id="indexes">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="label">Your indexes</p>
+        <h2>Bloomberg-style analysis, built for football.</h2>
+        <p class="lede">Describe the player you're after in your own words. The Prism turns it into a ranking and keeps it on your Home, where it updates itself every matchday.</p>
+      </div>
+      <div class="ix-demo reveal" id="ix-demo">
+        <div class="ix-left">
+        <div class="ix-step">
+          <div class="ix-step-lbl">1 · You describe it</div>
+          <div class="askbar" id="ix-bar"><span class="spark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></span><span class="q" id="ix-q"></span></div>
+        </div>
+        <div class="ix-step" id="ix-rule-step">
+          <div class="ix-step-lbl">2 · The Prism writes the rule</div>
+          <div class="ix-rule" id="ix-rule"></div>
+        </div>
+        </div>
+        <div class="ix-step" id="ix-home-step">
+          <div class="ix-step-lbl">3 · It lands on your Home <span class="ix-saved" id="ix-saved">✓ Saved</span></div>
+          <div id="ix-panel"></div>
+        </div>
+      </div>
+      <p class="shot-cap reveal">A real index: the sentence above went through the app's interpreter and was ranked against every player in the five leagues. Viewing and saving one costs nothing.</p>
+    </div>
+  </section>
+
+  <!-- ── PLAYER PAGES: the real dashboard ── -->
   <section id="read">
     <div class="wrap">
       <div class="sec-head reveal">
-        <p class="label">Beyond the chat</p>
+        <p class="label">Player pages</p>
         <h2>Open any player and The Prism has a view.</h2>
-        <p class="lede">A player's stats load straight away. Underneath, The Prism writes its read on them: what he's good at, what's worrying, who he plays like and where he's heading. Clubs work the same way, with a full brief you ask for when you want one.</p>
+        <p class="lede">Where he ranks against his position, his form, how he's changed since last season, and The Prism AI analysis one click away.</p>
       </div>
-      <div class="split reveal">
-        <div class="panel">
-          <div class="panel-head"><span>The numbers</span><span>computed from match data</span></div>
-          <div class="panel-body" id="pane-numbers"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-head"><span class="ai">Prism Analysis</span><span>the read</span></div>
-          <div class="panel-body" id="pane-read"></div>
-        </div>
-      </div>
-      <p class="note reveal">The ask bar knows what you're looking at, too. Open a player, ask "is he better than last season so far?", and The Prism knows the context already.</p>
+      <figure class="shot fade reveal"><picture><source media="(max-width: 620px)" srcset="img/player-dashboard-m.webp" width="390" height="1250"><img src="img/player-dashboard.webp" width="1180" height="968" alt="Jude Bellingham's player page in The Prism: position score, season stats, where he ranks among 81 La Liga midfielders, his form and his change on last season" loading="lazy"></picture></figure>
     </div>
   </section>
 
@@ -431,39 +553,14 @@
       </div>
       <div class="points reveal">
         <div class="point">
-          <h3>It's live.</h3>
-          <p>Match stats for every player in the Premier League, La Liga, Serie A, the Bundesliga and Ligue 1, pulled as the games are played.</p>
+          <h3>Live information.</h3>
+          <p>Match stats for every player in the Premier League, La Liga, Serie A, the Bundesliga and Ligue 1, pulled as the games are played and analysed afterwards.</p>
         </div>
         <div class="point">
-          <h3>It's our own model.</h3>
+          <h3>The Prism's proprietary scoring model.</h3>
           <p>Every player is scored by The Prism's own model, built separately for each position. That's what powers the comparisons, the scouting briefs and the rankings you build yourself.</p>
         </div>
       </div>
-      <div class="flow reveal">
-        <div class="flow-step"><div class="n">01</div><h3>Live match data</h3><p>Every game, every player, across the top five leagues.</p></div>
-        <div class="flow-step"><div class="n">02</div><h3>The Prism's model</h3><p>Scored by position, so a centre back is judged as one.</p></div>
-        <div class="flow-step"><div class="n">03</div><h3>Your answer</h3><p>A report, a ranking or a straight reply to what you asked.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── THE APP ── -->
-  <section id="app">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <p class="label">The app</p>
-        <h2>For when you'd rather browse.</h2>
-        <p class="lede">The ask bar's the quickest way in. You don't have to use it for everything.</p>
-      </div>
-      <div class="tiles reveal">
-        <div class="tile"><div class="tname">Home</div><p>The scout board: the best under-24s in each league, ranked on what they do per 90 minutes, next to this week's fixtures and results.</p></div>
-        <div class="tile"><div class="tname">Scout</div><p>Search any player, or build a search from the characteristics you care about and see who fits.</p></div>
-        <div class="tile"><div class="tname">Your indexes</div><p>Your own rankings. Describe what you're after in your own words and The Prism turns it into a ranking you can keep.</p></div>
-        <div class="tile"><div class="tname">Leagues</div><p>Every table in the five leagues. Tap a club to open its squad, its depth chart and the academy players getting minutes.</p></div>
-        <div class="tile"><div class="tname">The Wire</div><p>Transfers in and out of the five leagues, with a read on how each new signing compares to the squad he's joined. News and Refractions sit on the same screen.</p></div>
-        <div class="tile"><div class="tname">Matches</div><p>Live scores while games are on. Open any match for the goals, the absences and a minute-by-minute momentum chart, so you can read back how it actually went.</p></div>
-      </div>
-      <p class="note reveal">All of your chats are saved too, so you can pick up a conversation where you left off.</p>
     </div>
   </section>
 
@@ -605,33 +702,43 @@
     if (R.length) {
       if (window.PRISM_RECORDED_ON) {
         document.getElementById('watch-lede').textContent =
-          'Real answers from the app, recorded on ' + window.PRISM_RECORDED_ON + '. You see the steps as well as the result.';
+          'Real answers from the app, at the time of recording. You see the steps as well as the result.';
       }
+      /* The hero already plays the first answer, so the chips start at the second. */
       var chips = document.getElementById('replay-chips');
       var qEl = document.getElementById('replay-q');
       var stepsEl = document.getElementById('replay-steps');
       var ansEl = document.getElementById('replay-answer');
+      var frame = document.getElementById('replay-frame');
+      var more = document.getElementById('replay-more');
       var metaEl = document.getElementById('replay-meta');
+      var PICKS = R.slice(1);
       function show(i) {
-        var r = R[i];
+        var r = PICKS[i];
         chips.querySelectorAll('.chip').forEach(function (c, n) { c.setAttribute('aria-selected', n === i ? 'true' : 'false'); });
         qEl.textContent = r.question;
         renderSteps(stepsEl, r.steps, false);
         ansEl.innerHTML = r.html;
+        frame.classList.add('capped');
+        /* only offer the expander when the cap actually hides something */
+        requestAnimationFrame(function () {
+          more.classList.toggle('show', frame.scrollHeight > frame.clientHeight + 4);
+        });
         metaEl.innerHTML = '';
-        [r.steps.length + (r.steps.length === 1 ? ' step' : ' steps'), r.seconds + 's to answer', 'recorded from the live app'].forEach(function (t) {
+        [r.steps.length + (r.steps.length === 1 ? ' step' : ' steps'), 'recorded from the live app'].forEach(function (t) {
           var s = document.createElement('span'); s.textContent = t; metaEl.appendChild(s);
         });
         if (window.plausible) plausible('Replay', { props: { id: r.id } });
       }
-      R.forEach(function (r, i) {
+      more.addEventListener('click', function () { frame.classList.remove('capped'); more.classList.remove('show'); });
+      PICKS.forEach(function (r, i) {
         var b = document.createElement('button');
         b.className = 'chip'; b.type = 'button'; b.setAttribute('role', 'tab');
         b.textContent = r.label;
         b.addEventListener('click', function () { show(i); });
         chips.appendChild(b);
       });
-      show(0);
+      if (PICKS.length) show(0);
 
       /* hero demo replays the first one, typed out */
       var hero = R[0];
@@ -640,12 +747,20 @@
       var sDemo = document.getElementById('demo-steps');
       var aDemo = document.getElementById('demo-answer');
       var fDemo = document.getElementById('demo-frame');
+      var demoMore = document.getElementById('demo-more');
+      function heroCap() {
+        requestAnimationFrame(function () {
+          demoMore.classList.toggle('show', fDemo.classList.contains('capped-m') && fDemo.scrollHeight > fDemo.clientHeight + 4);
+        });
+      }
+      demoMore.addEventListener('click', function () { fDemo.classList.remove('capped-m'); demoMore.classList.remove('show'); });
       function settle() {
         qDemo.textContent = hero.question;
         renderSteps(sDemo, hero.steps, false);
         fDemo.innerHTML = hero.html;
         aDemo.classList.add('in');
         bar.classList.remove('thinking');
+        heroCap();
       }
       if (reduce) { settle(); }
       else {
@@ -669,6 +784,7 @@
                   bar.classList.remove('thinking');
                   fDemo.innerHTML = hero.html;
                   aDemo.classList.add('in');
+                  heroCap();
                 }, 260 * (hero.steps.length + 1) + 500);
               }
             })();
@@ -677,12 +793,62 @@
         dio.observe(document.getElementById('demo'));
       }
 
-      /* the split panels show one recorded report, cut where the app cuts it:
-         the computed figures on the left, The Prism's written read on the right */
-      var split = window.PRISM_SPLIT;
-      if (split) {
-        document.getElementById('pane-numbers').innerHTML = split.numbers;
-        document.getElementById('pane-read').innerHTML = split.read;
+    }
+
+    /* ── Index demo: a real sentence, the rule the app wrote, the ranking it returned ──
+       The panel is the app's own markup (term-panel / trow), so it looks exactly as it
+       does on a tester's Home. Plays once when scrolled into view. */
+    var IX = window.PRISM_INDEX;
+    if (IX) {
+      var ixQ = document.getElementById('ix-q');
+      var ixRule = document.getElementById('ix-rule');
+      var ixPanel = document.getElementById('ix-panel');
+      var ixSaved = document.getElementById('ix-saved');
+      var esc = function (s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; };
+      function buildPanel() {
+        var rows = IX.players.map(function (p, i) {
+          return '<div class="trow"><span class="rk">' + (i + 1) + '</span>' +
+            (p.photo ? '<img class="php" src="' + esc(p.photo) + '" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">' : '<span class="php"></span>') +
+            (p.pos ? '<span class="pos">' + esc(p.pos) + '</span>' : '') +
+            '<span class="nm">' + esc(p.name) + ' <small>' + esc(p.team) + (p.age != null ? ' · ' + p.age : '') + '</small></span>' +
+            (IX.multi ? '<span class="tscore">' + Number(p.score).toFixed(0) + '</span>' : '') +
+            '<span class="val">' + esc(p.val) + '</span></div>';
+        }).join('');
+        var cols = IX.columns ? '<div class="ix-cols"><span class="ix-col-s">' + esc(IX.columns.score) + '</span><span class="ix-col-v">' + esc(IX.columns.value) + '</span></div>' : '';
+        return '<div class="term-panel ix-panel"><div class="term-hd"><span class="t">' + esc(IX.name) + '</span>' +
+          '<span class="ix-hd-r"><span class="code">YOURS</span></span></div>' +
+          '<div class="term-note">' + esc(IX.rule) + '</div>' + cols + rows + '</div>';
+      }
+      function settleIx() {
+        ixQ.textContent = IX.prompt; ixRule.textContent = IX.rule; ixRule.classList.add('in');
+        ixPanel.innerHTML = buildPanel(); ixPanel.classList.add('in'); ixSaved.classList.add('in');
+      }
+      if (reduce) { settleIx(); }
+      else {
+        var ixStarted = false;
+        var ixo = new IntersectionObserver(function (es) {
+          es.forEach(function (e) {
+            if (!e.isIntersecting || ixStarted) return;
+            ixStarted = true; ixo.disconnect();
+            var i = 0, txt = IX.prompt, bar = document.getElementById('ix-bar');
+            ixQ.innerHTML = '<span></span><span class="caret"></span>';
+            var span = ixQ.firstChild;
+            (function type() {
+              if (i <= txt.length) { span.textContent = txt.slice(0, i++); setTimeout(type, 28); return; }
+              ixQ.querySelector('.caret').remove();
+              bar.classList.add('thinking');
+              setTimeout(function () {
+                bar.classList.remove('thinking');
+                ixRule.textContent = IX.rule; ixRule.classList.add('in');
+                setTimeout(function () {
+                  ixPanel.innerHTML = buildPanel(); ixPanel.classList.add('in');
+                  setTimeout(function () { ixSaved.classList.add('in'); }, 450);
+                }, 900);
+              }, 900);
+            })();
+          });
+        }, { threshold: 0.3 });
+        ixo.observe(document.getElementById('ix-demo'));
       }
     }
 
