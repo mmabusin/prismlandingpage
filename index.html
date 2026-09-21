@@ -22,6 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/cards.css">
+  <link rel="stylesheet" href="/views.css">
   <style>
     /* ══════════════════════════════════════════════════════════════
        The Prism — landing page (v5)
@@ -79,7 +80,7 @@
       --text-xs: 0.625rem;
 
       --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-pill: 9999px;
-      --page: 1120px;
+      --page: 1200px;
     }
 
     /* The page is light, always. The app has a dark mode behind its own toggle,
@@ -99,10 +100,11 @@
       font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 600;
       text-transform: uppercase; letter-spacing: .12em; color: var(--accent);
     }
-    h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.03em; font-weight: 800; }
-    h2 { font-size: clamp(1.5rem, 3.6vw, 2.1rem); line-height: 1.12; }
+    /* page-level type only: the lifted app views (.view-frame) keep the app's own */
+    :where(h1, h2, h3):where(:not(.view-frame *)) { font-family: var(--font-display); letter-spacing: -0.03em; font-weight: 800; }
+    :where(h2):where(:not(.view-frame *)) { font-size: clamp(1.5rem, 3.6vw, 2.1rem); line-height: 1.12; }
     .lede { color: var(--text-dim); font-size: 0.95rem; max-width: 60ch; margin-top: 10px; }
-    section { padding: 60px 0; border-top: 1px solid var(--border); }
+    body > section { padding: 60px 0; border-top: 1px solid var(--border); }
     .sec-head { margin-bottom: 24px; }
 
     /* ── Nav ── */
@@ -148,7 +150,7 @@
     /* On a narrow phone the full line wraps to two and the pill loses its shape,
        so the qualifier drops and the badge stays one line. */
     @media (max-width: 430px) { .eyebrow-rest { display: none; } }
-    h1 {
+    .hero h1 {
       font-size: clamp(2.1rem, 5.6vw, 3.45rem); line-height: 1.04; margin: 20px 0 0; max-width: 17ch;
     }
     .hero-sub { color: var(--text-dim); font-size: 1.02rem; max-width: 54ch; margin-top: 16px; }
@@ -246,6 +248,65 @@
     .rp-p strong { color: var(--text); }
     .rp-h { font-size: 1rem; margin: 16px 0 4px; }
     .rp-list { margin: 10px 0 0 18px; font-size: var(--fs-body); color: var(--text-dim); }
+
+    /* ── Two-column hero (desktop) ──
+       The demo sits beside the headline rather than under it, so the first screen
+       shows The Prism working instead of a half-empty page. Phones and tablets
+       keep the stacked layout. */
+    .demo-head {
+      display: none; align-items: center; gap: 8px; font-family: var(--font-mono);
+      font-size: var(--fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .demo-mark { display: inline-flex; color: var(--text); }
+    .demo-tag { margin-left: auto; color: var(--text-muted); font-weight: 500; letter-spacing: .06em; }
+    @media (min-width: 1080px) {
+      .hero .wrap.hero-grid { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 56px; align-items: start; }
+      .hero { padding: 56px 0 64px; }
+      .hero h1 { font-size: 3.1rem; max-width: 14ch; }
+      .hero-copy { padding-top: 18px; }
+      .hero-demo {
+        border: 1px solid var(--border); border-radius: 20px; background: var(--surface2);
+        padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 20px 48px -28px rgba(37,99,235,.35);
+      }
+      .demo-head { display: flex; }
+      .hero-demo .askwrap { margin-top: 0; }
+      .hero-demo .askbar { background: var(--surface); }
+      .hero-demo .answer-frame.capped-m { max-height: 440px; overflow: hidden; position: relative; }
+      .hero-demo .answer-frame.capped-m::after {
+        content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 110px;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), var(--surface) 85%); pointer-events: none;
+      }
+      .hero-demo .more-m.show { display: block; }
+    }
+
+    /* ── Live app views (views.js + views.css) ── */
+    .view-frame { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
+    .view-frame .term-panel { border: 0; border-radius: 0; margin: 0; }
+    .md-layout { display: flex; flex-direction: column; gap: 16px; }
+    .md-row { display: block; }
+    .md-match { max-width: 760px; }
+    @media (max-width: 900px) { .md-row { grid-template-columns: 1fr; } }
+    .md-pick-lbl {
+      display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: var(--fs-label);
+      font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin: 0 0 8px 2px;
+    }
+    .md-pick-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse-dot 2.4s ease-out infinite; }
+    #view-gameweek .term-fx.is-picked { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+    #view-match { padding: 14px; }
+    .view-frame.capped-v { max-height: 620px; position: relative; }
+    .view-frame.capped-v::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 110px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 85%); pointer-events: none;
+    }
+    .pv-frame.capped-v { max-height: 900px; }
+    #view-player { padding: 12px; background: #f5f6f8;
+      /* the dashboard's own tokens, verbatim from #ph-profile in prism.css */
+      --pv-ground: #f6f7f9; --pv-win: #0f9d58; --pv-loss: #d93a49; --pv-draw: #8a93a3;
+      --pv-warn: #b7791f; --pv-warn-soft: rgba(183,121,31,.12); --pv-band: rgba(37,99,235,.14);
+      --pv-cta-bg: #0b0c0e; --pv-cta-fg: #ffffff; }
+    /* phones: two leagues are enough to make the point */
+    @media (max-width: 620px) { #view-gameweek .gw-league:nth-child(n+3) { display: none; } }
 
     /* ── Real screens ── */
     .shots { display: flex; flex-direction: column; gap: 14px; }
@@ -378,8 +439,8 @@
        the app's real density, so a 375px column cannot hold every row. */
     @media (max-width: 620px) {
       .hero { padding: 26px 0 44px; }
-      section { padding: 48px 0; }
-      h1 { margin-top: 16px; }
+      body > section { padding: 48px 0; }
+      .hero h1 { margin-top: 16px; }
       .askwrap { margin-top: 28px; }
       .answer-frame { padding: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
       .dna-header, .dna-meta, .dna-record, .rb-head, .rb-tagbar { flex-wrap: wrap; }
@@ -443,45 +504,35 @@
 
   <!-- ── HERO ── -->
   <header class="hero" id="top">
-    <div class="wrap">
-      <span class="eyebrow"><span class="dot"></span> Private beta<span class="eyebrow-rest"> · Europe's top five leagues</span></span>
-      <h1>Enterprise-level football analysis, <span class="h1-accent">for everyone.</span></h1>
-      <p class="hero-sub"><strong>AI-powered football intelligence at your fingertips.</strong> Ask it anything to settle arguments, make decisions, or fulfil your curiosity.</p>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="dot"></span> Private beta<span class="eyebrow-rest"> · Europe's top five leagues</span></span>
+        <h1>Enterprise-level football analysis, <span class="h1-accent">for everyone.</span></h1>
+        <p class="hero-sub"><strong>AI-powered football intelligence at your fingertips.</strong> Ask <span class="h1-accent">The Prism</span> anything in natural language and settle arguments, make decisions, or simply fulfil your curiosity.</p>
 
-      <form class="hero-form" id="form-hero" novalidate>
-        <input class="field" type="email" id="email-hero" placeholder="Your email" autocomplete="email" aria-label="Your email" />
-        <button class="btn" type="submit">Join the waitlist</button>
-      </form>
-      <p class="form-msg" id="msg-hero" role="status" aria-live="polite"></p>
-      <p class="note">Free while it's in beta. We're letting people in a few at a time.</p>
+        <form class="hero-form" id="form-hero" novalidate>
+          <input class="field" type="email" id="email-hero" placeholder="Your email" autocomplete="email" aria-label="Your email" />
+          <button class="btn" type="submit">Join the waitlist</button>
+        </form>
+        <p class="form-msg" id="msg-hero" role="status" aria-live="polite"></p>
+        <p class="note">Free while it's in beta. We're letting people in a few at a time.</p>
+      </div>
 
-      <div class="askwrap" id="demo">
-        <div class="askbar" id="askbar">
-          <span class="spark">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>
-          </span>
-          <span class="q" id="demo-q"></span>
+      <div class="hero-demo">
+        <div class="demo-head"><span class="demo-mark"><svg width="15" height="15"><use href="#mark"/></svg></span>Ask The Prism<span class="demo-tag">Recorded from the app</span></div>
+        <div class="askwrap" id="demo">
+          <div class="askbar" id="askbar">
+            <span class="spark">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+            <span class="q" id="demo-q"></span>
+          </div>
+          <div class="steps" id="demo-steps"></div>
+          <div class="answer" id="demo-answer"><div class="answer-frame capped-m" id="demo-frame"></div><button type="button" class="more more-m" id="demo-more">Show the full answer</button></div>
         </div>
-        <div class="steps" id="demo-steps"></div>
-        <div class="answer" id="demo-answer"><div class="answer-frame capped-m" id="demo-frame"></div><button type="button" class="more more-m" id="demo-more">Show the full answer</button></div>
       </div>
     </div>
   </header>
-
-  <!-- ── MATCHDAY: real Home panels ── -->
-  <section id="matchday" class="band">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <p class="label">Every matchday</p>
-        <h2>Scores and news, the moment they land.</h2>
-        <p class="lede">Every result in the five leagues as it goes in, next to the day's headlines. Open any match to see how it actually went.</p>
-      </div>
-      <div class="shots reveal">
-        <figure class="shot"><picture><source media="(max-width: 620px)" srcset="img/home-gameweek-m.webp" width="370" height="580"><img src="img/home-gameweek.webp" width="1248" height="470" alt="The Gameweek panel on The Prism's Home: every fixture of the current matchday in all five leagues, with scores" loading="lazy"></picture></figure>
-        <figure class="shot"><picture><source media="(max-width: 620px)" srcset="img/home-news-m.webp" width="370" height="343"><img src="img/home-news.webp" width="1248" height="300" alt="The News Wire panel on The Prism's Home: the day's headlines across the five leagues" loading="lazy"></picture></figure>
-      </div>
-    </div>
-  </section>
 
   <!-- ── WATCH IT WORK ── -->
   <section id="watch">
@@ -493,13 +544,35 @@
       </div>
       <div class="reveal">
         <div class="chips" id="replay-chips" role="tablist" aria-label="Recorded questions"></div>
-        <div class="askbar" style="margin-bottom:12px"><span class="spark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></span><span class="q" id="replay-q"></span></div>
+        <div class="askbar" id="replay-bar" style="margin-bottom:12px"><span class="spark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></span><span class="q" id="replay-q"></span></div>
         <div class="steps" id="replay-steps"></div>
-        <div class="answer in" style="margin-top:12px">
+        <div class="answer" id="replay-ans" style="margin-top:12px">
           <div class="answer-frame capped" id="replay-frame"><div id="replay-answer"></div></div>
           <button type="button" class="more" id="replay-more">Show the full answer</button>
         </div>
         <p class="replay-meta" id="replay-meta"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MATCHDAY: real Home panels ── -->
+  <section id="matchday" class="band">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="label">Every matchday</p>
+        <h2>Scores and news, the moment they land.</h2>
+        <p class="lede">Every result in the five leagues as it goes in, next to the day's headlines. Open any match to see how it actually went.</p>
+      </div>
+      <div class="md-layout reveal">
+        <div class="view-frame md-news" id="view-news"></div>
+        <div class="view-frame md-gw" id="view-gameweek"></div>
+        <div class="md-row">
+          <div class="md-match">
+            <div class="md-pick-lbl"><span class="md-pick-dot"></span>Opened: Manchester City 5-3 Sunderland</div>
+            <div class="view-frame md-match-frame capped-v" id="view-match"></div>
+            <button type="button" class="more" id="match-more">Show the whole match</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -540,7 +613,10 @@
         <h2>Open any player and The Prism has a view.</h2>
         <p class="lede">Where he ranks against his position, his form, how he's changed since last season, and The Prism AI analysis one click away.</p>
       </div>
-      <figure class="shot fade reveal"><picture><source media="(max-width: 620px)" srcset="img/player-dashboard-m.webp" width="390" height="1250"><img src="img/player-dashboard.webp" width="1180" height="968" alt="Jude Bellingham's player page in The Prism: position score, season stats, where he ranks among 81 La Liga midfielders, his form and his change on last season" loading="lazy"></picture></figure>
+      <div class="reveal">
+        <div class="view-frame pv-frame capped-v" id="view-player"></div>
+        <button type="button" class="more" id="player-more">Show the whole page</button>
+      </div>
     </div>
   </section>
 
@@ -664,6 +740,7 @@
   </footer>
 
   <script src="/replays.js"></script>
+  <script src="/views.js"></script>
   <script>
   (function () {
     'use strict';
@@ -688,7 +765,8 @@
 
     /* ── replays: real recorded answers ── */
     var R = window.PRISM_REPLAYS || [];
-    function renderSteps(host, steps, animate) {
+    function renderSteps(host, steps, animate, gap) {
+      gap = gap || 260;
       host.innerHTML = '';
       steps.forEach(function (s, i) {
         var d = document.createElement('div');
@@ -696,7 +774,7 @@
         d.innerHTML = '<span class="tick">▸</span><span></span>';
         d.lastChild.textContent = s;
         host.appendChild(d);
-        if (animate) setTimeout(function () { d.classList.add('in'); }, 260 * (i + 1));
+        if (animate) setTimeout(function () { d.classList.add('in'); }, gap * (i + 1));
       });
     }
     if (R.length) {
@@ -713,21 +791,52 @@
       var more = document.getElementById('replay-more');
       var metaEl = document.getElementById('replay-meta');
       var PICKS = R.slice(1);
-      function show(i) {
-        var r = PICKS[i];
-        chips.querySelectorAll('.chip').forEach(function (c, n) { c.setAttribute('aria-selected', n === i ? 'true' : 'false'); });
-        qEl.textContent = r.question;
-        renderSteps(stepsEl, r.steps, false);
-        ansEl.innerHTML = r.html;
-        frame.classList.add('capped');
-        /* only offer the expander when the cap actually hides something */
+      var rBar = document.getElementById('replay-bar');
+      var rAns = document.getElementById('replay-ans');
+      var seen = {}, playToken = 0;
+      function toggleMore() {
         requestAnimationFrame(function () {
-          more.classList.toggle('show', frame.scrollHeight > frame.clientHeight + 4);
+          more.classList.toggle('show', frame.classList.contains('capped') && frame.scrollHeight > frame.clientHeight + 4);
         });
+      }
+      /* First view of a chip plays through quickly (question, steps, card); a chip
+         already watched shows straight away. playToken cancels a build that is
+         still running when another chip is clicked. */
+      function show(i, animate) {
+        var r = PICKS[i], token = ++playToken;
+        chips.querySelectorAll('.chip').forEach(function (c, n) { c.setAttribute('aria-selected', n === i ? 'true' : 'false'); });
+        frame.classList.add('capped'); more.classList.remove('show');
         metaEl.innerHTML = '';
         [r.steps.length + (r.steps.length === 1 ? ' step' : ' steps'), 'recorded from the live app'].forEach(function (t) {
           var s = document.createElement('span'); s.textContent = t; metaEl.appendChild(s);
         });
+        var play = animate && !reduce && !seen[i];
+        seen[i] = true;
+        function land() {
+          if (token !== playToken) return;
+          rBar.classList.remove('thinking');
+          ansEl.innerHTML = r.html; rAns.classList.add('in');
+          toggleMore();
+        }
+        if (!play) {
+          qEl.textContent = r.question; renderSteps(stepsEl, r.steps, false); land();
+        } else {
+          rAns.classList.remove('in'); ansEl.innerHTML = ''; stepsEl.innerHTML = '';
+          /* Slow enough to read each beat: about 1.4s of typing, a pause while The
+             Prism "thinks", each step on its own, then the card. */
+          var txt = r.question, n = 0, per = Math.max(18, Math.min(34, 1400 / txt.length));
+          var STEP = 450, THINK = 350, SETTLE = 650;
+          (function type() {
+            if (token !== playToken) return;
+            if (n <= txt.length) { qEl.textContent = txt.slice(0, n++); setTimeout(type, per); return; }
+            rBar.classList.add('thinking');
+            setTimeout(function () {
+              if (token !== playToken) return;
+              renderSteps(stepsEl, r.steps, true, STEP);
+              setTimeout(land, STEP * r.steps.length + SETTLE);
+            }, THINK);
+          })();
+        }
         if (window.plausible) plausible('Replay', { props: { id: r.id } });
       }
       more.addEventListener('click', function () { frame.classList.remove('capped'); more.classList.remove('show'); });
@@ -735,10 +844,20 @@
         var b = document.createElement('button');
         b.className = 'chip'; b.type = 'button'; b.setAttribute('role', 'tab');
         b.textContent = r.label;
-        b.addEventListener('click', function () { show(i); });
+        b.addEventListener('click', function () { show(i, true); });
         chips.appendChild(b);
       });
-      if (PICKS.length) show(0);
+      /* the first chip plays when the section scrolls into view */
+      if (PICKS.length) {
+        chips.firstChild.setAttribute('aria-selected', 'true');
+        if (reduce || !('IntersectionObserver' in window)) { show(0, false); }
+        else {
+          var wio = new IntersectionObserver(function (es) {
+            if (es.some(function (e) { return e.isIntersecting; }) && !seen[0] && playToken === 0) { wio.disconnect(); show(0, true); }
+          }, { threshold: 0.2 });
+          wio.observe(document.getElementById('watch'));
+        }
+      }
 
       /* hero demo replays the first one, typed out */
       var hero = R[0];
@@ -850,6 +969,55 @@
         }, { threshold: 0.3 });
         ixo.observe(document.getElementById('ix-demo'));
       }
+    }
+
+    /* ── Live app views ──
+       Real markup lifted from the app (see views.js). The gameweek is trimmed to the
+       matchday being played, a few fixtures a league, with the match whose drawer is
+       shown highlighted as the one opened. */
+    var V = window.PRISM_VIEWS;
+    if (V) {
+      function mount(id, key) {
+        var host = document.getElementById(id), v = V[key];
+        if (!host || !v) return null;
+        var html = v.html;
+        (v.wrap || []).slice().reverse().forEach(function (w) {
+          html = '<div' + (w.id ? ' id="' + w.id + '"' : '') + (w.cls ? ' class="' + w.cls + '"' : '') + '>' + html + '</div>';
+        });
+        host.innerHTML = html;
+        return host;
+      }
+      var gw = mount('view-gameweek', 'gameweek');
+      /* The league crest comes from a field that was empty in the cached payload the
+         day this was captured; the logos are the data provider's own, keyed by league. */
+      var LG = { 'Premier League': '8/8', 'La Liga': '20/564', 'Bundesliga': '18/82', 'Ligue 1': '13/301', 'Serie A': '0/384' };
+      if (gw) gw.querySelectorAll('.gw-league > .tsub').forEach(function (t) {
+        var k = LG[t.textContent.trim()];
+        if (k && !t.querySelector('img')) t.insertAdjacentHTML('afterbegin',
+          '<img class="cri" src="https://cdn.sportmonks.com/images/soccer/leagues/' + k + '.png" alt="" loading="lazy"> ');
+      });
+      if (gw) {
+        gw.querySelectorAll('.gw-league').forEach(function (lg) {
+          var rounds = lg.querySelectorAll('.gw-round');
+          for (var i = 1; i < rounds.length; i++) {         // drop later matchdays
+            var n = rounds[i]; while (n) { var nx = n.nextElementSibling; n.remove(); n = nx; }
+          }
+          var rows = [].slice.call(lg.querySelectorAll('.term-fx'));
+          var pick = rows.filter(function (r) { return String(r.getAttribute('data-fx')) === String(V.match_fid); })[0];
+          var keep = rows.slice(0, pick ? 3 : 4);
+          if (pick) { pick.classList.add('is-picked'); if (keep.indexOf(pick) < 0) keep.push(pick); }
+          rows.forEach(function (r) { if (keep.indexOf(r) < 0) r.remove(); });
+        });
+      }
+      mount('view-news', 'news');
+      mount('view-match', 'match');
+      mount('view-player', 'player');
+      [['view-match', 'match-more'], ['view-player', 'player-more']].forEach(function (pair) {
+        var f = document.getElementById(pair[0]), b = document.getElementById(pair[1]);
+        if (!f || !b) return;
+        requestAnimationFrame(function () { b.classList.toggle('show', f.scrollHeight > f.clientHeight + 4); });
+        b.addEventListener('click', function () { f.classList.remove('capped-v'); b.classList.remove('show'); });
+      });
     }
 
     /* ── Refractions: load the live list, fall back to the known essay ── */
