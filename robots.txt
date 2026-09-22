@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://theprismai.com/refractions/sitemap.xml
