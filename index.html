@@ -646,7 +646,7 @@
         <p class="lede">Data-first scouting essays on the players and teams the numbers make interesting, written by Mo and built with The Prism. They live in the app and they're public, so anyone can read them.</p>
       </div>
       <div class="rfx-list reveal" id="rfx-list"></div>
-      <p style="margin-top:20px" class="reveal"><a class="btn btn-ghost" href="https://app.theprismai.com/refractions">Read Refractions</a></p>
+      <p style="margin-top:20px" class="reveal"><a class="btn btn-ghost" href="/refractions">Read Refractions</a></p>
     </div>
   </section>
 
@@ -728,7 +728,7 @@
         <span class="brand-name" style="font-size:.9rem">The Prism<span class="brand-dot">.</span></span>
       </a>
       <div class="foot-links">
-        <a href="https://app.theprismai.com/refractions">Refractions</a>
+        <a href="/refractions">Refractions</a>
         <a href="mailto:hello@theprismai.com">Contact</a>
         <span class="foot-copy">© 2026 The Prism</span>
       </div>
@@ -1003,7 +1003,7 @@
       posts.slice(0, 3).forEach(function (p) {
         var a = document.createElement('a');
         a.className = 'rfx-item';
-        a.href = 'https://app.theprismai.com/refractions/' + p.slug;
+        a.href = '/refractions/' + p.slug;
         var when = p.published_at ? new Date(p.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
         var kicker = document.createElement('div'); kicker.className = 'rfx-kicker';
         kicker.textContent = [when, p.read_minutes ? p.read_minutes + ' min read' : ''].filter(Boolean).join(' · ');

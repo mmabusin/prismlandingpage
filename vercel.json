@@ -31,5 +31,15 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/refractions",
+      "destination": "https://app.theprismai.com/_refractions"
+    },
+    {
+      "source": "/refractions/:path*",
+      "destination": "https://app.theprismai.com/_refractions/:path*"
+    }
   ]
 }
