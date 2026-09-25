@@ -236,10 +236,6 @@
     .h1-accent { color: var(--accent); }
     .eyebrow .dot { box-shadow: 0 0 0 0 rgba(37,99,235,.45); animation: pulse-dot 2.4s ease-out infinite; }
     @keyframes pulse-dot { 0% { box-shadow: 0 0 0 0 rgba(37,99,235,.45); } 70%, 100% { box-shadow: 0 0 0 7px rgba(37,99,235,0); } }
-    .hero .answer-frame { position: relative; border-top: 0; padding-top: 21px; }
-    .hero .answer-frame::before {
-      content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--spectrum);
-    }
     section.band { background: linear-gradient(180deg, #f5f8ff 0%, #fbfcff 100%); }
     section.band .shot, section.band .term-panel, section.band .askbar, section.band .ix-rule { background-color: #fff; }
 
@@ -847,7 +843,8 @@
         b.addEventListener('click', function () { show(i, true); });
         chips.appendChild(b);
       });
-      /* the first chip plays when the section scrolls into view */
+      /* This section does the building: the first chip plays when it scrolls into
+         view, which is below the fold, so the page itself loads calm. */
       if (PICKS.length) {
         chips.firstChild.setAttribute('aria-selected', 'true');
         if (reduce || !('IntersectionObserver' in window)) { show(0, false); }
@@ -881,36 +878,9 @@
         bar.classList.remove('thinking');
         heroCap();
       }
-      if (reduce) { settle(); }
-      else {
-        var started = false;
-        var dio = new IntersectionObserver(function (es) {
-          es.forEach(function (e) {
-            if (!e.isIntersecting || started) return;
-            started = true; dio.disconnect();
-            var i = 0, txt = hero.question;
-            qDemo.innerHTML = '<span></span><span class="caret"></span>';
-            var span = qDemo.firstChild;
-            (function type() {
-              if (i <= txt.length) {
-                span.textContent = txt.slice(0, i++);
-                setTimeout(type, 26);
-              } else {
-                qDemo.querySelector('.caret').remove();
-                bar.classList.add('thinking');
-                renderSteps(sDemo, hero.steps, true);
-                setTimeout(function () {
-                  bar.classList.remove('thinking');
-                  fDemo.innerHTML = hero.html;
-                  aDemo.classList.add('in');
-                  heroCap();
-                }, 260 * (hero.steps.length + 1) + 500);
-              }
-            })();
-          });
-        }, { threshold: 0.25 });
-        dio.observe(document.getElementById('demo'));
-      }
+      /* The hero arrives answered: question, steps and card already there. The
+         building happens in Watch it work, which is what that section is for. */
+      settle();
 
     }
 
