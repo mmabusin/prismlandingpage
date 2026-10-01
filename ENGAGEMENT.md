@@ -22,17 +22,14 @@ graceful fallback — e.g. `Hi there` rather than `Hi {{firstName}}` unless you 
 | # | Touch | Timing | Loops trigger | Job |
 |---|---|---|---|---|
 | E1 | Welcome | Day 0 (instant) | Contact created in `waitlist` group | Confirm, set the tone, one thing to look forward to |
-| E2 | The World Cup, read by the numbers | Day ~3 | Delay after E1 (or scheduled — see below) | Show the product thinking, timely + "live" WC hook |
-| E3 | Three ways to find any player | Day ~6 | Delay after E2 | Show the Build Profile / AI Search / stat-library workflow |
+| E3 | Three ways to find any player | Day ~6 | Delay after E1 | Show the Build Profile / AI Search / stat-library workflow |
 | E4 | Anatomy of a scout report | Day ~10 | Delay after E3 | Demonstrate the core magic |
 | E5 | What we just shipped | Day ~15 | Delay after E4 | Momentum / build-in-public, keep them warm |
 | E6 | Early access is coming | Day ~21 | Delay after E5 | Set expectations for waves, create anticipation |
 | E7 | You're in | On wave send | Manual broadcast to a segment | Deliver access, drive first session |
 
 > Keep the drip in a **single Loop** (E1→E6 as timed steps). Send **E7 manually** as a campaign
-> to whichever segment you're inviting in each wave. **E2 is the exception** if you run it live —
-> pull it out of the Loop and send it on a schedule from current data (see *"Making E2 live"* in
-> the README).
+> to whichever segment you're inviting in each wave.
 
 ---
 
@@ -64,49 +61,6 @@ Talk soon.
 — The Prism
 
 *You're receiving this because you requested early access at theprismai.com.*
-
----
-
-## E2 — The World Cup, read by the numbers (Day ~3)
-
-> **⚡ This is the "live" email.** The copy below is a real snapshot of the tournament as of
-> **1 Jul 2026** (round of 32). It reads like a next-morning dispatch on purpose. Two ways to run it:
-> **(a) Static** — paste this as-is for a one-off timely send. **(b) Dynamic (recommended while
-> the WC is on)** — send it on a schedule from live ESPN data so it's always current. See
-> *"Making E2 live"* in [README.md](README.md#waitlist-engagement-loops). All facts below are
-> pulled from the app's live World Cup feed — swap them for the latest before each send.
-
-**Subject:** Last night at the World Cup, read by the numbers
-**Preview text:** Belgium's late escape, Kane's rescue act — and the tie everyone's circled next.
-
----
-
-The World Cup doesn't stop, and neither does The Prism. Here's how the last 24 hours actually
-looked once you strip out the noise — every read grounded in live data, none of it from memory.
-
-The **round of 32** delivered chaos:
-
-- **Belgium 2–2 Senegal** — a stoppage-time equaliser dragged it to extra time and sent Brussels
-  into meltdown.
-- **England 2–1 Congo DR** — a Harry Kane double rescued England from a genuine upset and into
-  the next round.
-- **France 3–0 Sweden** — the most complete performance of the round.
-- **Germany** and the **Netherlands** both survived shoot-outs, edging Paraguay and Morocco after
-  1–1 draws.
-
-Next up, the tie everyone's circled: **Portugal v Croatia** — Ronaldo and Modrić, two icons, one
-of them going home.
-
-That's the kind of read The Prism builds on demand inside the **World Cup 2026** hub — results,
-form, and matchup analysis refracted into a single picture, with the receipts underneath. No hot
-takes. Just what the numbers say.
-
-When you're in, you'll ask it yourself: *"Who wins Portugal v Croatia?"* or *"Who's favourite for
-the Golden Boot right now?"* — and watch it show its working.
-
-More soon — next time, how to turn a vague idea into a shortlist in seconds.
-
-— The Prism
 
 ---
 
