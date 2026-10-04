@@ -40,6 +40,14 @@
     {
       "source": "/refractions/:path*",
       "destination": "https://app.theprismai.com/_refractions/:path*"
+    },
+    {
+      "source": "/rankings",
+      "destination": "https://app.theprismai.com/_rankings"
+    },
+    {
+      "source": "/rankings/:path*",
+      "destination": "https://app.theprismai.com/_rankings/:path*"
     }
   ]
 }

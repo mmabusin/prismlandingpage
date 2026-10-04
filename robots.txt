@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
 Sitemap: https://www.theprismai.com/refractions/sitemap.xml
+Sitemap: https://www.theprismai.com/rankings/sitemap.xml
