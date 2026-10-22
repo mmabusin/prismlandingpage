@@ -48,6 +48,10 @@
     {
       "source": "/rankings/:path*",
       "destination": "https://app.theprismai.com/_rankings/:path*"
+    },
+    {
+      "source": "/pricing",
+      "destination": "https://app.theprismai.com/_pricing"
     }
   ]
 }

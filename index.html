@@ -160,19 +160,10 @@
     }
     .hero-sub { color: var(--text-dim); font-size: 1.02rem; max-width: 54ch; margin-top: 16px; }
     .hero-sub strong { color: var(--text); font-weight: 600; }
-    .hero-form { display: flex; gap: 8px; margin-top: 26px; max-width: 430px; }
-    .field {
-      flex: 1; min-width: 0; height: 42px; border: 1px solid var(--border-strong);
-      border-radius: var(--r-pill); padding: 0 16px; font-family: var(--font);
-      font-size: var(--fs-body); background: var(--surface); color: var(--text);
-    }
-    .field:focus { outline: none; border-color: var(--accent); }
-    .field.bad { border-color: var(--danger); }
-    .hero-form .btn { height: 42px; }
-    .form-msg { font-size: var(--fs-meta); margin-top: 9px; min-height: 17px; }
-    .form-msg.err { color: var(--danger); }
-    .form-msg.ok { color: var(--success); }
+    .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+    .hero-cta .btn { height: 42px; display: inline-flex; align-items: center; padding: 0 20px; }
     .note { font-size: var(--fs-meta); color: var(--text-muted); margin-top: 9px; }
+    .hero-cta + .note { margin-top: 12px; }
 
     /* ── Ask bar (the app's own component) ── */
     .askwrap { margin-top: 40px; }
@@ -404,34 +395,13 @@
 
     /* ── CTA + footer ── */
     .cta { text-align: center; }
-    .cta .hero-form { margin: 22px auto 0; }
-    .cta .note, .cta .form-msg { text-align: center; }
+    .cta .hero-cta { justify-content: center; margin-top: 22px; }
+    .cta .note { text-align: center; }
     footer { border-top: 1px solid var(--border); padding: 26px 0; }
     .foot-in { max-width: var(--page); margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
     .foot-links { margin-left: auto; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
     .foot-links a, .foot-copy { font-size: var(--fs-meta); color: var(--text-muted); text-decoration: none; }
     .foot-links a:hover { color: var(--text); }
-
-    /* ── Signup confirmation ── */
-    .wl-confirm { max-width: 430px; }
-    .cta .wl-confirm { margin: 22px auto 0; }
-    .wl-badge {
-      width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff;
-      display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 0.9rem;
-    }
-    .cta .wl-badge { margin-left: auto; margin-right: auto; }
-    .wl-title { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
-    .wl-sub { color: var(--text-dim); font-size: var(--fs-body); margin-top: 6px; }
-    .wl-share-lbl { display: block; font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .1em; color: var(--text-muted); margin: 18px 0 10px; }
-    .wl-share { display: flex; gap: 8px; flex-wrap: wrap; }
-    .cta .wl-share { justify-content: center; }
-    .wl-btn {
-      display: inline-flex; align-items: center; gap: 7px; font-family: var(--font); font-size: var(--fs-meta);
-      color: var(--text-dim); background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--r-pill); padding: 7px 13px; cursor: pointer;
-    }
-    .wl-btn:hover { border-color: var(--accent); color: var(--text); }
-    .wl-btn svg { width: 13px; height: 13px; fill: currentColor; }
 
     /* ── Phones ──
        Tighter vertical rhythm (the desktop padding leaves a dead band above the
@@ -497,9 +467,11 @@
         <li><a href="#watch">Watch it work</a></li>
         <li><a href="#indexes">Indexes</a></li>
         <li><a href="#refractions">Refractions</a></li>
+        <li><a href="/pricing">Pricing</a></li>
         <li><a href="#faq">FAQ</a></li>
+        <li><a href="https://app.theprismai.com/" data-start="nav-signin">Sign in</a></li>
       </ul>
-      <a href="#join" class="btn">Join the waitlist</a>
+      <a href="https://app.theprismai.com/" class="btn" data-start="nav">Start free</a>
     </div>
   </nav>
 
@@ -507,16 +479,15 @@
   <header class="hero" id="top">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <span class="eyebrow"><span class="dot"></span> Private beta<span class="eyebrow-rest"> · Europe's top five leagues</span></span>
+        <span class="eyebrow"><span class="dot"></span> Now open<span class="eyebrow-rest"> · Europe's top five leagues</span></span>
         <h1>Enterprise-level football analysis, <span class="h1-accent">for everyone.</span></h1>
         <p class="hero-sub"><strong>AI-powered football intelligence at your fingertips.</strong> Ask <span class="h1-accent">The Prism</span> anything in natural language and settle arguments, make decisions, or simply fulfil your curiosity.</p>
 
-        <form class="hero-form" id="form-hero" novalidate>
-          <input class="field" type="email" id="email-hero" placeholder="Your email" autocomplete="email" aria-label="Your email" />
-          <button class="btn" type="submit">Join the waitlist</button>
-        </form>
-        <p class="form-msg" id="msg-hero" role="status" aria-live="polite"></p>
-        <p class="note">Free while it's in beta. We're letting people in a few at a time.</p>
+        <div class="hero-cta">
+          <a href="https://app.theprismai.com/" class="btn" data-start="hero">Start free</a>
+          <a href="/pricing" class="btn btn-ghost">See pricing</a>
+        </div>
+        <p class="note">Free to start, no card needed.</p>
       </div>
 
       <div class="hero-demo">
@@ -693,16 +664,16 @@
           <div class="faq-a">The Premier League, La Liga, Serie A, the Bundesliga and Ligue 1, this season and last. We are working on expanding to 20+ leagues soon.</div>
         </div>
         <div class="faq-item">
-          <button class="faq-q" type="button">When do I get in?<span class="pm">+</span></button>
-          <div class="faq-a">We're letting people in a few at a time so we can fix things as they come up. Sign up to the waitlist and we'll let you know by email when your time is here.</div>
+          <button class="faq-q" type="button">How do I get started?<span class="pm">+</span></button>
+          <div class="faq-a">Sign up at <a href="https://app.theprismai.com/" data-start="faq" style="color:var(--accent)">app.theprismai.com</a> with Google or your email and you're in straight away. New accounts get a few bonus questions on top of the free allowance.</div>
         </div>
         <div class="faq-item">
           <button class="faq-q" type="button">Is it free?<span class="pm">+</span></button>
-          <div class="faq-a">Yes, for everyone in the beta.</div>
+          <div class="faq-a">Yes. The free plan gives you a few questions a week. Plus and Pro give you more, and the <a href="/pricing" style="color:var(--accent)">pricing page</a> has what each one includes.</div>
         </div>
         <div class="faq-item">
           <button class="faq-q" type="button">What happens to my email?<span class="pm">+</span></button>
-          <div class="faq-a">We use it to send your invite and the occasional email about the app. You can unsubscribe from any of them.</div>
+          <div class="faq-a">We use it for your account and the occasional email about the app, and you can unsubscribe from those whenever you like. The <a href="https://app.theprismai.com/privacy" style="color:var(--accent)">privacy policy</a> has the details.</div>
         </div>
       </div>
       <p class="note reveal">Anything else? Email <a href="mailto:hello@theprismai.com" style="color:var(--accent)">hello@theprismai.com</a> and we'll get back to you.</p>
@@ -715,12 +686,10 @@
       <div class="reveal">
         <svg width="40" height="40" style="color:var(--text)"><use href="#mark"/></svg>
         <h2 style="margin-top:14px">Want in?</h2>
-        <p class="lede" style="margin:10px auto 0">Leave your email and we'll send an invite when there's room. It's free while it's in beta.</p>
-        <form class="hero-form" id="form-cta" novalidate>
-          <input class="field" type="email" id="email-cta" placeholder="Your email" autocomplete="email" aria-label="Your email" />
-          <button class="btn" type="submit">Join the waitlist</button>
-        </form>
-        <p class="form-msg" id="msg-cta" role="status" aria-live="polite"></p>
+        <p class="lede" style="margin:10px auto 0">Sign up free with Google or your email and ask your first question.</p>
+        <div class="hero-cta">
+          <a href="https://app.theprismai.com/" class="btn" data-start="cta">Start free</a>
+        </div>
         <p class="note">Questions first? Email <a href="mailto:hello@theprismai.com" style="color:var(--accent)">hello@theprismai.com</a></p>
       </div>
     </div>
@@ -735,6 +704,8 @@
       <div class="foot-links">
         <a href="/refractions">Refractions</a>
         <a href="mailto:hello@theprismai.com">Contact</a>
+        <a href="https://app.theprismai.com/privacy">Privacy</a>
+        <a href="https://app.theprismai.com/terms">Terms</a>
         <span class="foot-copy">© 2026 The Prism</span>
       </div>
     </div>
@@ -1024,86 +995,21 @@
       .then(function (d) { if (d && d.posts && d.posts.length) paintRfx(d.posts); })
       .catch(function () { /* the fallback is already on screen */ });
 
-    /* ── waitlist ──
-       Every path says something. The old form failed silently: a bad address
-       only turned the border red, a failed request flashed "Try again" for two
-       seconds, and a script error left the form dead or reloaded the page and
-       lost the address. */
-    var EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-    function wire(formId, inputId, msgId, source) {
-      var form = document.getElementById(formId);
-      if (!form) return;
-      var input = document.getElementById(inputId);
-      var msg = document.getElementById(msgId);
-      function say(text, kind) { msg.textContent = text; msg.className = 'form-msg' + (kind ? ' ' + kind : ''); }
-      form.addEventListener('submit', function (e) {
+    /* ── Start free ──
+       Every way into the app is a plain link, so it works with the script
+       blocked. Counted in Plausible as "Start Free" with where it was clicked;
+       the visit waits for the event to send (400ms at most) because the next
+       page is another site. A modified click opens a tab and is left alone. */
+    document.querySelectorAll('a[data-start]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        if (!window.plausible || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
         e.preventDefault();
-        try {
-          var email = (input.value || '').trim();
-          if (!EMAIL.test(email)) {
-            input.classList.add('bad'); input.focus();
-            say('That email address does not look right. Mind checking it?', 'err');
-            if (window.plausible) plausible('Waitlist Invalid', { props: { source: source } });
-            return;
-          }
-          input.classList.remove('bad');
-          var btn = form.querySelector('button');
-          var original = btn.textContent;
-          btn.textContent = 'Joining…'; btn.disabled = true;
-          say('');
-          fetch('/api/waitlist', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, source: source })
-          }).then(function (res) {
-            if (!res.ok) throw new Error('http ' + res.status);
-            if (window.plausible) plausible('Waitlist Signup', { props: { source: source } });
-            confirmPanel(form, msg);
-          }).catch(function (err) {
-            btn.textContent = original; btn.disabled = false;
-            say('That did not save. Please try again, or email hello@theprismai.com and we will add you by hand.', 'err');
-            if (window.plausible) plausible('Waitlist Failed', { props: { source: source } });
-          });
-        } catch (err) {
-          say('Something went wrong here. Email hello@theprismai.com and we will add you by hand.', 'err');
-          if (window.plausible) plausible('Waitlist Error', { props: { source: source } });
-        }
+        var gone = false;
+        function go() { if (!gone) { gone = true; window.location.href = a.href; } }
+        plausible('Start Free', { props: { source: a.getAttribute('data-start') }, callback: go });
+        setTimeout(go, 400);
       });
-    }
-    var SHARE_URL = 'https://www.theprismai.com';
-    var SHARE_TEXT = 'The Prism: ask it anything about football and it goes and gets the numbers. Early access here:';
-    function confirmPanel(form, msg) {
-      var p = document.createElement('div');
-      p.className = 'wl-confirm';
-      p.innerHTML =
-        '<div class="wl-badge">✓</div>' +
-        '<div class="wl-title">You\'re on the list.</div>' +
-        '<p class="wl-sub">Check your inbox for a welcome email. We\'re letting people in a few at a time, and your invite will arrive at the same address.</p>' +
-        '<span class="wl-share-lbl">Know someone who\'d like this? Send it on.</span>' +
-        '<div class="wl-share">' +
-          '<button type="button" class="wl-btn" data-share="x"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231z"/></svg>Share on X</button>' +
-          '<button type="button" class="wl-btn" data-share="whatsapp"><svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2z"/></svg>WhatsApp</button>' +
-          '<button type="button" class="wl-btn" data-share="copy"><svg viewBox="0 0 24 24"><path d="M3.9 12a3.1 3.1 0 0 1 3.1-3.1h3v-1.8h-3a4.9 4.9 0 0 0 0 9.8h3v-1.8h-3A3.1 3.1 0 0 1 3.9 12zm4.1 1h8v-2H8v2zm9-6.9h-3v1.8h3a3.1 3.1 0 0 1 0 6.2h-3v1.8h3a4.9 4.9 0 0 0 0-9.8z"/></svg>Copy link</button>' +
-        '</div>';
-      if (msg) msg.textContent = '';
-      var note = form.nextElementSibling;
-      form.replaceWith(p);
-      p.querySelectorAll('[data-share]').forEach(function (b) {
-        b.addEventListener('click', function () {
-          var kind = b.getAttribute('data-share');
-          if (window.plausible) plausible('Waitlist Share', { props: { kind: kind } });
-          if (kind === 'x') window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(SHARE_TEXT) + '&url=' + encodeURIComponent(SHARE_URL), '_blank', 'noopener');
-          else if (kind === 'whatsapp') window.open('https://wa.me/?text=' + encodeURIComponent(SHARE_TEXT + ' ' + SHARE_URL), '_blank', 'noopener');
-          else {
-            var done = function () { var s = b.lastChild; var was = s.textContent; s.textContent = 'Copied'; setTimeout(function () { s.textContent = was; }, 1600); };
-            if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(SHARE_URL).then(done).catch(done);
-            else done();
-          }
-        });
-      });
-    }
-    wire('form-hero', 'email-hero', 'msg-hero', 'hero');
-    wire('form-cta', 'email-cta', 'msg-cta', 'cta');
+    });
   })();
   </script>
 </body>

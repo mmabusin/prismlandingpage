@@ -1,7 +1,12 @@
 # The Prism — Landing Page (Vercel)
 
-Standalone marketing/waitlist page. Static `index.html` + one serverless function
+Standalone marketing page. Static `index.html` + one serverless function
 (`api/waitlist.js`) that stores early-access signups in Supabase. No build step.
+
+Since the web launch the page itself sends people to the app ("Start free", to
+`app.theprismai.com`) and has no signup form. Keep `api/waitlist.js`: the rankings and
+Refractions pages proxied onto this domain still post to it. `/pricing` is proxied to the
+app's `/_pricing` the same way (`vercel.json`).
 
 ## What's here
 - `index.html` — the full landing page (self-contained: inline CSS/JS, fonts via CDN)
