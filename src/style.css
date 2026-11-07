@@ -689,7 +689,7 @@ h3 { font-weight: 800; font-size: 1.2rem; line-height: 1.25; letter-spacing: -.0
 .foot-b { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-block: 18px 34px; border-top: 1px solid var(--line-2); font-size: 13px; color: var(--ink-3); }
 @media (max-width: 860px) { .foot-in { grid-template-columns: 1fr 1fr; } .foot-in > div:first-child { grid-column: 1 / -1; } }
 
-/* ── phone: hero and sticky call to action ── */
+/* ── phone: hero ── */
 @media (max-width: 1020px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; padding: 40px 28px 30px; } }
 @media (max-width: 560px) {
   .hero { margin-top: 12px; }
@@ -705,10 +705,6 @@ h3 { font-weight: 800; font-size: 1.2rem; line-height: 1.25; letter-spacing: -.0
   .rc-name { font-size: 22px; }
   .leagues { gap: 8px 14px; }
 }
-.sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; display: none; gap: 10px; padding: 10px var(--gut-r) calc(10px + env(safe-area-inset-bottom, 0px)) var(--gut-l); background: color-mix(in srgb, var(--bg) 90%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--line); transform: translateY(110%); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
-.sticky .btn { flex: 1; height: 46px; }
-.sticky.show { transform: none; }
-@media (max-width: 760px) { .sticky { display: flex; } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

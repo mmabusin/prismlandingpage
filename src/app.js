@@ -599,7 +599,7 @@
     }).join('');
   }
 
-  /* ────────────── theme, menu, sticky, doors ────────────── */
+  /* ────────────── theme, menu, doors ────────────── */
   /* light unless the visitor chose dark with the toggle; the device's own setting is not followed */
   function effTheme() { return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
   function setTheme(t) {
@@ -624,15 +624,6 @@
         if (tick) return; tick = true;
         requestAnimationFrame(function () { tick = false; var h = document.documentElement.scrollHeight - innerHeight; pr.style.transform = 'scaleX(' + (h > 0 ? scrollY / h : 0) + ')'; });
       }, { passive: true });
-    }
-    var sticky = $('#sticky'), heroCta = $('.hero .cta-row'), fin = $('#final');
-    if ('IntersectionObserver' in window && sticky) {
-      var seen = { hero: true, fin: false };
-      var so = new IntersectionObserver(function (es) {
-        es.forEach(function (e) { if (e.target === heroCta) seen.hero = e.isIntersecting; else seen.fin = e.isIntersecting; });
-        sticky.classList.toggle('show', !seen.hero && !seen.fin);
-      });
-      so.observe(heroCta); so.observe(fin);
     }
     /* Every way into the app is a plain link, so it works with scripts blocked. Plausible counts it as
        "Start Free" with where it was pressed; the visit waits for the event (400ms at most) because the
