@@ -10,9 +10,10 @@ Refractions pages proxied onto this domain still post to it. `/pricing` is proxi
 app's `/_pricing` the same way (`vercel.json`).
 
 ## The page (v6, for the web launch)
-`index.html` is built by `python3 build.py` (standard library only) from:
+`index.html` is built by `python3 build.py` (standard library only) from the files below. **Edit those,
+never `index.html` itself, and rebuild:** a change made only to `index.html` is lost on the next build.
 - `src/head.html`, `src/style.css`, `src/body.html`, `src/app.js`: the page itself. Every scene
-  (the hero's answer, Ask, the standing, Matches, Scout, Your club, The Monday Prism) is drawn by
+  (the hero's answer, Ask, the standing, Matches, Scout, Your club, The Weekend Prism) is drawn by
   `src/app.js` from the data, and moves only when the visitor allows motion.
 - `data/landing.json`: the real data those scenes draw (answers recorded from the app, players,
   matches and clubs read from it), baked from The Prism before launch.
@@ -20,7 +21,7 @@ app's `/_pricing` the same way (`vercel.json`).
   request leaves the page for a font. `img/`: the player photos and club crests the scenes use.
 - `python3 build.py --initials` builds the page with initials in place of every photo and crest.
 
-CSS, data and script are inline, so the page is one request plus its fonts and images. The Monday
+CSS, data and script are inline, so the page is one request plus its fonts and images. The Weekend
 Prism box posts to `https://app.theprismai.com/api/monday/subscribe`. The previous page is kept at
 `landing-v5.html` (it still uses `cards.css`, `views.css`, `views.js` and `replays.js`).
 

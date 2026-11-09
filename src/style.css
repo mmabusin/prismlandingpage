@@ -517,7 +517,7 @@ h3 { font-weight: 800; font-size: 1.2rem; line-height: 1.25; letter-spacing: -.0
   .yc-hd .yc-follow { grid-column: 1 / -1; justify-self: start; }
 }
 
-/* ── monday ── */
+/* ── the weekend prism (ids and classes keep "monday") ── */
 .monday-in { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); gap: 48px; align-items: center; padding: 48px; border-radius: var(--r-xl); background: var(--surface-2); border: 1px solid var(--line); }
 .mf { margin-top: 24px; display: flex; gap: 8px; max-width: 460px; }
 .mf input { flex: 1; min-width: 0; height: 48px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font: 500 15px var(--font); }

@@ -496,7 +496,7 @@
       '<p class="foot-note">Arsenal on The Prism’s Home, ' + esc(L.as_of) + '. The line-up is the expected XI until the clubs name their teams.</p>';
   }
 
-  /* The Monday Prism, drawn the way the email is (monday.py on the launch branch): masthead with the
+  /* The Weekend Prism, drawn the way the email is (monday.py on the launch branch): masthead with the
      weekend's figures, The Prism's opening, player of the weekend, game of the weekend with where the
      ball was, smash and grab, a league's results, the under-23s and the games to watch next. */
   function renderMonday() {
@@ -509,8 +509,8 @@
     var young = M.young.map(function (y) { return '<div class="mm-y"><div><b>' + esc(y.n) + '</b><span>' + esc(y.meta) + '</span></div><em>' + y.rt.toFixed(2) + '</em></div>'; }).join('');
     var watch = M.watch.map(function (w) { return '<div class="mm-w"><div><b>' + esc(w.teams) + '</b><span>' + esc(w.meta) + '</span></div><em>' + esc(w.when).replace('\n', '<br>') + '</em></div>'; }).join('');
     el.innerHTML =
-      '<div class="mm-scroll" id="mm-scroll" tabindex="0" aria-label="A sample issue of The Monday Prism">' +
-      '<div class="mm-mast"><div class="mm-logo">' + markSVG() + '<b>The Monday Prism</b></div>' +
+      '<div class="mm-scroll" id="mm-scroll" tabindex="0" aria-label="A sample issue of The Weekend Prism">' +
+      '<div class="mm-mast"><div class="mm-logo">' + markSVG() + '<b>The Weekend Prism</b></div>' +
         '<p class="mm-tag">The weekend across Europe’s five big leagues, in five minutes.</p>' +
         '<p class="mm-issue">Sample issue · ' + esc(M.label) + '</p>' +
         '<div class="mm-tiles">' + M.numbers.map(function (n) { return '<div><b>' + esc(n.v) + '</b><span>' + esc(n.l) + '</span></div>'; }).join('') + '</div></div>' +
@@ -534,7 +534,7 @@
       '</div>' +
       '<p class="foot-note">A sample issue, from the weekend of 31 October. Scroll it.</p>';
     $$('canvas[data-heat]', el).forEach(function (c) { var h = M[c.getAttribute('data-heat')]; paintHeat(c, h.grid, h.cols, h.rows); });
-    /* The agreed endpoint (WEB_LAUNCH_PLAN.md 3b, Resend): 200 means a confirm email went out, from "The Monday
+    /* The agreed endpoint (WEB_LAUNCH_PLAN.md 3b, Resend): 200 means a confirm email went out, from "The Weekend
        Prism", and the address joins only when its button is pressed; it never says whether an address was
        already on the list. 422 a bad address, 429 five tries an hour from one connection, 503 or 502 nothing
        was sent, so never "you're in". */
@@ -548,7 +548,7 @@
       fetch(MONDAY_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: v, source: 'landing' }) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { s: r.status, j: j }; }); })
         .then(function (x) {
-          if (x.s === 200 && x.j && x.j.ok) { form.classList.add('sent'); $('#mf-ok').textContent = 'Nearly there. Check your inbox for an email from The Monday Prism, and press its button to confirm.'; if (window.plausible) plausible('Monday Prism', { props: { source: 'landing' } }); return; }
+          if (x.s === 200 && x.j && x.j.ok) { form.classList.add('sent'); $('#mf-ok').textContent = 'Nearly there. Check your inbox for an email from The Weekend Prism, and press its button to confirm.'; if (window.plausible) plausible('Monday Prism', { props: { source: 'landing' } }); return; }
           if (x.s === 422) say('That email address does not look right. Check it and try again.');
           else if (x.s === 429) say('Too many tries from this connection. Please try again in an hour.');
           else say('That did not work. Please try again in a minute.');
