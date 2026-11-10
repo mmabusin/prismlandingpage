@@ -21,7 +21,26 @@
 <meta name="twitter:description" content="The AI-powered football scouting & analytics platform for Europe's top five leagues.">
 <meta name="twitter:image" content="https://www.theprismai.com/og.png?v=2">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"The Prism","url":"https://www.theprismai.com/","logo":"https://www.theprismai.com/prism-mark.png","email":"hello@theprismai.com"},{"@type":"WebSite","name":"The Prism","url":"https://www.theprismai.com/"}]}</script>
-<script defer data-domain="theprismai.com" src="https://plausible.io/js/script.js"></script>
+<!-- Visits are counted by The Prism itself (console, Traffic): no cookie, no third party.
+     A page view on load, and every Start free or way into the app when pressed. -->
+<script>(function(){try{var E="https://app.theprismai.com/api/p",S="landing",w=window,d=document,n=navigator,
+q=new URLSearchParams(location.search),ig=0,EO='';try{EO=new URL(E,location.href).origin}catch(x){}
+try{var ls=w.localStorage;if(q.get('prism_count')==='off')ls.setItem('prism_nocount','1');
+if(q.get('prism_count')==='on')ls.removeItem('prism_nocount');ig=ls.getItem('prism_nocount')==='1'?1:0}catch(x){}
+if(n.webdriver||!/(^|\.)theprismai\.com$/.test(location.hostname))return;
+function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(x){return ''}}
+function send(o){o.s=S;o.tz=tz();o.mt=n.maxTouchPoints||0;if(ig)o.x=1;var b=JSON.stringify(o);
+try{if(n.sendBeacon&&n.sendBeacon(E,b))return}catch(x){}
+try{fetch(E,{method:'POST',body:b,keepalive:true,mode:'no-cors',credentials:'omit'})}catch(x){}}
+function view(){send({k:'v',p:location.pathname,r:d.referrer||'',src:q.get('src')||q.get('ref')||'',
+us:q.get('utm_source')||'',um:q.get('utm_medium')||'',uc:q.get('utm_campaign')||''})}
+if(d.prerendering)d.addEventListener('prerenderingchange',view,{once:true});else view();
+d.addEventListener('click',function(e){var el=e.target&&e.target.closest?e.target.closest('[data-door],a[href]'):null;
+if(!el)return;var door='',dd=el.getAttribute('data-door');
+if(dd){try{var j=JSON.parse(dd);door=(j&&j.s)||''}catch(x){door=dd}}
+if(el.href){try{var u=new URL(el.href,location.href);if(u.origin===EO){door=u.searchParams.get('src')||door}
+else if(!dd)return}catch(x){if(!dd)return}}
+if(!door)return;send({k:'d',p:location.pathname,d:String(door).slice(0,48)})},true)}catch(x){}})();</script>
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style id="fonts">

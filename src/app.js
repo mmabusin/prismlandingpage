@@ -548,7 +548,7 @@
       fetch(MONDAY_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: v, source: 'landing' }) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { s: r.status, j: j }; }); })
         .then(function (x) {
-          if (x.s === 200 && x.j && x.j.ok) { form.classList.add('sent'); $('#mf-ok').textContent = 'Nearly there. Check your inbox for an email from The Weekend Prism, and press its button to confirm.'; if (window.plausible) plausible('Monday Prism', { props: { source: 'landing' } }); return; }
+          if (x.s === 200 && x.j && x.j.ok) { form.classList.add('sent'); $('#mf-ok').textContent = 'Nearly there. Check your inbox for an email from The Weekend Prism, and press its button to confirm.'; return; }
           if (x.s === 422) say('That email address does not look right. Check it and try again.');
           else if (x.s === 429) say('Too many tries from this connection. Please try again in an hour.');
           else say('That did not work. Please try again in a minute.');
@@ -625,19 +625,8 @@
         requestAnimationFrame(function () { tick = false; var h = document.documentElement.scrollHeight - innerHeight; pr.style.transform = 'scaleX(' + (h > 0 ? scrollY / h : 0) + ')'; });
       }, { passive: true });
     }
-    /* Every way into the app is a plain link, so it works with scripts blocked. Plausible counts it as
-       "Start Free" with where it was pressed; the visit waits for the event (400ms at most) because the
-       next page is another site. A modified click opens a tab and is left alone. */
-    $$('a[data-door]').forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        if (!window.plausible || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        e.preventDefault();
-        var gone = false;
-        function go() { if (!gone) { gone = true; window.location.href = a.href; } }
-        plausible('Start Free', { props: { source: a.getAttribute('data-door') }, callback: go });
-        setTimeout(go, 400);
-      });
-    });
+    /* Every way into the app is a plain link, so it works with scripts blocked. The page's counter
+       (head.html) records each one as it is pressed, with its ?src= tag, without holding the visit. */
   }
 
   /* ────────────── scenes play when they come into view ────────────── */
