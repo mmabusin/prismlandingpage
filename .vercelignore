@@ -1,0 +1,5 @@
+# The landing page's build sources: index.html is built from them (python3 build.py) and is what Vercel
+# serves, so the sources themselves need not be on the site.
+src
+data
+build.py
